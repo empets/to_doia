@@ -212,13 +212,13 @@ return $default(_that.title,_that.date,_that.time,_that.recurring);case _:
 @JsonSerializable()
 
 class _TaskResponseModel implements TaskResponseModel {
-  const _TaskResponseModel({required this.title, required this.date, required this.time, required this.recurring});
+  const _TaskResponseModel({required this.title, required this.date, required this.time, this.recurring = false});
   factory _TaskResponseModel.fromJson(Map<String, dynamic> json) => _$TaskResponseModelFromJson(json);
 
 @override final  String? title;
 @override final  String? date;
 @override final  String? time;
-@override final  bool recurring;
+@override@JsonKey() final  bool recurring;
 
 /// Create a copy of TaskResponseModel
 /// with the given fields replaced by the non-null parameter values.

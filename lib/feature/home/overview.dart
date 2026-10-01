@@ -1,40 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:to_doia/core/confirmation/confimation_screen.dart';
 import 'package:to_doia/core/ia_analyse/ai_analyzing_screen.dart';
+import 'package:to_doia/core/injetction/injection_container.dart';
 import 'package:to_doia/core/models/task.dart';
 import 'package:to_doia/core/persmission/permission_screen.dart';
 import 'package:to_doia/core/succes_screen/success_screen.dart';
 import 'package:to_doia/core/transcription/transcription_screen.dart';
 import 'package:to_doia/core/voice/voice_listening.dart';
+import 'package:to_doia/feature/home/domaine/repositorie/voic_task_repository.dart';
+import 'package:to_doia/feature/home/domaine/usecase/create_task_from_voice.dart';
+import 'package:to_doia/feature/home/presentation/bloc/voice_task.dart';
 import 'package:to_doia/feature/home/presentation/page/home_screen.dart';
 import 'package:to_doia/feature/onboarding/splash_screen.dart';
 import 'package:to_doia/feature/setting/setting_screen.dart';
 import 'package:to_doia/feature/setting/sub_setting_screen.dart';
 import 'package:to_doia/feature/taches/manual_create_screen.dart';
 import 'package:to_doia/feature/taches/tasks_screen.dart';
+import 'package:injectable/injectable.dart';
 
 class SmartReminderApp extends StatelessWidget {
   const SmartReminderApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(360, 690),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      builder: (_, child) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData.light().copyWith(
-            textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme),
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
-          ),
-          home: child, // 👈 IMPORTANT
-        );
-      },
-      child: const AppShell(),
+    return BlocProvider(
+      create: (context) => VoiceTaskCubit(
+        createTask: getIt<CreateTaskFromVoiceUseCase>(),
+        recorder: VoiceRecorder(),
+      ),
+      child: ScreenUtilInit(
+        designSize: const Size(360, 690),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        builder: (_, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData.light().copyWith(
+              textTheme: GoogleFonts.robotoTextTheme(
+                Theme.of(context).textTheme,
+              ),
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+            ),
+            home: child, // 👈 IMPORTANT
+          );
+        },
+        child: const AppShell(),
+      ),
     );
   }
 }

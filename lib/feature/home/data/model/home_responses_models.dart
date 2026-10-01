@@ -10,7 +10,7 @@ abstract class TaskResponseModel with _$TaskResponseModel {
     required String? title,
     required String? date,
     required String? time,
-    required bool recurring,
+    @Default(false) bool recurring,
   }) = _TaskResponseModel;
 
   factory TaskResponseModel.fromJson(Map<String, dynamic> json) =>

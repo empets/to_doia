@@ -11,7 +11,7 @@ _TaskResponseModel _$TaskResponseModelFromJson(Map<String, dynamic> json) =>
       title: json['title'] as String?,
       date: json['date'] as String?,
       time: json['time'] as String?,
-      recurring: json['recurring'] as bool,
+      recurring: json['recurring'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$TaskResponseModelToJson(_TaskResponseModel instance) =>

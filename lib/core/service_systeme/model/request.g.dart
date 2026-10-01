@@ -7,11 +7,11 @@ part of 'request.dart';
 // **************************************************************************
 
 _Request<T> _$RequestFromJson<T>(Map<String, dynamic> json) => _Request<T>(
-      data: json['data'],
-      user: json['user'] as String?,
-      deviceId: json['deviceId'] as String?,
-      serviceLibelle: json['serviceLibelle'] as String,
-    );
+  data: json['data'],
+  user: json['user'] as String?,
+  deviceId: json['deviceId'] as String?,
+  serviceLibelle: json['serviceLibelle'] as String,
+);
 
 Map<String, dynamic> _$RequestToJson<T>(_Request<T> instance) =>
     <String, dynamic>{
@@ -40,18 +40,18 @@ Map<String, dynamic> _$RequestPaginateToJson<T>(_RequestPaginate<T> instance) =>
     };
 
 _RequestWithoutUser<T> _$RequestWithoutUserFromJson<T>(
-        Map<String, dynamic> json) =>
-    _RequestWithoutUser<T>(
-      data: json['data'],
-      serviceLibelle: json['serviceLibelle'] as String,
-    );
+  Map<String, dynamic> json,
+) => _RequestWithoutUser<T>(
+  data: json['data'],
+  serviceLibelle: json['serviceLibelle'] as String,
+);
 
 Map<String, dynamic> _$RequestWithoutUserToJson<T>(
-        _RequestWithoutUser<T> instance) =>
-    <String, dynamic>{
-      'data': instance.data,
-      'serviceLibelle': instance.serviceLibelle,
-    };
+  _RequestWithoutUser<T> instance,
+) => <String, dynamic>{
+  'data': instance.data,
+  'serviceLibelle': instance.serviceLibelle,
+};
 
 _RequestWrapper<T> _$RequestWrapperFromJson<T>(Map<String, dynamic> json) =>
     _RequestWrapper<T>(
@@ -82,20 +82,20 @@ Map<String, dynamic> _$RequestDatasToJson<T>(_RequestDatas<T> instance) =>
     };
 
 _RequestDatasWithoutUser<T> _$RequestDatasWithoutUserFromJson<T>(
-        Map<String, dynamic> json) =>
-    _RequestDatasWithoutUser<T>(
-      user: json['user'] as String?,
-      datas: json['datas'],
-      serviceLibelle: json['serviceLibelle'] as String,
-    );
+  Map<String, dynamic> json,
+) => _RequestDatasWithoutUser<T>(
+  user: json['user'] as String?,
+  datas: json['datas'],
+  serviceLibelle: json['serviceLibelle'] as String,
+);
 
 Map<String, dynamic> _$RequestDatasWithoutUserToJson<T>(
-        _RequestDatasWithoutUser<T> instance) =>
-    <String, dynamic>{
-      'user': instance.user,
-      'datas': instance.datas,
-      'serviceLibelle': instance.serviceLibelle,
-    };
+  _RequestDatasWithoutUser<T> instance,
+) => <String, dynamic>{
+  'user': instance.user,
+  'datas': instance.datas,
+  'serviceLibelle': instance.serviceLibelle,
+};
 
 _RequestAuth<T> _$RequestAuthFromJson<T>(Map<String, dynamic> json) =>
     _RequestAuth<T>(

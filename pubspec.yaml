@@ -182,15 +182,19 @@ dependencies:
   get: any
   pdf: ^3.10.8 
   printing: ^5.11.1
-  path_provider: ^2.1.2
+  path_provider: any
   pluto_grid: any
   qr_flutter: ^4.1.0
   carousel_slider: ^5.1.2
   cached_network_image: ^3.4.1
   syncfusion_flutter_pdfviewer: ^28.1.37
   # workmanager: ^0.5.2
+  dio: ^5.4.0
+  record: ^6.0.0
 
 
+dependency_overrides:
+  # record_linux: ^1.1.0
 
 dev_dependencies:
   flutter_test:

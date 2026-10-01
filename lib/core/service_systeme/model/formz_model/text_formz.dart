@@ -77,8 +77,9 @@ class TextValiderNdFibreFormz
     }
 
     // 🔹 Cas 1 : Numéro qui commence par 27 et contient 10 chiffres
-    final isTenDigitNumberStartingWith27 =
-        RegExp(r'^27\d{8}$').hasMatch(result);
+    final isTenDigitNumberStartingWith27 = RegExp(
+      r'^27\d{8}$',
+    ).hasMatch(result);
     if (isTenDigitNumberStartingWith27) return null;
 
     // 🔹 Sinon, invalide
@@ -142,10 +143,7 @@ class TextTrackingCodeFormz
   }
 }
 
-enum PhoneAlternativeFormzValidationError {
-  empty,
-  invalid,
-}
+enum PhoneAlternativeFormzValidationError { empty, invalid }
 
 class PhoneAlternativeFormz
     extends FormzInput<String, PhoneAlternativeFormzValidationError> {
