@@ -1,19 +1,25 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
+import 'package:to_doia/core/constante/global_params.dart';
 import 'package:to_doia/core/service_systeme/error/failure.dart';
 import 'package:to_doia/feature/home/data/model/home_responses_models.dart';
+
+import 'package:injectable/injectable.dart';
 
 abstract class GroqRemoteDataSource {
   Future<String> transcribe(String filePath);
   Future<TaskResponseModel> extractTask(String text);
 }
 
+@LazySingleton(as: GroqRemoteDataSource)
 class GroqRemoteDataSourceImpl implements GroqRemoteDataSource {
   GroqRemoteDataSourceImpl(this._client);
   final http.Client _client;
 
   static const _base = 'https://api.groq.com/openai/v1';
-  static const _key = String.fromEnvironment('');
+  static const _key = '';
+  //String.fromEnvironment(GlobalParams.GROQ_API_KEY);
   static const _timeout = Duration(seconds: 30);
 
   Map<String, String> get _auth => {'Authorization': 'Bearer $_key'};
@@ -33,6 +39,7 @@ class GroqRemoteDataSourceImpl implements GroqRemoteDataSource {
     final res = await http.Response.fromStream(
       await _client.send(req).timeout(_timeout),
     );
+    log('$req');
     return _decode(res)['text'] as String;
   }
 
@@ -45,7 +52,7 @@ class GroqRemoteDataSourceImpl implements GroqRemoteDataSource {
           Uri.parse('$_base/chat/completions'),
           headers: {..._auth, 'Content-Type': 'application/json'},
           body: jsonEncode({
-            'model': 'llama-3.3-70b-versatile',
+            'model': 'openai/gpt-oss-20b',
             'temperature': 0,
             'response_format': {'type': 'json_object'},
             'messages': [
@@ -65,6 +72,7 @@ class GroqRemoteDataSourceImpl implements GroqRemoteDataSource {
         .timeout(_timeout);
 
     final content = _decode(res)['choices'][0]['message']['content'] as String;
+    log('Groq response: ${jsonDecode(content) as Map<String, dynamic>}');
     return TaskResponseModel.fromJson(
       jsonDecode(content) as Map<String, dynamic>,
     );
@@ -74,6 +82,7 @@ class GroqRemoteDataSourceImpl implements GroqRemoteDataSource {
   Map<String, dynamic> _decode(http.Response res) {
     final body = utf8.decode(res.bodyBytes);
     if (res.statusCode != 200) {
+      log('Groq ${res.statusCode} : $body');
       throw ServerException('Groq ${res.statusCode} : $body');
     }
     return jsonDecode(body) as Map<String, dynamic>;

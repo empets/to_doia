@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "597005911627",
+    "firebase_url": "https://epbomie-default-rtdb.firebaseio.com",
+    "project_id": "epbomie",
+    "storage_bucket": "epbomie.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:597005911627:android:7d7887c33eab00343aafce",
+        "android_client_info": {
+          "package_name": "com.example.grace_church"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-7ctGp_kC_78986gZrbjM4Rv_loqJTzQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

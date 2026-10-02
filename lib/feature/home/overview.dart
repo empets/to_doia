@@ -10,7 +10,6 @@ import 'package:to_doia/core/persmission/permission_screen.dart';
 import 'package:to_doia/core/succes_screen/success_screen.dart';
 import 'package:to_doia/core/transcription/transcription_screen.dart';
 import 'package:to_doia/core/voice/voice_listening.dart';
-import 'package:to_doia/feature/home/domaine/repositorie/voic_task_repository.dart';
 import 'package:to_doia/feature/home/domaine/usecase/create_task_from_voice.dart';
 import 'package:to_doia/feature/home/presentation/bloc/voice_task.dart';
 import 'package:to_doia/feature/home/presentation/page/home_screen.dart';
@@ -19,7 +18,6 @@ import 'package:to_doia/feature/setting/setting_screen.dart';
 import 'package:to_doia/feature/setting/sub_setting_screen.dart';
 import 'package:to_doia/feature/taches/manual_create_screen.dart';
 import 'package:to_doia/feature/taches/tasks_screen.dart';
-import 'package:injectable/injectable.dart';
 
 class SmartReminderApp extends StatelessWidget {
   const SmartReminderApp({super.key});

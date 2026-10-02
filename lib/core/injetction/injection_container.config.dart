@@ -19,11 +19,19 @@ import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 import '../../feature/home/data/repository/home_repository_impl.dart' as _i435;
+import '../../feature/home/data/repository/voice_task_repository_impl.dart'
+    as _i681;
+import '../../feature/home/data/service/remote/groq_remote_data_soucre.dart'
+    as _i78;
 import '../../feature/home/data/service/remote/home_remote_repository.dart'
     as _i348;
 import '../../feature/home/data/service/remote/home_remote_repository_impl.dart'
     as _i386;
 import '../../feature/home/domaine/repositorie/home_repository.dart' as _i282;
+import '../../feature/home/domaine/repositorie/voic_task_repository.dart'
+    as _i722;
+import '../../feature/home/domaine/usecase/create_task_from_voice.dart'
+    as _i324;
 import 'injection_container.dart' as _i809;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -45,6 +53,15 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i386.HomeRemoteRepositoryImpl(dio: gh<_i361.Dio>()),
     );
     gh.lazySingleton<_i282.HomeRepository>(() => _i435.HomeRepositoryImpl());
+    gh.lazySingleton<_i78.GroqRemoteDataSource>(
+      () => _i78.GroqRemoteDataSourceImpl(gh<_i519.Client>()),
+    );
+    gh.lazySingleton<_i722.VoiceTaskRepository>(
+      () => _i681.VoiceTaskRepositoryImpl(gh<_i78.GroqRemoteDataSource>()),
+    );
+    gh.lazySingleton<_i324.CreateTaskFromVoiceUseCase>(
+      () => _i324.CreateTaskFromVoiceUseCase(gh<_i722.VoiceTaskRepository>()),
+    );
     return this;
   }
 }
