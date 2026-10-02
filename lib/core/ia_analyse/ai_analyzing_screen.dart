@@ -1,6 +1,8 @@
 // lib/screens/ai_analyzing_screen.dart
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:to_doia/core/confirmation/confimation_screen.dart';
 
 class AIAnalyzingScreen extends StatefulWidget {
   const AIAnalyzingScreen({super.key});
@@ -11,13 +13,23 @@ class AIAnalyzingScreen extends StatefulWidget {
 class _AIAnalyzingScreenState extends State<AIAnalyzingScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _spin = AnimationController(
-    vsync: this, duration: const Duration(milliseconds: 900))..repeat();
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  )..repeat();
   int _step = 0;
 
   @override
   void initState() {
     super.initState();
     _animateSteps();
+    Future.delayed(const Duration(milliseconds: 2200), () {
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ConfirmationScreen()),
+        );
+      }
+    });
   }
 
   void _animateSteps() async {
@@ -28,7 +40,10 @@ class _AIAnalyzingScreenState extends State<AIAnalyzingScreen>
   }
 
   @override
-  void dispose() { _spin.dispose(); super.dispose(); }
+  void dispose() {
+    _spin.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,21 +67,29 @@ class _AIAnalyzingScreenState extends State<AIAnalyzingScreen>
                   animation: _spin,
                   builder: (_, child) => Transform.rotate(
                     angle: _spin.value * 2 * pi,
-                    child: child),
+                    child: child,
+                  ),
                   child: SizedBox(
-                    width: 64, height: 64,
+                    width: 64,
+                    height: 64,
                     child: CustomPaint(painter: _SpinnerPainter()),
                   ),
                 ),
                 const SizedBox(height: 28),
 
-                const Text('Je prépare votre rappel...',
-                  style: TextStyle(
-                    color: Color(0xFF1A1A2E), fontSize: 18,
-                    fontWeight: FontWeight.w700)),
+                 Text(
+                  'Je prépare votre rappel...',
+                  style: GoogleFonts.roboto(
+                    color: Color(0xFF1A1A2E),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 const SizedBox(height: 8),
-                const Text("L'IA analyse votre demande",
-                  style: TextStyle(color: Color(0xFF6B7280), fontSize: 14)),
+                 Text(
+                  "L'IA analyse votre demande",
+                  style: GoogleFonts.roboto(color: Color(0xFF6B7280), fontSize: 14),
+                ),
                 const SizedBox(height: 32),
 
                 // Étapes
@@ -74,26 +97,34 @@ class _AIAnalyzingScreenState extends State<AIAnalyzingScreen>
                   final done = e.key <= _step;
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 10),
-                    child: Row(children: [
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        width: 8, height: 8,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: done
-                            ? const Color(0xFF10B981)
-                            : const Color(0xFF6366F1).withOpacity(0.3)),
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        done ? '${e.value} ✓' : '${e.value}...',
-                        style: TextStyle(
-                          color: done
-                            ? const Color(0xFF10B981)
-                            : const Color(0xFF6B7280),
-                          fontSize: 14,
-                          fontWeight: done ? FontWeight.w600 : FontWeight.w400)),
-                    ]),
+                    child: Row(
+                      children: [
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: done
+                                ? const Color(0xFF10B981)
+                                : const Color(0xFF6366F1).withOpacity(0.3),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          done ? '${e.value} ✓' : '${e.value}...',
+                          style: GoogleFonts.roboto(
+                            color: done
+                                ? const Color(0xFF10B981)
+                                : const Color(0xFF6B7280),
+                            fontSize: 14,
+                            fontWeight: done
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 }),
               ],
@@ -125,7 +156,11 @@ class _SpinnerPainter extends CustomPainter {
     canvas.drawCircle(center, radius, bgPaint);
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
-      -pi / 2, pi * 1.2, false, paint);
+      -pi / 2,
+      pi * 1.2,
+      false,
+      paint,
+    );
   }
 
   @override

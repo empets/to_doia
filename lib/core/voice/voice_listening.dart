@@ -1,12 +1,14 @@
 // lib/screens/voice_listening_screen.dart
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:to_doia/core/ia_analyse/ai_analyzing_screen.dart';
+import 'package:to_doia/core/transcription/transcription_screen.dart';
 
 class VoiceListeningScreen extends StatefulWidget {
-  final VoidCallback onStop;
-  final VoidCallback onCancel;
-  const VoiceListeningScreen({super.key,
-    required this.onStop, required this.onCancel});
+  const VoiceListeningScreen({super.key});
   @override
   State<VoiceListeningScreen> createState() => _VoiceListeningScreenState();
 }
@@ -14,9 +16,13 @@ class VoiceListeningScreen extends StatefulWidget {
 class _VoiceListeningScreenState extends State<VoiceListeningScreen>
     with TickerProviderStateMixin {
   late final AnimationController _pulse = AnimationController(
-    vsync: this, duration: const Duration(milliseconds: 1200))..repeat(reverse: true);
+    vsync: this,
+    duration: const Duration(milliseconds: 1200),
+  )..repeat(reverse: true);
   late final AnimationController _wave = AnimationController(
-    vsync: this, duration: const Duration(milliseconds: 80))..repeat(reverse: true);
+    vsync: this,
+    duration: const Duration(milliseconds: 80),
+  )..repeat(reverse: true);
 
   final List<double> _waveHeights = List.generate(9, (_) => 8);
   int _tick = 0;
@@ -51,100 +57,203 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Statut
-          const Text('Je vous écoute...',
-            style: TextStyle(
-              color: Color(0xFF6B7280), fontSize: 16,
-              fontWeight: FontWeight.w500)),
-          const SizedBox(height: 48),
+          // Statutd
+          Text(
+            'Je vous écoute...',
+            style: GoogleFonts.roboto(
+              color: Color(0xFF6B7280),
+              fontSize: 15.sp,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(height: 44.h),
 
           // Microphone animé
           AnimatedBuilder(
             animation: _pulse,
-            builder: (_, __) => SizedBox(
-              width: 200, height: 200,
-              child: Stack(alignment: Alignment.center, children: [
-                ...List.generate(3, (i) => Container(
-                  width: 100 + (i+1)*30 + _pulse.value*10,
-                  height: 100 + (i+1)*30 + _pulse.value*10,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: const Color(0xFF6366F1)
-                      .withOpacity(0.1 - i * 0.025)),
-                )),
-                Container(
-                  width: 100, height: 100,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Color(0xFF818CF8), Color(0xFF6366F1)]),
-                    boxShadow: [BoxShadow(
-                      color: const Color(0xFF6366F1)
-                        .withOpacity(0.5 + _pulse.value * 0.1),
-                      blurRadius: 36 + _pulse.value * 10)]),
-                  child: const Icon(Icons.mic_rounded, color: Colors.white, size: 44),
-                ),
-              ]),
+            builder: (_, _) => SizedBox(
+              width: 200,
+              height: 200,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  ...List.generate(
+                    3,
+                    (i) => Container(
+                      width: 100 + (i + 1) * 30 + _pulse.value * 10,
+                      height: 100 + (i + 1) * 30 + _pulse.value * 10,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color(
+                          0xFF6366F1,
+                        ).withOpacity(0.1 - i * 0.025),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Color(0xFF818CF8), Color(0xFF6366F1)],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(
+                            0xFF6366F1,
+                          ).withOpacity(0.5 + _pulse.value * 0.1),
+                          blurRadius: 36 + _pulse.value * 10,
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      Icons.mic_rounded,
+                      color: Colors.white,
+                      size: 37.h,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: 40),
+          SizedBox(height: 40.h),
 
           // Ondes audio
           SizedBox(
-            height: 48,
+            height: 48.h,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: _waveHeights.asMap().entries.map((e) => AnimatedContainer(
-                duration: const Duration(milliseconds: 80),
-                width: 5, height: e.value,
-                margin: const EdgeInsets.symmetric(horizontal: 3),
-                decoration: BoxDecoration(
-                  color: Color.lerp(
-                    const Color(0xFF818CF8),
-                    const Color(0xFF6366F1),
-                    e.value / 30),
-                  borderRadius: BorderRadius.circular(4)),
-              )).toList(),
+              children: _waveHeights
+                  .asMap()
+                  .entries
+                  .map(
+                    (e) => AnimatedContainer(
+                      duration: const Duration(milliseconds: 80),
+                      width: 5,
+                      height: e.value,
+                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                      decoration: BoxDecoration(
+                        color: Color.lerp(
+                          const Color(0xFF818CF8),
+                          const Color(0xFF6366F1),
+                          e.value / 30,
+                        ),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  )
+                  .toList(),
             ),
           ),
           const SizedBox(height: 40),
 
           // Indication enregistrement
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Container(
-              width: 8, height: 8,
-              decoration: const BoxDecoration(
-                color: Color(0xFFEF4444), shape: BoxShape.circle),
-            ),
-            const SizedBox(width: 8),
-            const Text('Enregistrement en cours...',
-              style: TextStyle(color: Color(0xFF6B7280), fontSize: 14)),
-          ]),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFEF4444),
+                  shape: BoxShape.circle,
+                ),
+              ),
+              SizedBox(width: 8.h),
+              Text(
+                'Enregistrement en cours...',
+                style: GoogleFonts.roboto(
+                  color: Color(0xFF6B7280),
+                  fontSize: 13.sp,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 48),
 
           // Bouton Arrêter
-          GestureDetector(
-            onTap: widget.onStop,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 14),
-              decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xFF6366F1), width: 2),
-                borderRadius: BorderRadius.circular(32)),
-              child: const Text('Arrêter',
-                style: TextStyle(
-                  color: Color(0xFF6366F1), fontSize: 15,
-                  fontWeight: FontWeight.w600)),
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  //widget.onStop();
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 36,
+                    vertical: 14,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: const Color(0xFF6366F1),
+                      width: 2,
+                    ),
+                    borderRadius: BorderRadius.circular(32),
+                  ),
+                  child: Text(
+                    'Arrêter',
+                    style: GoogleFonts.roboto(
+                      color: Color(0xFF6366F1),
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 16.w),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AIAnalyzingScreen(),
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 36,
+                    vertical: 14,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: const Color(0xFF6366F1),
+                      width: 2,
+                    ),
+                    borderRadius: BorderRadius.circular(32),
+                  ),
+                  child: Text(
+                    'Suivant',
+                    style: GoogleFonts.roboto(
+                      color: Color(0xFF6366F1),
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 14),
 
           TextButton(
-            onPressed: widget.onCancel,
-            child: const Text('Annuler',
-              style: TextStyle(color: Color(0xFF6B7280), fontSize: 14))),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            //widget.onCancel,
+            child: Text(
+              'Annuler',
+              style: GoogleFonts.roboto(
+                color: Color(0xFF6B7280),
+                fontSize: 14.sp,
+              ),
+            ),
+          ),
         ],
       ),
     ),

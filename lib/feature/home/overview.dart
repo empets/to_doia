@@ -248,16 +248,16 @@ class _AppShellState extends State<AppShell> {
       // ── Flux vocal ─────────────────────────────────────────────────────────
       case AppScreen.listening:
         return VoiceListeningScreen(
-          onStop: _stopListening,
-          onCancel: () => _go(AppScreen.home),
+          // onStop: _stopListening,
+          // onCancel: () => _go(AppScreen.home),
         );
 
       case AppScreen.transcription:
         return TranscriptionScreen(
-          transcript: _transcript,
-          onConfirm: _confirmTranscript,
-          onRetry: _startListening,
-          onCancel: () => _go(AppScreen.home),
+          // transcript: _transcript,
+          // onConfirm: _confirmTranscript,
+          // onRetry: _startListening,
+          // onCancel: () => _go(AppScreen.home),
         );
 
       case AppScreen.analyzing:
@@ -265,17 +265,17 @@ class _AppShellState extends State<AppShell> {
 
       case AppScreen.confirmation:
         return ConfirmationScreen(
-          task: _pendingTask!,
-          onConfirm: _confirmTask,
-          onModify: () => _go(AppScreen.manualCreate),
-          onCancel: () => _go(AppScreen.home),
+          // task: _pendingTask!,
+         // onConfirm: _confirmTask,
+          // onModify: () => _go(AppScreen.manualCreate),
+          // onCancel: () => _go(AppScreen.home),
         );
 
       case AppScreen.success:
         return SuccessScreen(
-          task: _pendingTask!,
-          onGoHome: () => _goNav(0),
-          onGoTasks: () => _goNav(1),
+          // task: _pendingTask!,
+          // onGoHome: () => _goNav(0),
+          // onGoTasks: () => _goNav(1),
         );
 
       // ── Tâches ─────────────────────────────────────────────────────────────
@@ -291,8 +291,8 @@ class _AppShellState extends State<AppShell> {
 
       case AppScreen.manualCreate:
         return ManualCreateScreen(
-          onAdd: _addTask,
-          onBack: () => _go(AppScreen.tasks),
+          // onAdd: _addTask,
+          // onBack: () => _go(AppScreen.tasks),
         );
 
       // ── Paramètres ─────────────────────────────────────────────────────────
