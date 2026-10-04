@@ -14,8 +14,8 @@ class GlobalParams {
   static const String storageBuckets = "authenfication-9fc25.appspot.com";
 
   static const String supabaseUrl = "https://fmuatlxmaevqaobpkvyq.supabase.co";
-  static const String supabaseAnonKey =
-      "sb_publishable_7giZ3h24vVQzKeNMH15FWg_cjAM_42y";
+  static const String supabaseAnonKey = "sb_publishable_7giZ3h24vVQzKeNMH15FWg_cjAM_42y";
+
 
   static const String groqApiKeyName = String.fromEnvironment(
     'GROQ_API_KEY',

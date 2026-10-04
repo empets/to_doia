@@ -3,15 +3,15 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:to_doia/core/ia_analyse/ai_analyzing_screen.dart';
+import 'package:grace_church/core/ia_analyse/ai_analyzing_screen.dart';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:to_doia/core/ia_analyse/ai_analyzing_screen.dart';
-import 'package:to_doia/feature/home/presentation/bloc/voice_task.dart';
+import 'package:grace_church/core/ia_analyse/ai_analyzing_screen.dart';
+import 'package:grace_church/feature/home/presentation/bloc/voice_task.dart';
 
 
 // class VoiceListeningScreen extends StatefulWidget {
@@ -334,10 +334,13 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
     return BlocListener<VoiceTaskCubit, VoiceTaskState>(
       listener: (context, state) {
         if (state is VoiceSuccess) {
+       
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => AIAnalyzingScreen(),
+              builder: (context) => AIAnalyzingScreen(
+                task: state.result
+              ),
             ),
           );
         }

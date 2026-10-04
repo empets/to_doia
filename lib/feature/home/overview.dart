@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:to_doia/core/confirmation/confimation_screen.dart';
-import 'package:to_doia/core/ia_analyse/ai_analyzing_screen.dart';
-import 'package:to_doia/core/injetction/injection_container.dart';
-import 'package:to_doia/core/models/task.dart';
-import 'package:to_doia/core/persmission/permission_screen.dart';
-import 'package:to_doia/core/succes_screen/success_screen.dart';
-import 'package:to_doia/core/transcription/transcription_screen.dart';
-import 'package:to_doia/core/voice/voice_listening.dart';
-import 'package:to_doia/feature/home/domaine/usecase/create_task_from_voice.dart';
-import 'package:to_doia/feature/home/presentation/bloc/voice_task.dart';
-import 'package:to_doia/feature/home/presentation/page/home_screen.dart';
-import 'package:to_doia/feature/onboarding/splash_screen.dart';
-import 'package:to_doia/feature/setting/setting_screen.dart';
-import 'package:to_doia/feature/setting/sub_setting_screen.dart';
-import 'package:to_doia/feature/taches/manual_create_screen.dart';
-import 'package:to_doia/feature/taches/tasks_screen.dart';
+import 'package:grace_church/core/confirmation/confimation_screen.dart';
+import 'package:grace_church/core/ia_analyse/ai_analyzing_screen.dart';
+import 'package:grace_church/core/injetction/injection_container.dart';
+import 'package:grace_church/core/models/task.dart';
+import 'package:grace_church/core/persmission/permission_screen.dart';
+import 'package:grace_church/core/succes_screen/success_screen.dart';
+import 'package:grace_church/core/transcription/transcription_screen.dart';
+import 'package:grace_church/core/voice/voice_listening.dart';
+import 'package:grace_church/feature/home/domaine/usecase/create_task_from_voice.dart';
+import 'package:grace_church/feature/home/presentation/bloc/voice_task.dart';
+import 'package:grace_church/feature/home/presentation/page/home_screen.dart';
+import 'package:grace_church/feature/onboarding/splash_screen.dart';
+import 'package:grace_church/feature/setting/setting_screen.dart';
+import 'package:grace_church/feature/setting/sub_setting_screen.dart';
+import 'package:grace_church/feature/taches/manual_create_screen.dart';
+import 'package:grace_church/feature/taches/tasks_screen.dart';
 
 class SmartReminderApp extends StatelessWidget {
   const SmartReminderApp({super.key});
@@ -258,16 +258,16 @@ class _AppShellState extends State<AppShell> {
           // onCancel: () => _go(AppScreen.home),
         );
 
-      case AppScreen.analyzing:
-        return const AIAnalyzingScreen();
+      // case AppScreen.analyzing:
+      //   return const AIAnalyzingScreen();
 
       case AppScreen.confirmation:
-        return ConfirmationScreen(
+        return SizedBox(); //ConfirmationScreen(
           // task: _pendingTask!,
          // onConfirm: _confirmTask,
           // onModify: () => _go(AppScreen.manualCreate),
           // onCancel: () => _go(AppScreen.home),
-        );
+        //);
 
       case AppScreen.success:
         return SuccessScreen(
@@ -370,6 +370,9 @@ class _AppShellState extends State<AppShell> {
 
       case AppScreen.settingsHelp:
         return _subScaffold('Aide', const HelpScreen());
+      case AppScreen.analyzing:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 

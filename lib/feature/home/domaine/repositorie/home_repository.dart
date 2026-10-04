@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:to_doia/core/service_systeme/error/failure.dart';
-import 'package:to_doia/feature/home/domaine/entities/response/home_responses.dart';
+import 'package:grace_church/core/service_systeme/error/failure.dart';
+import 'package:grace_church/feature/home/domaine/entities/request/home_request.dart';
+import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 
 abstract class HomeRepository{
   /// Crée une tâche à partir d'une commande vocale enregistrée.
@@ -16,4 +17,12 @@ abstract class HomeRepository{
   Future<Either<Failure, TaskResponse>> createTaskFromVoice({
     required String audioPath,
   });
+
+  // ---------------------------------------------------------------------------------------------
+  // cette interface permet de creer une tache 
+  // il prend en paramètre un objet RequestCreateTask qui contient les parametre de la requette 
+  // il retourne un objet String? qui contient l'id de la tache cree
+  // ---------------------------------------------------------------------------------------------
+  Future<Either<Failure, String?>> createTask(RequestCreateTask request);
+
 }

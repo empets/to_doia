@@ -1029,3 +1029,16 @@ String formatNotificationTimer(String createdAtString) {
     return 'Date invalide';
   }
 }
+
+
+String formatDate(DateTime date) {
+  const jours = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+  const mois = [
+    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
+  ];
+
+  final jour = jours[date.weekday - 1];
+  final numero = date.day.toString().padLeft(2, '0');
+  return '$jour $numero ${mois[date.month - 1]}';
+}

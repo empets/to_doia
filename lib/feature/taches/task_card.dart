@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:to_doia/core/models/task.dart';
+import 'package:grace_church/core/models/task.dart';
 
 class TaskCard extends StatefulWidget {
   final Task task;

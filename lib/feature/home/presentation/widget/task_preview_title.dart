@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:to_doia/core/models/task.dart';
+import 'package:grace_church/core/models/task.dart';
 
 class TaskPreviewTile extends StatelessWidget {
   final Task task;

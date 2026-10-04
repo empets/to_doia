@@ -10,7 +10,6 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'package:dio/dio.dart' as _i361;
 import 'package:firebase_database/firebase_database.dart' as _i345;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
 import 'package:get_it/get_it.dart' as _i174;
@@ -32,6 +31,7 @@ import '../../feature/home/domaine/repositorie/voic_task_repository.dart'
     as _i722;
 import '../../feature/home/domaine/usecase/create_task_from_voice.dart'
     as _i324;
+import '../../feature/home/domaine/usecase/create_task_usecase.dart' as _i320;
 import 'injection_container.dart' as _i809;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -50,11 +50,16 @@ extension GetItInjectableX on _i174.GetIt {
       preResolve: true,
     );
     gh.lazySingleton<_i348.HomeRemoteRepository>(
-      () => _i386.HomeRemoteRepositoryImpl(dio: gh<_i361.Dio>()),
+      () => _i386.HomeRemoteRepositoryImpl(db: gh<_i345.DatabaseReference>()),
     );
-    gh.lazySingleton<_i282.HomeRepository>(() => _i435.HomeRepositoryImpl());
+    gh.lazySingleton<_i282.HomeRepository>(
+      () => _i435.HomeRepositoryImpl(gh<_i348.HomeRemoteRepository>()),
+    );
     gh.lazySingleton<_i78.GroqRemoteDataSource>(
       () => _i78.GroqRemoteDataSourceImpl(gh<_i519.Client>()),
+    );
+    gh.lazySingleton<_i320.CreateTaskUseCase>(
+      () => _i320.CreateTaskUseCase(gh<_i282.HomeRepository>()),
     );
     gh.lazySingleton<_i722.VoiceTaskRepository>(
       () => _i681.VoiceTaskRepositoryImpl(gh<_i78.GroqRemoteDataSource>()),

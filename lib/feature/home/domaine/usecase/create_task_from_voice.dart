@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
-import 'package:to_doia/core/service_systeme/error/failure.dart';
-import 'package:to_doia/core/service_systeme/usercase/usercase.dart';
-import 'package:to_doia/feature/home/domaine/entities/response/home_responses.dart';
-import 'package:to_doia/feature/home/domaine/repositorie/voic_task_repository.dart';
+import 'package:grace_church/core/service_systeme/error/failure.dart';
+import 'package:grace_church/core/service_systeme/usercase/usercase.dart';
+import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
+import 'package:grace_church/feature/home/domaine/repositorie/voic_task_repository.dart';
 
 @lazySingleton
 class CreateTaskFromVoiceUseCase implements UseCase<TaskResponse, String>  {

@@ -8,7 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:to_doia/main.dart';
+import 'package:grace_churchmain.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

@@ -1,7 +1,7 @@
 // lib/screens/manual_create_screen.dart
 import 'package:flutter/material.dart';
-import 'package:to_doia/core/models/task.dart';
-import 'package:to_doia/core/voice/voice_listening.dart'
+import 'package:grace_church/core/models/task.dart';
+import 'package:grace_church/core/voice/voice_listening.dart'
     show VoiceListeningScreen;
 
 class ManualCreateScreen extends StatefulWidget {

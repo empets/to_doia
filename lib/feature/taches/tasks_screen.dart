@@ -1,7 +1,7 @@
 // lib/screens/tasks_screen.dart
 import 'package:flutter/material.dart';
-import 'package:to_doia/core/models/task.dart';
-import 'package:to_doia/feature/taches/task_card.dart';
+import 'package:grace_church/core/models/task.dart';
+import 'package:grace_church/feature/taches/task_card.dart';
 
 
 class TasksScreen extends StatefulWidget {

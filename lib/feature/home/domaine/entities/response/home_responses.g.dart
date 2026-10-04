@@ -12,6 +12,9 @@ _TaskResponse _$TaskResponseFromJson(Map<String, dynamic> json) =>
       date: json['date'] as String,
       time: json['time'] as String,
       recurring: json['recurring'] as bool,
+      content: json['content'] as String,
+      status: json['status'] as String,
+      taskId: json['taskId'] as String? ?? "",
     );
 
 Map<String, dynamic> _$TaskResponseToJson(_TaskResponse instance) =>
@@ -20,4 +23,7 @@ Map<String, dynamic> _$TaskResponseToJson(_TaskResponse instance) =>
       'date': instance.date,
       'time': instance.time,
       'recurring': instance.recurring,
+      'content': instance.content,
+      'status': instance.status,
+      'taskId': instance.taskId,
     };

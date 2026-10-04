@@ -1,6 +1,6 @@
 import 'package:formz/formz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:to_doia/core/service_systeme/error/failure.dart';
+import 'package:grace_church/core/data_process/failure.dart';
 
 part 'api_state.freezed.dart';
 

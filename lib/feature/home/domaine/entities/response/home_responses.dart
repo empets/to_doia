@@ -10,6 +10,9 @@ abstract class TaskResponse with _$TaskResponse {
     required String date,
     required String time,
     required bool recurring,
+    required String content,
+    required String status,
+    @Default("") String taskId,
   }) = _TaskResponse;
 
   factory TaskResponse.fromJson(Map<String, dynamic> json) =>

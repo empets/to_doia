@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TaskResponseModel {
 
- String? get title; String? get date; String? get time; bool get recurring;
+ String? get title; String? get date; String? get time; bool get recurring; String? get content; String? get status;
 /// Create a copy of TaskResponseModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $TaskResponseModelCopyWith<TaskResponseModel> get copyWith => _$TaskResponseMode
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskResponseModel&&(identical(other.title, title) || other.title == title)&&(identical(other.date, date) || other.date == date)&&(identical(other.time, time) || other.time == time)&&(identical(other.recurring, recurring) || other.recurring == recurring));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskResponseModel&&(identical(other.title, title) || other.title == title)&&(identical(other.date, date) || other.date == date)&&(identical(other.time, time) || other.time == time)&&(identical(other.recurring, recurring) || other.recurring == recurring)&&(identical(other.content, content) || other.content == content)&&(identical(other.status, status) || other.status == status));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,date,time,recurring);
+int get hashCode => Object.hash(runtimeType,title,date,time,recurring,content,status);
 
 @override
 String toString() {
-  return 'TaskResponseModel(title: $title, date: $date, time: $time, recurring: $recurring)';
+  return 'TaskResponseModel(title: $title, date: $date, time: $time, recurring: $recurring, content: $content, status: $status)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $TaskResponseModelCopyWith<$Res>  {
   factory $TaskResponseModelCopyWith(TaskResponseModel value, $Res Function(TaskResponseModel) _then) = _$TaskResponseModelCopyWithImpl;
 @useResult
 $Res call({
- String? title, String? date, String? time, bool recurring
+ String? title, String? date, String? time, bool recurring, String? content, String? status
 });
 
 
@@ -65,13 +65,15 @@ class _$TaskResponseModelCopyWithImpl<$Res>
 
 /// Create a copy of TaskResponseModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? title = freezed,Object? date = freezed,Object? time = freezed,Object? recurring = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? title = freezed,Object? date = freezed,Object? time = freezed,Object? recurring = null,Object? content = freezed,Object? status = freezed,}) {
   return _then(_self.copyWith(
 title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String?,date: freezed == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
 as String?,time: freezed == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
 as String?,recurring: null == recurring ? _self.recurring : recurring // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,content: freezed == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
+as String?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -156,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? title,  String? date,  String? time,  bool recurring)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? title,  String? date,  String? time,  bool recurring,  String? content,  String? status)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TaskResponseModel() when $default != null:
-return $default(_that.title,_that.date,_that.time,_that.recurring);case _:
+return $default(_that.title,_that.date,_that.time,_that.recurring,_that.content,_that.status);case _:
   return orElse();
 
 }
@@ -177,10 +179,10 @@ return $default(_that.title,_that.date,_that.time,_that.recurring);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? title,  String? date,  String? time,  bool recurring)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? title,  String? date,  String? time,  bool recurring,  String? content,  String? status)  $default,) {final _that = this;
 switch (_that) {
 case _TaskResponseModel():
-return $default(_that.title,_that.date,_that.time,_that.recurring);case _:
+return $default(_that.title,_that.date,_that.time,_that.recurring,_that.content,_that.status);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -197,10 +199,10 @@ return $default(_that.title,_that.date,_that.time,_that.recurring);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? title,  String? date,  String? time,  bool recurring)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? title,  String? date,  String? time,  bool recurring,  String? content,  String? status)?  $default,) {final _that = this;
 switch (_that) {
 case _TaskResponseModel() when $default != null:
-return $default(_that.title,_that.date,_that.time,_that.recurring);case _:
+return $default(_that.title,_that.date,_that.time,_that.recurring,_that.content,_that.status);case _:
   return null;
 
 }
@@ -212,13 +214,15 @@ return $default(_that.title,_that.date,_that.time,_that.recurring);case _:
 @JsonSerializable()
 
 class _TaskResponseModel implements TaskResponseModel {
-  const _TaskResponseModel({required this.title, required this.date, required this.time, this.recurring = false});
+  const _TaskResponseModel({required this.title, required this.date, required this.time, this.recurring = false, required this.content, required this.status});
   factory _TaskResponseModel.fromJson(Map<String, dynamic> json) => _$TaskResponseModelFromJson(json);
 
 @override final  String? title;
 @override final  String? date;
 @override final  String? time;
 @override@JsonKey() final  bool recurring;
+@override final  String? content;
+@override final  String? status;
 
 /// Create a copy of TaskResponseModel
 /// with the given fields replaced by the non-null parameter values.
@@ -233,16 +237,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskResponseModel&&(identical(other.title, title) || other.title == title)&&(identical(other.date, date) || other.date == date)&&(identical(other.time, time) || other.time == time)&&(identical(other.recurring, recurring) || other.recurring == recurring));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskResponseModel&&(identical(other.title, title) || other.title == title)&&(identical(other.date, date) || other.date == date)&&(identical(other.time, time) || other.time == time)&&(identical(other.recurring, recurring) || other.recurring == recurring)&&(identical(other.content, content) || other.content == content)&&(identical(other.status, status) || other.status == status));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,date,time,recurring);
+int get hashCode => Object.hash(runtimeType,title,date,time,recurring,content,status);
 
 @override
 String toString() {
-  return 'TaskResponseModel(title: $title, date: $date, time: $time, recurring: $recurring)';
+  return 'TaskResponseModel(title: $title, date: $date, time: $time, recurring: $recurring, content: $content, status: $status)';
 }
 
 
@@ -253,7 +257,7 @@ abstract mixin class _$TaskResponseModelCopyWith<$Res> implements $TaskResponseM
   factory _$TaskResponseModelCopyWith(_TaskResponseModel value, $Res Function(_TaskResponseModel) _then) = __$TaskResponseModelCopyWithImpl;
 @override @useResult
 $Res call({
- String? title, String? date, String? time, bool recurring
+ String? title, String? date, String? time, bool recurring, String? content, String? status
 });
 
 
@@ -270,13 +274,15 @@ class __$TaskResponseModelCopyWithImpl<$Res>
 
 /// Create a copy of TaskResponseModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = freezed,Object? date = freezed,Object? time = freezed,Object? recurring = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = freezed,Object? date = freezed,Object? time = freezed,Object? recurring = null,Object? content = freezed,Object? status = freezed,}) {
   return _then(_TaskResponseModel(
 title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String?,date: freezed == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
 as String?,time: freezed == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
 as String?,recurring: null == recurring ? _self.recurring : recurring // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,content: freezed == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
+as String?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

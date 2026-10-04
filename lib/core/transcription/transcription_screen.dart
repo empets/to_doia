@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:to_doia/core/ia_analyse/ai_analyzing_screen.dart';
 
 class TranscriptionScreen extends StatelessWidget {
   // final String transcript;
@@ -105,12 +104,14 @@ class TranscriptionScreen extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AIAnalyzingScreen(),
-                    ),
-                  );
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => AIAnalyzingScreen(
+
+                  //     ),
+                  //   ),
+                  // );
                 },
                 //onConfirm,
                 style: ElevatedButton.styleFrom(

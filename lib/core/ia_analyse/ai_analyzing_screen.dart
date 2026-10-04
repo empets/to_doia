@@ -2,10 +2,15 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:to_doia/core/confirmation/confimation_screen.dart';
+import 'package:grace_church/core/confirmation/confimation_screen.dart';
+import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
+
 
 class AIAnalyzingScreen extends StatefulWidget {
-  const AIAnalyzingScreen({super.key});
+  const AIAnalyzingScreen({super.key, required this.task});
+
+  final TaskResponse task;
+  
   @override
   State<AIAnalyzingScreen> createState() => _AIAnalyzingScreenState();
 }
@@ -26,7 +31,7 @@ class _AIAnalyzingScreenState extends State<AIAnalyzingScreen>
       if (mounted) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ConfirmationScreen()),
+          MaterialPageRoute(builder: (context) => ConfirmationScreen(task: widget.task)),
         );
       }
     });

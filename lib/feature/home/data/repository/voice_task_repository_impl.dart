@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:dartz/dartz.dart';
+import 'package:grace_church/feature/home/domaine/repositorie/voic_task_repository.dart';
 import 'package:injectable/injectable.dart';
-import 'package:to_doia/core/service_systeme/error/failure.dart';
-import 'package:to_doia/feature/home/data/model/home_responses_models.dart';
-import 'package:to_doia/feature/home/data/service/remote/groq_remote_data_soucre.dart';
-import 'package:to_doia/feature/home/domaine/entities/response/home_responses.dart';
-import 'package:to_doia/feature/home/domaine/repositorie/voic_task_repository.dart';
+import 'package:grace_church/core/service_systeme/error/failure.dart';
+import 'package:grace_church/feature/home/data/model/home_responses_models.dart';
+import 'package:grace_church/feature/home/data/service/remote/groq_remote_data_soucre.dart';
+import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
+import 'package:grace_church/feature/home/domaine/repositorie/voic_task_repository.dart';
 
 
 @LazySingleton(as: VoiceTaskRepository)

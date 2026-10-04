@@ -2,11 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:to_doia/core/models/task.dart';
-import 'package:to_doia/core/voice/voice_listening.dart';
-import 'package:to_doia/feature/home/presentation/widget/empty_state.dart';
-import 'package:to_doia/feature/home/presentation/widget/statcard.dart';
-import 'package:to_doia/feature/home/presentation/widget/task_preview_title.dart';
+import 'package:grace_church/core/models/task.dart';
+import 'package:grace_church/core/voice/voice_listening.dart';
+import 'package:grace_church/feature/home/presentation/widget/empty_state.dart';
+import 'package:grace_church/feature/home/presentation/widget/statcard.dart';
+import 'package:grace_church/feature/home/presentation/widget/task_preview_title.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<Task> tasks;

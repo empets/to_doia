@@ -1,6 +1,6 @@
 // lib/screens/settings_sub_screens.dart
 import 'package:flutter/material.dart';
-import 'package:to_doia/core/models/task.dart';
+import 'package:grace_church/core/models/task.dart';
 
 const _P = Color(0xFF6366F1);
 const _sub = Color(0xFF6B7280);

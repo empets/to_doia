@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
-import 'package:to_doia/feature/home/domaine/entities/response/home_responses.dart';
-import 'package:to_doia/feature/home/domaine/usecase/create_task_from_voice.dart';
+import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
+import 'package:grace_church/feature/home/domaine/usecase/create_task_from_voice.dart';
 
 sealed class VoiceTaskState {}
 
