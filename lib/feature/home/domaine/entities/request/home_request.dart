@@ -12,7 +12,7 @@ abstract class RequestCreateTask with _$RequestCreateTask {
     required bool recurring,
     required String content,
     required String status,
-    @Default("") String id,
+    @Default("") String userId,
 
 
   }) = _RequestCreateTask;

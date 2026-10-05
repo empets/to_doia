@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:grace_church/core/confirmation/confimation_screen.dart';
-import 'package:grace_church/core/ia_analyse/ai_analyzing_screen.dart';
 import 'package:grace_church/core/injetction/injection_container.dart';
 import 'package:grace_church/core/models/task.dart';
 import 'package:grace_church/core/persmission/permission_screen.dart';
@@ -16,19 +14,31 @@ import 'package:grace_church/feature/home/presentation/page/home_screen.dart';
 import 'package:grace_church/feature/onboarding/splash_screen.dart';
 import 'package:grace_church/feature/setting/setting_screen.dart';
 import 'package:grace_church/feature/setting/sub_setting_screen.dart';
-import 'package:grace_church/feature/taches/manual_create_screen.dart';
-import 'package:grace_church/feature/taches/tasks_screen.dart';
+import 'package:grace_church/feature/taches/domaine/usecase/get_task_list_usecase.dart';
+import 'package:grace_church/feature/taches/presentation/bloc/get_task/event/task_event.dart';
+import 'package:grace_church/feature/taches/presentation/bloc/get_task/get_list_bloc.dart';
+import 'package:grace_church/feature/taches/presentation/pages/manual_create_screen.dart';
+import 'package:grace_church/feature/taches/presentation/pages/tasks_screen.dart';
 
 class SmartReminderApp extends StatelessWidget {
   const SmartReminderApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => VoiceTaskCubit(
-        createTask: getIt<CreateTaskFromVoiceUseCase>(),
-        recorder: VoiceRecorder(),
-      ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => VoiceTaskCubit(
+            createTask: getIt<CreateTaskFromVoiceUseCase>(),
+            recorder: VoiceRecorder(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) =>
+              GetListBloc(getTaskListUseCase: getIt<GetTaskListUseCase>())
+                ..add(TaskSectionEvent.fetch(null)),
+        ),
+      ],
       child: ScreenUtilInit(
         designSize: const Size(360, 690),
         minTextAdapt: true,
@@ -263,11 +273,11 @@ class _AppShellState extends State<AppShell> {
 
       case AppScreen.confirmation:
         return SizedBox(); //ConfirmationScreen(
-          // task: _pendingTask!,
-         // onConfirm: _confirmTask,
-          // onModify: () => _go(AppScreen.manualCreate),
-          // onCancel: () => _go(AppScreen.home),
-        //);
+      // task: _pendingTask!,
+      // onConfirm: _confirmTask,
+      // onModify: () => _go(AppScreen.manualCreate),
+      // onCancel: () => _go(AppScreen.home),
+      //);
 
       case AppScreen.success:
         return SuccessScreen(

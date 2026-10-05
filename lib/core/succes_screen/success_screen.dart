@@ -1,5 +1,6 @@
 // lib/screens/success_screen.dart
 import 'package:flutter/material.dart';
+import 'package:grace_church/feature/home/presentation/page/home_screen.dart';
 import '../models/task.dart';
 
 class SuccessScreen extends StatefulWidget {
@@ -136,10 +137,17 @@ class _SuccessScreenState extends State<SuccessScreen>
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      Navigator.pop(context);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomeScreen(
+                            tasks: [],
+                            onMicTap: () {},
+                            onViewTasks: () {},
+                            onNotif: () {},
+                          ),
+                        ),
+                      );
                     },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF6366F1),

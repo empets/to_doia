@@ -66,8 +66,9 @@ class GroqRemoteDataSourceImpl implements GroqRemoteDataSource {
               //     {"title": string|null, "date": "YYYY-MM-DD"|null, "time": "HH:mm"|null, "recurring": boolean}''',
               // },
               {
-  'role': 'system',
-  'content': '''
+                'role': 'system',
+                'content':
+                    '''
 Tu extrais une tâche depuis la transcription d'un message vocal en français (le vocal peut être long).
 Date du jour : $today. Heure actuelle : ${DateTime.now().hour}:${DateTime.now().minute}.
 Résous "demain", "lundi prochain", "ce soir", etc. à partir de cette date.
@@ -85,7 +86,7 @@ Règles :
 
 Réponds UNIQUEMENT avec ce JSON, sans texte autour ni markdown :
 {"title": string|null, "content": string|null, "date": "YYYY-MM-DD"|null, "time": "HH:mm"|null, "recurring": boolean, "status": "en_cours"|"a_terminer"|"annule"|"a_venir"}''',
-},
+              },
               {'role': 'user', 'content': text},
             ],
           }),

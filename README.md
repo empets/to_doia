@@ -38,3 +38,5 @@ lib/
 │   └── settings_sub_screens.dart
 └── widgets/
     └── task_card.dart# to_doia
+
+arrête le flutter pub run build_runner build et lance pkill -f build_runner; pkill dart

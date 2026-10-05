@@ -14,8 +14,7 @@ import 'package:grace_church/feature/home/domaine/usecase/create_task_usecase.da
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/create_task_bloc.dart';
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/event/create_tast_event.dart';
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/state/create_tast_state.dart';
-import 'package:grace_church/feature/taches/manual_create_screen.dart';
-
+import 'package:grace_church/feature/taches/presentation/pages/manual_create_screen.dart';
 
 class ConfirmationScreen extends StatelessWidget {
   const ConfirmationScreen({super.key, required this.task});
@@ -110,29 +109,30 @@ class ConfirmationScreen extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                         ),
                         SizedBox(width: 8.w),
-                        RichText(text: TextSpan(
-                          children: [
-                            if(task.date.isNotEmpty)
-                            TextSpan(
-                              text: '${formatDate(DateTime.parse(task.date))}',
-                              style: GoogleFonts.roboto(
-                                color: Colors.grey.shade600,
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            if(task.time.isNotEmpty)
-                            TextSpan(
-                              text: ' à ${task.time}',
-                              style: GoogleFonts.roboto(
-                                color: Colors.grey.shade600,
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ]
-                        ))
-                      
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              if (task.date.isNotEmpty)
+                                TextSpan(
+                                  text: formatDate(DateTime.parse(task.date)),
+                                  style: GoogleFonts.roboto(
+                                    color: Colors.grey.shade600,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              if (task.time.isNotEmpty)
+                                TextSpan(
+                                  text: ' à ${task.time}',
+                                  style: GoogleFonts.roboto(
+                                    color: Colors.grey.shade600,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                     Row(
@@ -200,37 +200,54 @@ class ConfirmationScreen extends StatelessWidget {
                       listener: (context, state) {
                         if (state.status.isSuccess) {
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SuccessScreen(),
-                              ),
-                            );
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SuccessScreen(),
+                            ),
+                          );
                         }
                         if (state.status.isFailure) {
-                            AppAlert.showError(context, state.errorMessage ?? 'Une erreur est survenue');
+                          AppAlert.showError(
+                            context,
+                            state.errorMessage ?? 'Une erreur est survenue',
+                          );
                         }
                       },
                       builder: (context, state) {
-                        return PrimaryButton(label: "Confirmer",
-                        fontSize: 14.sp,
-                        colorText: Colors.white,
-                         backgroundColor: const Color(0xFF6366F1),
-                         borderRadius: 16,
-                        isLoading: state.status.isInProgress,
-                         onPressed: () {
-                          context.read<FormTastBloc>().add(CreateTaskEvent.changeTitle(task.title));
-                            context.read<FormTastBloc>().add(CreateTaskEvent.changeTime("02:00"));
-                            context.read<FormTastBloc>().add(CreateTaskEvent.changeTaskId("1"));
-                            context.read<FormTastBloc>().add(CreateTaskEvent.changeStatus(task.status));
-                            context.read<FormTastBloc>().add(CreateTaskEvent.changeRecurring(false));
-                            context.read<FormTastBloc>().add(CreateTaskEvent.changeDate(task.date));
-                            context.read<FormTastBloc>().add(CreateTaskEvent.changeContent(task.content));
-                            context.read<FormTastBloc>().add(CreateTaskEvent.submit());
-                        });
-                        
-                        
-                        
-            
+                        return PrimaryButton(
+                          label: "Confirmer",
+                          fontSize: 14.sp,
+                          colorText: Colors.white,
+                          backgroundColor: const Color(0xFF6366F1),
+                          borderRadius: 16,
+                          isLoading: state.status.isInProgress,
+                          onPressed: () {
+                            context.read<FormTastBloc>().add(
+                              CreateTaskEvent.changeTitle(task.title),
+                            );
+                            context.read<FormTastBloc>().add(
+                              CreateTaskEvent.changeTime("02:00"),
+                            );
+                            context.read<FormTastBloc>().add(
+                              CreateTaskEvent.changeTaskId("1"),
+                            );
+                            context.read<FormTastBloc>().add(
+                              CreateTaskEvent.changeStatus(task.status),
+                            );
+                            context.read<FormTastBloc>().add(
+                              CreateTaskEvent.changeRecurring(false),
+                            );
+                            context.read<FormTastBloc>().add(
+                              CreateTaskEvent.changeDate(task.date),
+                            );
+                            context.read<FormTastBloc>().add(
+                              CreateTaskEvent.changeContent(task.content),
+                            );
+                            context.read<FormTastBloc>().add(
+                              CreateTaskEvent.submit(),
+                            );
+                          },
+                        );
                       },
                     ),
                   ),

@@ -1,6 +1,6 @@
 // This is a generated file; do not edit or check into version control.
-FLUTTER_ROOT=C:\Users\flutter
-FLUTTER_APPLICATION_PATH=C:\Users\Peters\projet2K26\to_doia
+FLUTTER_ROOT=/opt/homebrew/share/flutter
+FLUTTER_APPLICATION_PATH=/Users/admin/Documents/to_doia
 COCOAPODS_PARALLEL_CODE_SIGN=true
 FLUTTER_BUILD_DIR=build
 FLUTTER_BUILD_NAME=1.0.0

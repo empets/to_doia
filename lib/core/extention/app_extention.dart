@@ -91,8 +91,6 @@ extension OnlyDigits on String {
   String get digitsOnly => replaceAll(RegExp('[^0-9]'), '');
 }
 
-
-
 Color getNewstatutcolor(String statusBscs) {
   if (statusBscs.isEmpty) {
     return Colors.grey.withValues(alpha: .1);
@@ -110,8 +108,6 @@ bool getNewStatusIconColor(String statusBscs) {
   }
   return false;
 }
-
-
 
 Color getNewStatusTextColor(String statusBscs) {
   if (statusBscs.isEmpty) {
@@ -150,16 +146,16 @@ extension EmailValidator on String {
     return '${this[0].toUpperCase()}${substring(1).toLowerCase()}';
   }
 
-String cleanText() {
-  return replaceAll(r'\r\n', '\n')
-      .replaceAll(r'\n', '\n')
-      .replaceAll(r'\r', '\n')
-      .replaceAll('.n', '. ') // .n littéral -> vrai saut de ligne
-      .replaceAll(r"\'", "'")
-      .replaceAll(r'\"', '"')
-      .replaceAll(r'\\', r'\')
-      .trim();
-}
+  String cleanText() {
+    return replaceAll(r'\r\n', '\n')
+        .replaceAll(r'\n', '\n')
+        .replaceAll(r'\r', '\n')
+        .replaceAll('.n', '. ') // .n littéral -> vrai saut de ligne
+        .replaceAll(r"\'", "'")
+        .replaceAll(r'\"', '"')
+        .replaceAll(r'\\', r'\')
+        .trim();
+  }
 
   bool isValidEmail() {
     return RegExp(
@@ -175,15 +171,11 @@ String cleanText() {
   }
 
   bool isValidContact() {
-    return RegExp(
-      r'^(07|05|01|21)[0-9][0-9]{7}$',
-    ).hasMatch(this);
+    return RegExp(r'^(07|05|01|21)[0-9][0-9]{7}$').hasMatch(this);
   }
 
   bool isIdentifiantFibre() {
-    return RegExp(
-      r'^(27)[0-9][0-9]{7}$',
-    ).hasMatch(this);
+    return RegExp(r'^(27)[0-9][0-9]{7}$').hasMatch(this);
   }
 
   bool isValidPasswordPCMB2B() {
@@ -356,8 +348,9 @@ extension DoubleAmountExtensions on double? {
     if (self.toString().length > 7) {
       formatter = NumberFormat('#,##0.###');
     }
-    final result =
-        formatter.format(double.tryParse(self.toString())).replaceAll(',', ' ');
+    final result = formatter
+        .format(double.tryParse(self.toString()))
+        .replaceAll(',', ' ');
     return result;
   }
 }
@@ -518,7 +511,8 @@ extension FrenchColorExtension on String {
 String removeLetters(String text) {
   return text.replaceAll(RegExp('[^MmNnGg0-9]'), '');
 }
-/// cette methode permet de recupéer le chiffre ainsi que la lettre qui le suit 
+
+/// cette methode permet de recupéer le chiffre ainsi que la lettre qui le suit
 /// par exemple : Offre fibre 1G max -> 1G
 String extractDigitAndLetter(String text) {
   return RegExp(r'\d[a-zA-Z]').allMatches(text).map((m) => m.group(0)!).join();
@@ -549,8 +543,9 @@ bool isValidDate(String dateStr) {
 
 String getDate30Formatted(String dateStr) {
   final date = DateFormat('dd/MM/yyyy HH:mm:ss').parse(dateStr);
-  return DateFormat('dd/MM/yyyy HH:mm:ss')
-      .format(date.add(const Duration(days: 30)));
+  return DateFormat(
+    'dd/MM/yyyy HH:mm:ss',
+  ).format(date.add(const Duration(days: 30)));
 }
 
 /// Check if BSCS status is inactive
@@ -559,7 +554,6 @@ bool isBscsInactive(String? statusBscs) {
   return statusBscs.getOrEmpty().isEmpty ||
       !statusBscs.getOrEmpty().contains('Actif');
 }
-
 
 /// Mask phone number
 /// Example: 1234567890 -> 12****7890
@@ -583,7 +577,6 @@ String formatMaskedPhone(String phone) {
   return '+225 ${digits.substring(0, 2)} •••• ${digits.substring(6)}';
 }
 
-
 extension CoordinateExtension on double {
   bool get isUnsetCoordinate => this == 0.0;
 
@@ -603,8 +596,9 @@ extension AddressCleanerExtension on String {
   ///   → "Cocody, Abidjan"
   /// - "Cocody" → "Cocody" (inchangé)
   String get cleanLocationName {
-    final parts =
-        split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+    final parts = split(
+      ',',
+    ).map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
     if (parts.isEmpty) return this;
 
     final filtered = parts.where((part) {
@@ -632,10 +626,7 @@ DateTime parseDate(String date) {
 String formatDateOnly(String date) {
   final dateTime = parseDate(date);
 
-  return DateFormat(
-    'd MMMM y',
-    'fr',
-  ).format(dateTime);
+  return DateFormat('d MMMM y', 'fr').format(dateTime);
 }
 
 String formatTimeDifference(String date) {
@@ -664,23 +655,13 @@ String formatTimeDifference(String date) {
 
 // cette methode permet d'afficher la date par catégorie (aujourd'hui, hier, semaine, les plus ancien)
 String formatSmartDate(String date) {
-  final dateTime = DateFormat(
-    'dd/MM/yyyy HH:mm:ss',
-  ).parse(date);
+  final dateTime = DateFormat('dd/MM/yyyy HH:mm:ss').parse(date);
 
   final now = DateTime.now();
 
-  final today = DateTime(
-    now.year,
-    now.month,
-    now.day,
-  );
+  final today = DateTime(now.year, now.month, now.day);
 
-  final targetDate = DateTime(
-    dateTime.year,
-    dateTime.month,
-    dateTime.day,
-  );
+  final targetDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
 
   // Aujourd'hui
   if (targetDate == today) {
@@ -688,23 +669,17 @@ String formatSmartDate(String date) {
   }
 
   // Hier
-  final yesterday = today.subtract(
-    const Duration(days: 1),
-  );
+  final yesterday = today.subtract(const Duration(days: 1));
 
   if (targetDate == yesterday) {
     return 'Hier';
   }
 
   // Début de la semaine actuelle : lundi
-  final startOfWeek = today.subtract(
-    Duration(days: today.weekday - 1),
-  );
+  final startOfWeek = today.subtract(Duration(days: today.weekday - 1));
 
   // Fin de la semaine actuelle : dimanche
-  final endOfWeek = startOfWeek.add(
-    const Duration(days: 6),
-  );
+  final endOfWeek = startOfWeek.add(const Duration(days: 6));
 
   // Cette semaine
   if (!targetDate.isBefore(startOfWeek) && !targetDate.isAfter(endOfWeek)) {
@@ -883,8 +858,6 @@ int extractNumber(String value) {
   return int.tryParse(value.replaceAll(RegExp('[^0-9]'), '')) ?? 0;
 }
 
-
-
 /// Cette fonction applique une logique de formatage temporel pour notifications comme WhatsApp/Telegram.
 String formatNotificationTime(String createdAtString) {
   try {
@@ -902,31 +875,19 @@ String formatNotificationTime(String createdAtString) {
         '${DateFormat('EEE', 'fr_FR').format(createdAt).capitalize()} '
             'à $timeStr',
       _ => // Plus ancien (date complète)
-        DateFormat('EEE. à d MMM', 'fr_FR').format(createdAt).capitalize(),
+      DateFormat('EEE. à d MMM', 'fr_FR').format(createdAt).capitalize(),
     };
   } catch (e) {
     return 'Date invalide';
   }
 }
 
-
-
-
-
-
-
-
-
-
 // cette methode permet de retier que le nombre de jour
 // dans une phrase. je l'utilise dans PinpadSucessOffreFlexible
 // exemple : Passe Duo 1 jour
 // resultat: 1 jour
 String extractNombreEtJours(String text) {
-  final match = RegExp(
-    r'\d+\s*jours?',
-    caseSensitive: false,
-  ).firstMatch(text);
+  final match = RegExp(r'\d+\s*jours?', caseSensitive: false).firstMatch(text);
 
   return match?.group(0) ?? '';
 }
@@ -967,7 +928,6 @@ bool tousDesNombres(String input) {
   return allNumbers.hasMatch(input);
 }
 
-
 /// Formate la date de création d'une notification selon son ancienneté.
 ///
 /// - Aujourd'hui : affiche uniquement l'heure (`11:00`).
@@ -979,23 +939,13 @@ bool tousDesNombres(String input) {
 /// Retourne `Date invalide` si la date fournie ne peut pas être analysée.
 String formatNotificationTimer(String createdAtString) {
   try {
-    final createdAt = DateFormat(
-      'dd/MM/yyyy HH:mm:ss',
-    ).parse(createdAtString);
+    final createdAt = DateFormat('dd/MM/yyyy HH:mm:ss').parse(createdAtString);
 
     final now = DateTime.now();
 
-    final today = DateTime(
-      now.year,
-      now.month,
-      now.day,
-    );
+    final today = DateTime(now.year, now.month, now.day);
 
-    final createdDay = DateTime(
-      createdAt.year,
-      createdAt.month,
-      createdAt.day,
-    );
+    final createdDay = DateTime(createdAt.year, createdAt.month, createdAt.day);
 
     final timeStr = DateFormat('HH:mm').format(createdAt);
 
@@ -1012,9 +962,7 @@ String formatNotificationTimer(String createdAtString) {
     }
 
     // Cette semaine
-    final startOfWeek = today.subtract(
-      Duration(days: today.weekday - 1),
-    );
+    final startOfWeek = today.subtract(Duration(days: today.weekday - 1));
 
     if (!createdDay.isBefore(startOfWeek)) {
       return '${DateFormat('EEE', 'fr_FR').format(createdAt).capitalize()} '
@@ -1030,15 +978,36 @@ String formatNotificationTimer(String createdAtString) {
   }
 }
 
-
 String formatDate(DateTime date) {
   const jours = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
   const mois = [
-    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
+    'Janvier',
+    'Février',
+    'Mars',
+    'Avril',
+    'Mai',
+    'Juin',
+    'Juillet',
+    'Août',
+    'Septembre',
+    'Octobre',
+    'Novembre',
+    'Décembre',
   ];
 
   final jour = jours[date.weekday - 1];
   final numero = date.day.toString().padLeft(2, '0');
   return '$jour $numero ${mois[date.month - 1]}';
+}
+
+/// true si aujourd'hui est le jour de [date] (format 'yyyy-MM-dd') ou après.
+/// Renvoie false si la chaîne est invalide.
+bool isDateReached(String date) {
+  final target = DateTime.tryParse(date);
+  if (target == null) return false;
+
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final day = DateTime(target.year, target.month, target.day);
+  return !today.isBefore(day);
 }

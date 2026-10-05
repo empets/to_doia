@@ -14,7 +14,7 @@ _RequestCreateTask _$RequestCreateTaskFromJson(Map<String, dynamic> json) =>
       recurring: json['recurring'] as bool,
       content: json['content'] as String,
       status: json['status'] as String,
-      id: json['id'] as String? ?? "",
+      userId: json['userId'] as String? ?? "",
     );
 
 Map<String, dynamic> _$RequestCreateTaskToJson(_RequestCreateTask instance) =>
@@ -25,7 +25,7 @@ Map<String, dynamic> _$RequestCreateTaskToJson(_RequestCreateTask instance) =>
       'recurring': instance.recurring,
       'content': instance.content,
       'status': instance.status,
-      'id': instance.id,
+      'userId': instance.userId,
     };
 
 _RequestTaskUpdateKey _$RequestTaskUpdateKeyFromJson(

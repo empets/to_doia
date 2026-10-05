@@ -32,6 +32,18 @@ import '../../feature/home/domaine/repositorie/voic_task_repository.dart'
 import '../../feature/home/domaine/usecase/create_task_from_voice.dart'
     as _i324;
 import '../../feature/home/domaine/usecase/create_task_usecase.dart' as _i320;
+import '../../feature/taches/data/repository/home_repository_impl.dart'
+    as _i321;
+import '../../feature/taches/data/service/remote/task_remote_repository.dart'
+    as _i763;
+import '../../feature/taches/data/service/remote/task_remote_repository_impl.dart'
+    as _i963;
+import '../../feature/taches/domaine/repositorie/task_repository.dart'
+    as _i1062;
+import '../../feature/taches/domaine/usecase/get_task_list_usecase.dart'
+    as _i767;
+import '../../feature/taches/presentation/bloc/get_task/get_list_bloc.dart'
+    as _i439;
 import 'injection_container.dart' as _i809;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -49,6 +61,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => injectableModule.locaDataShared(),
       preResolve: true,
     );
+    gh.lazySingleton<_i763.TaskRemoteRepository>(
+      () => _i963.TaskRemoteRepositoryImpl(db: gh<_i345.DatabaseReference>()),
+    );
     gh.lazySingleton<_i348.HomeRemoteRepository>(
       () => _i386.HomeRemoteRepositoryImpl(db: gh<_i345.DatabaseReference>()),
     );
@@ -61,11 +76,21 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i320.CreateTaskUseCase>(
       () => _i320.CreateTaskUseCase(gh<_i282.HomeRepository>()),
     );
+    gh.lazySingleton<_i1062.TaskRepository>(
+      () => _i321.TaskRepositoryImpl(gh<_i763.TaskRemoteRepository>()),
+    );
     gh.lazySingleton<_i722.VoiceTaskRepository>(
       () => _i681.VoiceTaskRepositoryImpl(gh<_i78.GroqRemoteDataSource>()),
     );
+    gh.lazySingleton<_i767.GetTaskListUseCase>(
+      () => _i767.GetTaskListUseCase(gh<_i1062.TaskRepository>()),
+    );
     gh.lazySingleton<_i324.CreateTaskFromVoiceUseCase>(
       () => _i324.CreateTaskFromVoiceUseCase(gh<_i722.VoiceTaskRepository>()),
+    );
+    gh.lazySingleton<_i439.GetListBloc>(
+      () =>
+          _i439.GetListBloc(getTaskListUseCase: gh<_i767.GetTaskListUseCase>()),
     );
     return this;
   }
