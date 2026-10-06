@@ -13,6 +13,9 @@ abstract class TaskResponse with _$TaskResponse {
     required String content,
     required String status,
     @Default("") String taskId,
+    @Default("") String createAt,
+    @Default("") String userId,
+    @Default(0) int recordtime,
   }) = _TaskResponse;
 
   factory TaskResponse.fromJson(Map<String, dynamic> json) =>

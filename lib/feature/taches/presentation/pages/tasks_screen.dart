@@ -104,24 +104,7 @@ class _TasksScreenState extends State<TasksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final tasks = _filtered;
-    final today = tasks
-        .where((t) => !t.done && t.dateLabel == "Aujourd'hui")
-        .toList();
-    final tomorrow = tasks
-        .where((t) => !t.done && t.dateLabel == 'Demain')
-        .toList();
-    final upcoming = tasks
-        .where(
-          (t) =>
-              !t.done &&
-              t.dateLabel != "Aujourd'hui" &&
-              t.dateLabel != 'Demain',
-        )
-        .toList();
-    final done = widget.showCompleted
-        ? tasks.where((t) => t.done).toList()
-        : <Task>[];
+ 
 
     return BlocBuilder<GetListBloc, ApiState<List<TaskResponse>>>(
       builder: (context, stateTaskList) {

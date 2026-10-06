@@ -7,13 +7,12 @@ import 'package:grace_church/core/service_systeme/model/formz_model/text_formz.d
 import 'package:grace_church/feature/home/domaine/entities/request/home_request.dart';
 import 'package:grace_church/feature/home/domaine/usecase/create_task_usecase.dart';
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/event/create_tast_event.dart';
- 
-  import 'state/create_tast_state.dart';
 
-class FormTastBloc
-    extends Bloc<CreateTaskEvent, CreateTastState> {
+import 'state/create_tast_state.dart';
+
+class FormTastBloc extends Bloc<CreateTaskEvent, CreateTastState> {
   FormTastBloc({required this.createTaskUseCase})
-      : super(CreateTastState.initial()) {
+    : super(CreateTastState.initial()) {
     on<CreateTaskEvent>(createTast);
   }
 
@@ -25,14 +24,13 @@ class FormTastBloc
     TextFormz? time,
     TextFormz? content,
     TextFormz? eventStatus,
-  }) =>
-      Formz.validate([
-        title ?? state.title,
-        date ?? state.date,
-        time ?? state.time,
-        content ?? state.content,
-        eventStatus ?? state.eventStatus,
-      ]);
+  }) => Formz.validate([
+    title ?? state.title,
+    date ?? state.date,
+    time ?? state.time,
+    content ?? state.content,
+    eventStatus ?? state.eventStatus,
+  ]);
 
   Future<void> createTast(
     CreateTaskEvent event,
@@ -105,10 +103,7 @@ class FormTastBloc
 
       case ChangeTaskIdCreateTaskEvent(:final taskId):
         emit(
-          state.copyWith(
-            taskId: taskId,
-            status: FormzSubmissionStatus.initial,
-          ),
+          state.copyWith(taskId: taskId, status: FormzSubmissionStatus.initial),
         );
         break;
 
@@ -130,17 +125,20 @@ class FormTastBloc
           emit(
             response.fold(
               (failure) {
-                log("SubmitCreateTaskEvent failure: ${failure.message.getOrEmpty()}");
+                log(
+                  "SubmitCreateTaskEvent failure: ${failure.message.getOrEmpty()}",
+                );
                 return state.copyWith(
-                errorMessage: failure.message.getOrEmpty(),
-                status: FormzSubmissionStatus.failure,
-              );
+                  errorMessage: failure.message.getOrEmpty(),
+                  status: FormzSubmissionStatus.failure,
+                );
               },
               (success) =>
                   state.copyWith(status: FormzSubmissionStatus.success),
             ),
           );
         }
+
         break;
     }
   }

@@ -13,6 +13,10 @@ abstract class TaskResponseModel with _$TaskResponseModel {
     @Default(false) bool recurring,
     required String? content,
     required String? status,
+    @Default("") String? createAt,
+    @Default("") String taskId,
+    @Default("") String userId,
+    @Default(0) int recordtime,
   }) = _TaskResponseModel;
 
   factory TaskResponseModel.fromJson(Map<String, dynamic> json) =>
@@ -26,6 +30,10 @@ abstract class TaskResponseModel with _$TaskResponseModel {
       recurring: model.recurring.getOrEmpty(),
       content: model.content.getOrEmpty(),
       status: model.status.getOrEmpty(),
+      createAt: model.createAt.getOrEmpty(),
+      taskId: model.taskId.getOrEmpty(),
+      userId: model.userId.getOrEmpty(),
+      recordtime: model.recordtime.getOrEmpty(),
     );
   }
 }

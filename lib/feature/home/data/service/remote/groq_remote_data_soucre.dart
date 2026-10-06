@@ -85,7 +85,7 @@ Règles :
   "a_venir" si elle est planifiée plus tard. Par défaut : "a_venir".
 
 Réponds UNIQUEMENT avec ce JSON, sans texte autour ni markdown :
-{"title": string|null, "content": string|null, "date": "YYYY-MM-DD"|null, "time": "HH:mm"|null, "recurring": boolean, "status": "en_cours"|"a_terminer"|"annule"|"a_venir"}''',
+{"title": string|null, "content": string|null, "date": "YYYY-MM-DD"|null, "time": "HH:mm"|null, "recurring": boolean, "status": "en_cours"|"a_terminer"|"annule"|"a_venir", "recordtime": number|null}''',
               },
               {'role': 'user', 'content': text},
             ],
@@ -110,3 +110,6 @@ Réponds UNIQUEMENT avec ce JSON, sans texte autour ni markdown :
     return jsonDecode(body) as Map<String, dynamic>;
   }
 }
+
+
+// - "recordtime"" : il correspond au temps d'enregistrement du vocal   

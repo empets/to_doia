@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:grace_church/core/models/task.dart';
 import 'package:grace_church/core/voice/voice_listening.dart'
     show VoiceListeningScreen;
+import 'package:grace_church/core/models/task.dart';
+import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 
 class ManualCreateScreen extends StatefulWidget {
-  const ManualCreateScreen({super.key});
+  const ManualCreateScreen({super.key,  this.task});
+  final TaskResponse? task;
   @override
   State<ManualCreateScreen> createState() => _ManualCreateScreenState();
 }
@@ -33,13 +36,23 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
     final t = await showTimePicker(context: context, initialTime: _time);
     if (t != null) setState(() => _time = t);
   }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.task != null) {
+        final task = TaskResponse(
+                    title: widget.task?.title ?? "",
+                    date: widget.task?.date ?? "",
+                    time: widget.task?.time ?? "",
+                    recurring: widget.task?.recurring ?? false,
+                    content: widget.task?.content ?? "",
+                    status: widget.task?.status ?? "",
+                  );
+    }
+  }
 
-  final task = Task(
-    id: DateTime.now().millisecondsSinceEpoch.toString(),
-    title: 'Appeler Jean',
-    date: 'Demain',
-    time: '10:00',
-  );
+  
 
   @override
   void dispose() {

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TaskResponse {
 
- String get title; String get date; String get time; bool get recurring; String get content; String get status; String get taskId;
+ String get title; String get date; String get time; bool get recurring; String get content; String get status; String get taskId; String get createAt; String get userId; int get recordtime;
 /// Create a copy of TaskResponse
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $TaskResponseCopyWith<TaskResponse> get copyWith => _$TaskResponseCopyWithImpl<T
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskResponse&&(identical(other.title, title) || other.title == title)&&(identical(other.date, date) || other.date == date)&&(identical(other.time, time) || other.time == time)&&(identical(other.recurring, recurring) || other.recurring == recurring)&&(identical(other.content, content) || other.content == content)&&(identical(other.status, status) || other.status == status)&&(identical(other.taskId, taskId) || other.taskId == taskId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskResponse&&(identical(other.title, title) || other.title == title)&&(identical(other.date, date) || other.date == date)&&(identical(other.time, time) || other.time == time)&&(identical(other.recurring, recurring) || other.recurring == recurring)&&(identical(other.content, content) || other.content == content)&&(identical(other.status, status) || other.status == status)&&(identical(other.taskId, taskId) || other.taskId == taskId)&&(identical(other.createAt, createAt) || other.createAt == createAt)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.recordtime, recordtime) || other.recordtime == recordtime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,date,time,recurring,content,status,taskId);
+int get hashCode => Object.hash(runtimeType,title,date,time,recurring,content,status,taskId,createAt,userId,recordtime);
 
 @override
 String toString() {
-  return 'TaskResponse(title: $title, date: $date, time: $time, recurring: $recurring, content: $content, status: $status, taskId: $taskId)';
+  return 'TaskResponse(title: $title, date: $date, time: $time, recurring: $recurring, content: $content, status: $status, taskId: $taskId, createAt: $createAt, userId: $userId, recordtime: $recordtime)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $TaskResponseCopyWith<$Res>  {
   factory $TaskResponseCopyWith(TaskResponse value, $Res Function(TaskResponse) _then) = _$TaskResponseCopyWithImpl;
 @useResult
 $Res call({
- String title, String date, String time, bool recurring, String content, String status, String taskId
+ String title, String date, String time, bool recurring, String content, String status, String taskId, String createAt, String userId, int recordtime
 });
 
 
@@ -65,7 +65,7 @@ class _$TaskResponseCopyWithImpl<$Res>
 
 /// Create a copy of TaskResponse
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? date = null,Object? time = null,Object? recurring = null,Object? content = null,Object? status = null,Object? taskId = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? date = null,Object? time = null,Object? recurring = null,Object? content = null,Object? status = null,Object? taskId = null,Object? createAt = null,Object? userId = null,Object? recordtime = null,}) {
   return _then(_self.copyWith(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
@@ -74,7 +74,10 @@ as String,recurring: null == recurring ? _self.recurring : recurring // ignore: 
 as bool,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String,taskId: null == taskId ? _self.taskId : taskId // ignore: cast_nullable_to_non_nullable
-as String,
+as String,createAt: null == createAt ? _self.createAt : createAt // ignore: cast_nullable_to_non_nullable
+as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String,recordtime: null == recordtime ? _self.recordtime : recordtime // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 
@@ -159,10 +162,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String date,  String time,  bool recurring,  String content,  String status,  String taskId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String date,  String time,  bool recurring,  String content,  String status,  String taskId,  String createAt,  String userId,  int recordtime)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TaskResponse() when $default != null:
-return $default(_that.title,_that.date,_that.time,_that.recurring,_that.content,_that.status,_that.taskId);case _:
+return $default(_that.title,_that.date,_that.time,_that.recurring,_that.content,_that.status,_that.taskId,_that.createAt,_that.userId,_that.recordtime);case _:
   return orElse();
 
 }
@@ -180,10 +183,10 @@ return $default(_that.title,_that.date,_that.time,_that.recurring,_that.content,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String date,  String time,  bool recurring,  String content,  String status,  String taskId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String date,  String time,  bool recurring,  String content,  String status,  String taskId,  String createAt,  String userId,  int recordtime)  $default,) {final _that = this;
 switch (_that) {
 case _TaskResponse():
-return $default(_that.title,_that.date,_that.time,_that.recurring,_that.content,_that.status,_that.taskId);case _:
+return $default(_that.title,_that.date,_that.time,_that.recurring,_that.content,_that.status,_that.taskId,_that.createAt,_that.userId,_that.recordtime);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +203,10 @@ return $default(_that.title,_that.date,_that.time,_that.recurring,_that.content,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String date,  String time,  bool recurring,  String content,  String status,  String taskId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String date,  String time,  bool recurring,  String content,  String status,  String taskId,  String createAt,  String userId,  int recordtime)?  $default,) {final _that = this;
 switch (_that) {
 case _TaskResponse() when $default != null:
-return $default(_that.title,_that.date,_that.time,_that.recurring,_that.content,_that.status,_that.taskId);case _:
+return $default(_that.title,_that.date,_that.time,_that.recurring,_that.content,_that.status,_that.taskId,_that.createAt,_that.userId,_that.recordtime);case _:
   return null;
 
 }
@@ -215,7 +218,7 @@ return $default(_that.title,_that.date,_that.time,_that.recurring,_that.content,
 @JsonSerializable()
 
 class _TaskResponse implements TaskResponse {
-  const _TaskResponse({required this.title, required this.date, required this.time, required this.recurring, required this.content, required this.status, this.taskId = ""});
+  const _TaskResponse({required this.title, required this.date, required this.time, required this.recurring, required this.content, required this.status, this.taskId = "", this.createAt = "", this.userId = "", this.recordtime = 0});
   factory _TaskResponse.fromJson(Map<String, dynamic> json) => _$TaskResponseFromJson(json);
 
 @override final  String title;
@@ -225,6 +228,9 @@ class _TaskResponse implements TaskResponse {
 @override final  String content;
 @override final  String status;
 @override@JsonKey() final  String taskId;
+@override@JsonKey() final  String createAt;
+@override@JsonKey() final  String userId;
+@override@JsonKey() final  int recordtime;
 
 /// Create a copy of TaskResponse
 /// with the given fields replaced by the non-null parameter values.
@@ -239,16 +245,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskResponse&&(identical(other.title, title) || other.title == title)&&(identical(other.date, date) || other.date == date)&&(identical(other.time, time) || other.time == time)&&(identical(other.recurring, recurring) || other.recurring == recurring)&&(identical(other.content, content) || other.content == content)&&(identical(other.status, status) || other.status == status)&&(identical(other.taskId, taskId) || other.taskId == taskId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskResponse&&(identical(other.title, title) || other.title == title)&&(identical(other.date, date) || other.date == date)&&(identical(other.time, time) || other.time == time)&&(identical(other.recurring, recurring) || other.recurring == recurring)&&(identical(other.content, content) || other.content == content)&&(identical(other.status, status) || other.status == status)&&(identical(other.taskId, taskId) || other.taskId == taskId)&&(identical(other.createAt, createAt) || other.createAt == createAt)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.recordtime, recordtime) || other.recordtime == recordtime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,date,time,recurring,content,status,taskId);
+int get hashCode => Object.hash(runtimeType,title,date,time,recurring,content,status,taskId,createAt,userId,recordtime);
 
 @override
 String toString() {
-  return 'TaskResponse(title: $title, date: $date, time: $time, recurring: $recurring, content: $content, status: $status, taskId: $taskId)';
+  return 'TaskResponse(title: $title, date: $date, time: $time, recurring: $recurring, content: $content, status: $status, taskId: $taskId, createAt: $createAt, userId: $userId, recordtime: $recordtime)';
 }
 
 
@@ -259,7 +265,7 @@ abstract mixin class _$TaskResponseCopyWith<$Res> implements $TaskResponseCopyWi
   factory _$TaskResponseCopyWith(_TaskResponse value, $Res Function(_TaskResponse) _then) = __$TaskResponseCopyWithImpl;
 @override @useResult
 $Res call({
- String title, String date, String time, bool recurring, String content, String status, String taskId
+ String title, String date, String time, bool recurring, String content, String status, String taskId, String createAt, String userId, int recordtime
 });
 
 
@@ -276,7 +282,7 @@ class __$TaskResponseCopyWithImpl<$Res>
 
 /// Create a copy of TaskResponse
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? date = null,Object? time = null,Object? recurring = null,Object? content = null,Object? status = null,Object? taskId = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? date = null,Object? time = null,Object? recurring = null,Object? content = null,Object? status = null,Object? taskId = null,Object? createAt = null,Object? userId = null,Object? recordtime = null,}) {
   return _then(_TaskResponse(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
@@ -285,7 +291,10 @@ as String,recurring: null == recurring ? _self.recurring : recurring // ignore: 
 as bool,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String,taskId: null == taskId ? _self.taskId : taskId // ignore: cast_nullable_to_non_nullable
-as String,
+as String,createAt: null == createAt ? _self.createAt : createAt // ignore: cast_nullable_to_non_nullable
+as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String,recordtime: null == recordtime ? _self.recordtime : recordtime // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 

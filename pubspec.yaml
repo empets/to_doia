@@ -191,6 +191,8 @@ dependencies:
   # workmanager: ^0.5.2
   dio: ^5.4.0
   record: ^6.0.0
+  audioplayers: ^6.1.0
+  
 
 
 dependency_overrides:

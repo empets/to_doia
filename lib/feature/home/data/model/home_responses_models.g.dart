@@ -14,6 +14,10 @@ _TaskResponseModel _$TaskResponseModelFromJson(Map<String, dynamic> json) =>
       recurring: json['recurring'] as bool? ?? false,
       content: json['content'] as String?,
       status: json['status'] as String?,
+      createAt: json['createAt'] as String? ?? "",
+      taskId: json['taskId'] as String? ?? "",
+      userId: json['userId'] as String? ?? "",
+      recordtime: (json['recordtime'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$TaskResponseModelToJson(_TaskResponseModel instance) =>
@@ -24,4 +28,8 @@ Map<String, dynamic> _$TaskResponseModelToJson(_TaskResponseModel instance) =>
       'recurring': instance.recurring,
       'content': instance.content,
       'status': instance.status,
+      'createAt': instance.createAt,
+      'taskId': instance.taskId,
+      'userId': instance.userId,
+      'recordtime': instance.recordtime,
     };

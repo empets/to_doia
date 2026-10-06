@@ -15,6 +15,9 @@ _TaskResponse _$TaskResponseFromJson(Map<String, dynamic> json) =>
       content: json['content'] as String,
       status: json['status'] as String,
       taskId: json['taskId'] as String? ?? "",
+      createAt: json['createAt'] as String? ?? "",
+      userId: json['userId'] as String? ?? "",
+      recordtime: (json['recordtime'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$TaskResponseToJson(_TaskResponse instance) =>
@@ -26,4 +29,7 @@ Map<String, dynamic> _$TaskResponseToJson(_TaskResponse instance) =>
       'content': instance.content,
       'status': instance.status,
       'taskId': instance.taskId,
+      'createAt': instance.createAt,
+      'userId': instance.userId,
+      'recordtime': instance.recordtime,
     };
