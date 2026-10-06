@@ -123,3 +123,43 @@ class IconBtn extends StatelessWidget {
   );
 }
 
+
+
+class Label extends StatelessWidget {
+  final String text;
+  const Label(this.text);
+  @override
+  Widget build(BuildContext context) => Text(
+    text,
+    style: const TextStyle(
+      color: Color(0xFF6B7280),
+      fontSize: 11,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 0.6,
+    ),
+  );
+}
+
+class FieldBox extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  const FieldBox({required this.icon, required this.text});
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(14),
+    ),
+    child: Row(
+      children: [
+        Icon(icon, color: const Color(0xFF6366F1), size: 17),
+        const SizedBox(width: 8),
+        Text(
+          text,
+          style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 13),
+        ),
+      ],
+    ),
+  );
+}

@@ -1,13 +1,15 @@
 // lib/screens/success_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:grace_church/feature/home/presentation/page/home_screen.dart';
-import '../models/task.dart';
 
 class SuccessScreen extends StatefulWidget {
-  // final Task task;
-  // final VoidCallback onGoHome;
-  // final VoidCallback onGoTasks;
-  const SuccessScreen({super.key});
+  const SuccessScreen({super.key, this.task});
+
+  final TaskResponse? task;
+
   @override
   State<SuccessScreen> createState() => _SuccessScreenState();
 }
@@ -35,13 +37,6 @@ class _SuccessScreenState extends State<SuccessScreen>
     super.dispose();
   }
 
-  final task = Task(
-    id: DateTime.now().millisecondsSinceEpoch.toString(),
-    title: 'Appeler Jean',
-    date: 'Demain',
-    time: '10:00',
-  );
-
   @override
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: Colors.white,
@@ -59,7 +54,7 @@ class _SuccessScreenState extends State<SuccessScreen>
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(0xFF10B981).withOpacity(0.12),
+                  color: const Color(0xFF10B981).withValues(alpha: 0.12),
                 ),
                 child: const Icon(
                   Icons.check_rounded,
@@ -71,65 +66,23 @@ class _SuccessScreenState extends State<SuccessScreen>
             ),
             const SizedBox(height: 24),
 
-            const Text(
+            Text(
               'Rappel programmé',
-              style: TextStyle(
+              style: GoogleFonts.roboto(
                 color: Color(0xFF10B981),
-                fontSize: 20,
+                fontSize: 17.sp,
                 fontWeight: FontWeight.w800,
+              ),
+            ),
+            Text(
+              'Votre tâche a été créée avec succès',
+              style: GoogleFonts.roboto(
+                color: Colors.grey.shade600,
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w400,
               ),
             ),
             const SizedBox(height: 14),
-
-            Text(
-              task.title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Color(0xFF1A1A2E),
-                fontSize: 26,
-                fontWeight: FontWeight.w800,
-                height: 1.2,
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            Text(
-              '${task.dateLabel} à ${task.timeLabel}',
-              style: const TextStyle(color: Color(0xFF6B7280), fontSize: 16),
-            ),
-            const SizedBox(height: 12),
-
-            if (task.recurrence != 'Aucune')
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF6366F1).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.repeat_rounded,
-                      color: Color(0xFF6366F1),
-                      size: 14,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      task.recurrence,
-                      style: const TextStyle(
-                        color: Color(0xFF6366F1),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            const SizedBox(height: 48),
 
             // Boutons
             Row(
@@ -160,10 +113,10 @@ class _SuccessScreenState extends State<SuccessScreen>
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Accueil',
-                      style: TextStyle(
-                        fontSize: 15,
+                      style: GoogleFonts.roboto(
+                        fontSize: 13.sp,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -178,16 +131,16 @@ class _SuccessScreenState extends State<SuccessScreen>
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF6366F1),
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      padding:  EdgeInsets.symmetric(vertical: 15.h),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
+                    child: Text(
                       'Mes tâches',
-                      style: TextStyle(
-                        fontSize: 15,
+                      style: GoogleFonts.roboto(
+                        fontSize: 13.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),

@@ -1,14 +1,26 @@
 // lib/screens/manual_create_screen.dart
 import 'package:flutter/material.dart';
-import 'package:grace_church/core/models/task.dart';
-import 'package:grace_church/core/voice/voice_listening.dart'
-    show VoiceListeningScreen;
-import 'package:grace_church/core/models/task.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:formz/formz.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:grace_church/core/alert/app_alerte.dart';
+import 'package:grace_church/core/constante/constantes.dart';
+import 'package:grace_church/core/custome_widget/button.dart';
+import 'package:grace_church/core/injetction/injection_container.dart';
+import 'package:grace_church/core/succes_screen/success_screen.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
+import 'package:grace_church/feature/home/domaine/usecase/create_task_usecase.dart';
+import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/create_task_bloc.dart';
+import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/event/create_tast_event.dart';
+import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/state/create_tast_state.dart';
+import 'package:grace_church/feature/taches/presentation/pages/widget/empty_data.dart';
 
 class ManualCreateScreen extends StatefulWidget {
-  const ManualCreateScreen({super.key,  this.task});
+  const ManualCreateScreen({super.key, this.task, this.actionType = ''});
   final TaskResponse? task;
+  final String actionType;
+
   @override
   State<ManualCreateScreen> createState() => _ManualCreateScreenState();
 }
@@ -17,10 +29,8 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
   final _titleCtrl = TextEditingController();
   DateTime _date = DateTime.now().add(const Duration(days: 1));
   TimeOfDay _time = const TimeOfDay(hour: 9, minute: 0);
-  String _rec = 'Aucune';
 
   static const _primary = Color(0xFF6366F1);
-  bool get _canSave => _titleCtrl.text.trim().isNotEmpty;
 
   Future<void> _pickDate() async {
     final d = await showDatePicker(
@@ -29,30 +39,75 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
-    if (d != null) setState(() => _date = d);
+    if (d != null) {
+      setState(() {
+        _date = d;
+        _controllerDate.text = '${_date.day}/${_date.month}/${_date.year} ';
+        context.read<FormTastBloc>().add(
+          CreateTaskEvent.changeDate(_controllerDate.text),
+        );
+      });
+    }
   }
 
   Future<void> _pickTime() async {
     final t = await showTimePicker(context: context, initialTime: _time);
-    if (t != null) setState(() => _time = t);
-  }
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    if (widget.task != null) {
-        final task = TaskResponse(
-                    title: widget.task?.title ?? "",
-                    date: widget.task?.date ?? "",
-                    time: widget.task?.time ?? "",
-                    recurring: widget.task?.recurring ?? false,
-                    content: widget.task?.content ?? "",
-                    status: widget.task?.status ?? "",
-                  );
+    if (t != null) {
+      setState(() {
+        _time = t;
+        _controllerTime.text = '${_time.hour}:${_time.minute}';
+        context.read<FormTastBloc>().add(
+          CreateTaskEvent.changeTime(_controllerTime.text),
+        );
+      });
     }
   }
 
-  
+  final TextEditingController _controllerTitle = TextEditingController();
+  final TextEditingController _controllerContent = TextEditingController();
+  final TextEditingController _controllerDate = TextEditingController();
+  final TextEditingController _controllerTime = TextEditingController();
+  final TextEditingController _controllerRecurring = TextEditingController();
+  final TextEditingController _controllerStatus = TextEditingController();
+
+  FormTastBloc? formTastBloc;
+
+  @override
+  void initState() {
+    super.initState();
+
+    formTastBloc = FormTastBloc(createTaskUseCase: getIt<CreateTaskUseCase>());
+
+    if (widget.task != null) {
+      _controllerTitle.text = widget.task?.title ?? "";
+      _controllerContent.text = widget.task?.content ?? "";
+      _controllerDate.text = widget.task?.date ?? "";
+      _controllerTime.text = widget.task?.time ?? "";
+      _controllerRecurring.text = "false";
+      _controllerStatus.text = widget.task?.status ?? "";
+
+      context.read<FormTastBloc>().add(
+        CreateTaskEvent.changeTitle(_controllerTitle.text),
+      );
+      context.read<FormTastBloc>().add(
+        CreateTaskEvent.changeTitle(_controllerTitle.text),
+      );
+      context.read<FormTastBloc>().add(
+        CreateTaskEvent.changeTime(_controllerTime.text),
+      );
+      context.read<FormTastBloc>().add(CreateTaskEvent.changeTaskId("1"));
+      context.read<FormTastBloc>().add(
+        CreateTaskEvent.changeStatus(_controllerStatus.text),
+      );
+      context.read<FormTastBloc>().add(CreateTaskEvent.changeRecurring(false));
+      context.read<FormTastBloc>().add(
+        CreateTaskEvent.changeDate(_controllerDate.text),
+      );
+      context.read<FormTastBloc>().add(
+        CreateTaskEvent.changeContent(_controllerContent.text),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -73,7 +128,7 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    //widget.onBack
+                    Navigator.pop(context);
                   },
                   child: Container(
                     width: 36,
@@ -90,11 +145,11 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                   ),
                 ),
                 const SizedBox(width: 14),
-                const Text(
+                Text(
                   'Nouvelle tâche',
-                  style: TextStyle(
+                  style: GoogleFonts.roboto(
                     color: Color(0xFF1A1A2E),
-                    fontSize: 18,
+                    fontSize: 15.h,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -110,13 +165,11 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                 GestureDetector(
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.pop(context);
-                    Navigator.pop(context);
                   },
                   child: Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: _primary.withOpacity(0.08),
+                      color: _primary.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: _primary.withOpacity(0.2)),
                     ),
@@ -127,25 +180,25 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                           color: _primary,
                           size: 20,
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: 12.w),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              Text(
                                 'Conseil : utilisez votre voix !',
-                                style: TextStyle(
+                                style: GoogleFonts.roboto(
                                   color: _primary,
-                                  fontSize: 13,
+                                  fontSize: 13.sp,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 'Plus rapide avec le microphone.',
-                                style: TextStyle(
+                                style: GoogleFonts.roboto(
                                   color: _primary.withOpacity(0.7),
-                                  fontSize: 12,
+                                  fontSize: 12.sp,
                                 ),
                               ),
                             ],
@@ -158,31 +211,44 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                 const SizedBox(height: 20),
 
                 // Titre
-                _Label('TITRE DE LA TÂCHE'),
+                Label('TITRE DE LA TÂCHE'),
                 const SizedBox(height: 6),
-                TextField(
-                  controller: _titleCtrl,
-                  onChanged: (_) => setState(() {}),
-                  style: const TextStyle(
-                    color: Color(0xFF1A1A2E),
-                    fontSize: 15,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: 'Ex : Appeler Jean...',
-                    hintStyle: const TextStyle(color: Color(0xFF6B7280)),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
-                  ),
+                BlocBuilder<FormTastBloc, CreateTastState>(
+                  builder: (context, state) {
+                    return TextFormField(
+                      controller: _controllerTitle,
+                      readOnly: state.status.isInProgress,
+                      forceErrorText:
+                          !state.title.isPure || !state.title.isValid
+                          ? 'Se champs est obligatoirre'
+                          : '',
+                      onChanged: (_) {
+                        context.read<FormTastBloc>().add(
+                          CreateTaskEvent.changeTitle(_controllerTitle.text),
+                        );
+                      },
+                      style: GoogleFonts.roboto(
+                        color: Color(0xFF1A1A2E),
+                        fontSize: 15.h,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Ex : Appeler Jean...',
+                        hintStyle: GoogleFonts.roboto(color: Color(0xFF6B7280)),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 16.h,
+                          vertical: 14.h,
+                        ),
+                      ),
+                    );
+                  },
                 ),
-                const SizedBox(height: 14),
+                SizedBox(height: 14.h),
 
                 // Date + Heure
                 Row(
@@ -191,13 +257,13 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _Label('DATE'),
+                          Label('DATE'),
                           const SizedBox(height: 6),
                           GestureDetector(
                             onTap: _pickDate,
-                            child: _FieldBox(
+                            child: FieldBox(
                               icon: Icons.calendar_today_rounded,
-                              text: '${_date.day}/${_date.month}/${_date.year}',
+                              text: _controllerDate.text,
                             ),
                           ),
                         ],
@@ -208,13 +274,16 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _Label('HEURE'),
+                          Label('HEURE'),
                           const SizedBox(height: 6),
                           GestureDetector(
                             onTap: _pickTime,
-                            child: _FieldBox(
+                            child: FieldBox(
                               icon: Icons.access_time_rounded,
-                              text: _time.format(context),
+                              text: _controllerTime.text,
+                              // format(context)
+                              // _controllerTime.text,
+                              // _time.format(context),
                             ),
                           ),
                         ],
@@ -225,73 +294,89 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                 const SizedBox(height: 14),
 
                 // Répétition
-                _Label('RÉPÉTITION'),
+                Label('DESCRIPTION'),
                 const SizedBox(height: 6),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: _rec,
-                      isExpanded: true,
-                      dropdownColor: Colors.white,
-                      style: const TextStyle(
-                        color: Color(0xFF1A1A2E),
-                        fontSize: 14,
+                BlocBuilder<FormTastBloc, CreateTastState>(
+                  builder: (context, state) {
+                    return TextFormField(
+                      controller: _controllerContent,
+                      readOnly: state.status.isInProgress,
+                      forceErrorText:
+                          !state.content.isPure || !state.content.isValid
+                          ? 'Se champs est obligatoirre'
+                          : '',
+                      maxLines: 4,
+                      onChanged: (value) {
+                        context.read<FormTastBloc>().add(
+                          CreateTaskEvent.changeContent(
+                            _controllerContent.text,
+                          ),
+                        );
+                      },
+                      style: GoogleFonts.roboto(
+                        color: const Color(0xFF1A1A2E),
+                        fontSize: 14.sp,
                       ),
-                      items: ['Aucune', 'Quotidien', 'Hebdomadaire', 'Mensuel']
-                          .map(
-                            (v) => DropdownMenuItem(value: v, child: Text(v)),
-                          )
-                          .toList(),
-                      onChanged: (v) => setState(() => _rec = v!),
-                    ),
-                  ),
+                      decoration: InputDecoration(
+                        hintText: 'Ex : Description',
+                        hintStyle: const TextStyle(color: Color(0xFF6B7280)),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 14.h,
+                        ),
+                      ),
+                    );
+                  },
                 ),
-                const SizedBox(height: 28),
+
+                SizedBox(height: 25.h),
 
                 // Bouton créer
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _canSave
-                        ? () {
-                            Task(
-                              id: DateTime.now().millisecondsSinceEpoch
-                                  .toString(),
-                              title: _titleCtrl.text.trim(),
-                              date: '${_date.day}/${_date.month}',
-                              time: _time.format(context),
-                            );
-                            // widget.onAdd(Task(
-                            //   id: DateTime.now().millisecondsSinceEpoch.toString(),
-                            //   title: _titleCtrl.text.trim(),
-                            //   date: '${_date.day}/${_date.month}',
-                            //   time: _time.format(context),
-                            //   recurrence: _rec,
-                            // ));
-                          }
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _primary,
-                      disabledBackgroundColor: _primary.withOpacity(0.4),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: const Text(
-                      'Créer la tâche',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
+                  child: BlocConsumer<FormTastBloc, CreateTastState>(
+                    builder: (context, state) {
+                      return PrimaryButton(
+                        label: "Créer la tâche",
+                        isLoading: state.status.isInProgress,
+                        fontSize: 14.sp,
+                        colorText: Colors.white,
+                        backgroundColor: state.status.isInProgress
+                            ? _primary.withValues(alpha: 0.4)
+                            : _primary,
+                        borderRadius: 16,
+                        onPressed: state.status.isInProgress || !state.isValide
+                            ? null
+                            : () {
+                                context.read<FormTastBloc>().add(
+                                  CreateTaskEvent.submit(),
+                                );
+                              },
+                      );
+                    },
+                    listener: (context, state) {
+                      if (widget.actionType.contains(
+                        TypeCreateTaskOrUpdate.CREATE_TASK,
+                      )) {
+                        if (state.status.isSuccess) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SuccessScreen(),
+                            ),
+                          );
+                        }
+                        if (state.status.isFailure) {
+                          AppAlert.showError(context, state.errorMessage);
+                        }
+                      }
+                    },
                   ),
                 ),
               ],
@@ -299,45 +384,6 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
           ),
         ],
       ),
-    ),
-  );
-}
-
-class _Label extends StatelessWidget {
-  final String text;
-  const _Label(this.text);
-  @override
-  Widget build(BuildContext context) => Text(
-    text,
-    style: const TextStyle(
-      color: Color(0xFF6B7280),
-      fontSize: 11,
-      fontWeight: FontWeight.w700,
-      letterSpacing: 0.6,
-    ),
-  );
-}
-
-class _FieldBox extends StatelessWidget {
-  final IconData icon;
-  final String text;
-  const _FieldBox({required this.icon, required this.text});
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(14),
-    ),
-    child: Row(
-      children: [
-        Icon(icon, color: const Color(0xFF6366F1), size: 17),
-        const SizedBox(width: 8),
-        Text(
-          text,
-          style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 13),
-        ),
-      ],
     ),
   );
 }

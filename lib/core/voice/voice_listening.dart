@@ -1,3 +1,4 @@
+
 // lib/screens/voice_listening_screen.dart
 import 'dart:async';
 import 'dart:math';
@@ -124,6 +125,18 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
     await context.read<VoiceTaskCubit>().restart();
   }
 
+  /// Retour à l'état initial de la page (nouvel enregistrement vierge).
+  /// Utilisé quand la requête échoue ou que le vocal est inexploitable.
+  Future<void> _resetPage() async {
+    await _player.stop();
+    if (!mounted) return;
+    setState(() {
+      _position = Duration.zero;
+      _duration = Duration.zero;
+    });
+    await context.read<VoiceTaskCubit>().retry();
+  }
+
   Future<void> _send() async {
     await _player.stop();
     if (!mounted) return;
@@ -216,7 +229,8 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
         canPop: false,
         onPopInvokedWithResult: (didPop, _) {
           if (didPop) return;
-          if (context.read<VoiceTaskCubit>().state is VoiceLoading) return;
+          final s = context.read<VoiceTaskCubit>().state;
+          if (s is VoiceLoading || s is VoiceSuccess) return;
           _cancel();
         },
         child: MultiBlocListener(
@@ -241,30 +255,21 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
                   // state.result.date.isNotEmpty &&
                   // state.result.time.isNotEmpty
                   ) {
-                    context.read<FormTastBloc>().add(
-                      CreateTaskEvent.changeTitle(state.result.title),
-                    );
-                    context.read<FormTastBloc>().add(
+                    final form = context.read<FormTastBloc>();
+                    form.add(CreateTaskEvent.changeTitle(state.result.title));
+                    form.add(
                       CreateTaskEvent.changeContent(state.result.content),
                     );
-                    context.read<FormTastBloc>().add(
-                      CreateTaskEvent.changeDate("2026-10-20"),
-                    );
-                    context.read<FormTastBloc>().add(
-                      CreateTaskEvent.changeTime("12:00"),
-                    );
-                    context.read<FormTastBloc>().add(
-                      CreateTaskEvent.changeRecurring(false),
-                    );
-                    context.read<FormTastBloc>().add(
-                      CreateTaskEvent.changeStatus(state.result.status),
-                    );
-                    context.read<FormTastBloc>().add(
-                      CreateTaskEvent.changeTaskId('sdddd'),
-                    );
+                    form.add(CreateTaskEvent.changeDate("2026-10-20"));
+                    form.add(CreateTaskEvent.changeTime("12:00"));
+                    form.add(CreateTaskEvent.changeRecurring(false));
+                    form.add(CreateTaskEvent.changeStatus(state.result.status));
+                    form.add(CreateTaskEvent.changeTaskId('sdddd'));
+                    // Le submit part APRÈS le remplissage du formulaire
+                    form.add(CreateTaskEvent.submit());
                   } else {
-                    _restart();
-                    return AppAlert.showError(
+                    _resetPage();
+                    return AppAlert.showInfo(
                       context,
                       'Veuillez reprendre le vocal, car nous n’avons pas pu détecter la date ni l’heure.',
                     );
@@ -277,6 +282,9 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
               },
             ),
             BlocListener<FormTastBloc, CreateTastState>(
+              // Uniquement quand le statut change (évite les boucles)
+              listenWhen: (previous, current) =>
+                  previous.status != current.status,
               listener: (context, stateForm) {
                 if (stateForm.status.isSuccess) {
                   Navigator.pushReplacement(
@@ -297,7 +305,8 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
                 }
 
                 if (stateForm.status.isFailure) {
-                  context.read<VoiceTaskCubit>().start();
+                  // Retour à l'état initial de la page
+                  _resetPage();
                   return AppAlert.showError(
                     context,
                     "Une erreur est survenue, veuillez réessayer.",
@@ -311,7 +320,9 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
               final bool isRecording = state is VoiceRecording;
               final bool isPaused = state is VoicePaused;
               final bool isStopped = state is VoiceStopped;
-              final bool isLoading = state is VoiceLoading;
+              // VoiceSuccess = soumission du formulaire en cours
+              final bool isLoading =
+                  state is VoiceLoading || state is VoiceSuccess;
               final bool isError = state is VoiceError;
 
               return Scaffold(
@@ -611,29 +622,10 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
                                       () => _togglePlay(state.path),
                                     ),
                                     const SizedBox(width: 20),
-                                    BlocBuilder<VoiceTaskCubit, VoiceTaskState>(
-                                      builder: (context, stateVoice) {
-                                        return BlocConsumer<
-                                          FormTastBloc,
-                                          CreateTastState
-                                        >(
-                                          listener: (context, stateForm) {},
-                                          builder: (context, state) {
-                                            return _pillButton(
-                                              Icons.send_rounded,
-                                              'Envoyer',
-                                              () {
-                                                context
-                                                    .read<FormTastBloc>()
-                                                    .add(
-                                                      CreateTaskEvent.submit(),
-                                                    );
-                                                _send();
-                                              },
-                                            );
-                                          },
-                                        );
-                                      },
+                                    _pillButton(
+                                      Icons.send_rounded,
+                                      'Envoyer',
+                                      _send,
                                     ),
                                   ],
                                 ),
@@ -661,7 +653,7 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
                             _pillButton(
                               Icons.mic_rounded,
                               'Réessayer',
-                              () => context.read<VoiceTaskCubit>().start(),
+                              () => context.read<VoiceTaskCubit>().retry(),
                             ),
 
                           // Loader pendant l'envoi
@@ -689,7 +681,6 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
                                 ),
                               ),
                             ),
-                            
                         ],
                       ),
                     ),

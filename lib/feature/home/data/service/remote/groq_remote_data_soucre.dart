@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
-import 'package:grace_church/core/constante/global_params.dart';
 import 'package:grace_church/core/service_systeme/error/failure.dart';
 import 'package:grace_church/feature/home/data/model/home_responses_models.dart';
 
@@ -83,6 +82,7 @@ Règles :
   "a_terminer" si elle est à finir ou à faire avant une échéance,
   "annule" si le vocal indique d'annuler/abandonner la tâche,
   "a_venir" si elle est planifiée plus tard. Par défaut : "a_venir".
+- "recordtime" : temps d'enregistrement du vocal en secondes, sinon null.
 
 Réponds UNIQUEMENT avec ce JSON, sans texte autour ni markdown :
 {"title": string|null, "content": string|null, "date": "YYYY-MM-DD"|null, "time": "HH:mm"|null, "recurring": boolean, "status": "en_cours"|"a_terminer"|"annule"|"a_venir", "recordtime": number|null}''',
