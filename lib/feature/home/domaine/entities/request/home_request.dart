@@ -13,18 +13,15 @@ abstract class RequestCreateTask with _$RequestCreateTask {
     required String content,
     required String status,
     @Default("") String userId,
-
-
+    @Default("") String taskId,
   }) = _RequestCreateTask;
 
   factory RequestCreateTask.fromJson(Map<String, dynamic> json) =>
       _$RequestCreateTaskFromJson(json);
 }
 
-
 @freezed
-abstract class RequestTaskUpdateKey
-    with _$RequestTaskUpdateKey {
+abstract class RequestTaskUpdateKey with _$RequestTaskUpdateKey {
   factory RequestTaskUpdateKey({required String taskId}) =
       // menberId
       _RequestTaskUpdateKey;

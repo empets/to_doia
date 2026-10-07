@@ -9,8 +9,6 @@ import 'package:grace_church/core/succes_screen/success_screen.dart';
 import 'package:grace_church/core/transcription/transcription_screen.dart';
 import 'package:grace_church/core/voice/voice_listening.dart';
 import 'package:grace_church/feature/home/domaine/usecase/create_task_from_voice.dart';
-import 'package:grace_church/feature/home/domaine/usecase/create_task_usecase.dart';
-import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/create_task_bloc.dart';
 import 'package:grace_church/feature/home/presentation/bloc/voice_task.dart';
 import 'package:grace_church/feature/home/presentation/page/home_screen.dart';
 import 'package:grace_church/feature/onboarding/splash_screen.dart';
@@ -40,9 +38,6 @@ class SmartReminderApp extends StatelessWidget {
               GetListBloc(getTaskListUseCase: getIt<GetTaskListUseCase>())
                 ..add(TaskSectionEvent.fetch(null)),
         ),
-        BlocProvider(
-          create: (context)=> FormTastBloc(createTaskUseCase: getIt<CreateTaskUseCase>()),
-        )
       ],
       child: ScreenUtilInit(
         designSize: const Size(360, 690),
@@ -261,6 +256,7 @@ class _AppShellState extends State<AppShell> {
       // ── Flux vocal ─────────────────────────────────────────────────────────
       case AppScreen.listening:
         return VoiceListeningScreen(
+          actionType:' TypeCreateTaskOrUpdate.CREATE_TASK,'
           // onStop: _stopListening,
           // onCancel: () => _go(AppScreen.home),
         );

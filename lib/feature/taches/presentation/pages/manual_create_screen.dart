@@ -7,11 +7,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:grace_church/core/alert/app_alerte.dart';
 import 'package:grace_church/core/constante/constantes.dart';
 import 'package:grace_church/core/custome_widget/button.dart';
+import 'package:grace_church/core/custome_widget/navigate.dart';
 import 'package:grace_church/core/injetction/injection_container.dart';
 import 'package:grace_church/core/succes_screen/success_screen.dart';
+import 'package:grace_church/core/voice/voice_listening.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:grace_church/feature/home/domaine/usecase/create_task_usecase.dart';
-import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/create_task_bloc.dart';
+import 'package:grace_church/feature/home/domaine/usecase/update_task_from_usercase.dart';
+import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/create_or_update_task_bloc.dart';
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/event/create_tast_event.dart';
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/state/create_tast_state.dart';
 import 'package:grace_church/feature/taches/presentation/pages/widget/empty_data.dart';
@@ -38,6 +41,19 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
       initialDate: _date,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: _primary,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (d != null) {
       setState(() {
@@ -51,7 +67,23 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
   }
 
   Future<void> _pickTime() async {
-    final t = await showTimePicker(context: context, initialTime: _time);
+    final t = await showTimePicker(
+      context: context,
+      initialTime: _time,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: _primary,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
     if (t != null) {
       setState(() {
         _time = t;
@@ -76,7 +108,10 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
   void initState() {
     super.initState();
 
-    formTastBloc = FormTastBloc(createTaskUseCase: getIt<CreateTaskUseCase>());
+    formTastBloc = FormTastBloc(
+      createTaskUseCase: getIt<CreateTaskUseCase>(),
+      updateTaskUseCase: getIt<UpdateTaskUseCase>(),
+    );
 
     if (widget.task != null) {
       _controllerTitle.text = widget.task?.title ?? "";
@@ -102,6 +137,9 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
       context.read<FormTastBloc>().add(CreateTaskEvent.changeRecurring(false));
       context.read<FormTastBloc>().add(
         CreateTaskEvent.changeDate(_controllerDate.text),
+      );
+      context.read<FormTastBloc>().add(
+        CreateTaskEvent.actionType(widget.actionType),
       );
       context.read<FormTastBloc>().add(
         CreateTaskEvent.changeContent(_controllerContent.text),
@@ -164,7 +202,9 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                 // Conseil vocal
                 GestureDetector(
                   onTap: () {
-                    Navigator.pop(context);
+                    Navigator.of(
+                      context,
+                    ).push(fadeRoute( VoiceListeningScreen(actionType: widget.actionType)));
                   },
                   child: Container(
                     padding: const EdgeInsets.all(14),
@@ -218,6 +258,15 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                     return TextFormField(
                       controller: _controllerTitle,
                       readOnly: state.status.isInProgress,
+                      errorBuilder: (context, error) {
+                        return Text(
+                          error,
+                          style: GoogleFonts.roboto(
+                            color: Colors.red,
+                            fontSize: 12.sp,
+                          ),
+                        );
+                      },
                       forceErrorText:
                           !state.title.isPure || !state.title.isValid
                           ? 'Se champs est obligatoirre'
@@ -343,7 +392,12 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                   child: BlocConsumer<FormTastBloc, CreateTastState>(
                     builder: (context, state) {
                       return PrimaryButton(
-                        label: "Créer la tâche",
+                        label:
+                            widget.actionType.contains(
+                              TypeCreateTaskOrUpdate.CREATE_TASK,
+                            )
+                            ? "Créer la tâche"
+                            : "Modifier la tâche",
                         isLoading: state.status.isInProgress,
                         fontSize: 14.sp,
                         colorText: Colors.white,
@@ -361,10 +415,10 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                       );
                     },
                     listener: (context, state) {
-                      if (widget.actionType.contains(
-                        TypeCreateTaskOrUpdate.CREATE_TASK,
-                      )) {
-                        if (state.status.isSuccess) {
+                      if (state.status.isSuccess) {
+                        if (widget.actionType.contains(
+                          TypeCreateTaskOrUpdate.CREATE_TASK,
+                        )) {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -372,9 +426,9 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                             ),
                           );
                         }
-                        if (state.status.isFailure) {
-                          AppAlert.showError(context, state.errorMessage);
-                        }
+                      }
+                      if (state.status.isFailure) {
+                        AppAlert.showError(context, state.errorMessage);
                       }
                     },
                   ),

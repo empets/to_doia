@@ -21,5 +21,9 @@ abstract class HomeRemoteRepository {
 
   Future<FirebaseResult<String?>> createTask(RequestCreateTask params);
 
+
+  Future<FirebaseResult<String?>> updateTask(RequestCreateTask params);
+
+
   
 }

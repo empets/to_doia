@@ -11,15 +11,16 @@ import 'package:grace_church/core/custome_widget/button.dart';
 import 'package:grace_church/core/extention/app_extention.dart';
 import 'package:grace_church/core/succes_screen/success_screen.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
-import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/create_task_bloc.dart';
+import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/create_or_update_task_bloc.dart';
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/event/create_tast_event.dart';
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/state/create_tast_state.dart';
 import 'package:grace_church/feature/taches/presentation/pages/manual_create_screen.dart';
 
 class ConfirmationScreen extends StatelessWidget {
-  const ConfirmationScreen({super.key, required this.task});
+  const ConfirmationScreen({super.key, required this.task, required this.actionType});
 
   final TaskResponse task;
+  final String actionType;
 
   @override
   Widget build(BuildContext context) {
@@ -201,6 +202,10 @@ class ConfirmationScreen extends StatelessWidget {
                     child: BlocConsumer<FormTastBloc, CreateTastState>(
                       listener: (context, state) {
                         if (state.status.isSuccess) {
+
+                          
+
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -241,6 +246,9 @@ class ConfirmationScreen extends StatelessWidget {
                             );
                             context.read<FormTastBloc>().add(
                               CreateTaskEvent.changeContent(task.content),
+                            );
+                            context.read<FormTastBloc>().add(
+                              CreateTaskEvent.actionType(actionType),
                             );
                             context.read<FormTastBloc>().add(
                               CreateTaskEvent.submit(),

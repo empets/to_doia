@@ -1,5 +1,3 @@
-
-
 import 'package:formz/formz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:grace_church/core/service_systeme/model/formz_model/text_formz.dart';
@@ -16,6 +14,7 @@ abstract class CreateTastState with _$CreateTastState {
     required TextFormz content,
     required TextFormz eventStatus,
     required String taskId,
+    required TextFormz actionType,
     required FormzSubmissionStatus status,
     required String errorMessage,
     required bool isValide,
@@ -29,6 +28,7 @@ abstract class CreateTastState with _$CreateTastState {
     content: TextFormz.pure(),
     eventStatus: TextFormz.pure(),
     taskId: '',
+    actionType: TextFormz.pure(),
     status: FormzSubmissionStatus.initial,
     errorMessage: '',
     isValide: false,

@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:grace_church/core/extention/app_extention.dart';
+import 'package:grace_church/core/constante/constantes.dart';
 import 'package:grace_church/core/models/task.dart';
 import 'package:grace_church/core/service_systeme/model/api/api_state.dart';
 import 'package:grace_church/core/voice/voice_listening.dart';
@@ -104,8 +104,6 @@ class _TasksScreenState extends State<TasksScreen> {
 
   @override
   Widget build(BuildContext context) {
- 
-
     return BlocBuilder<GetListBloc, ApiState<List<TaskResponse>>>(
       builder: (context, stateTaskList) {
         if (stateTaskList is LoadState<List<TaskResponse>>) {
@@ -142,7 +140,9 @@ class _TasksScreenState extends State<TasksScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => VoiceListeningScreen(),
+                            builder: (context) => VoiceListeningScreen(
+                              actionType: TypeCreateTaskOrUpdate.UPDATE_TASK,
+                            ),
                           ),
                         );
                       },

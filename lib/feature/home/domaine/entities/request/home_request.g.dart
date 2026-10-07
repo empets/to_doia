@@ -15,6 +15,7 @@ _RequestCreateTask _$RequestCreateTaskFromJson(Map<String, dynamic> json) =>
       content: json['content'] as String,
       status: json['status'] as String,
       userId: json['userId'] as String? ?? "",
+      taskId: json['taskId'] as String? ?? "",
     );
 
 Map<String, dynamic> _$RequestCreateTaskToJson(_RequestCreateTask instance) =>
@@ -26,6 +27,7 @@ Map<String, dynamic> _$RequestCreateTaskToJson(_RequestCreateTask instance) =>
       'content': instance.content,
       'status': instance.status,
       'userId': instance.userId,
+      'taskId': instance.taskId,
     };
 
 _RequestTaskUpdateKey _$RequestTaskUpdateKeyFromJson(

@@ -70,4 +70,30 @@ class HomeRemoteRepositoryImpl implements HomeRemoteRepository {
       return FirebaseError(e.toString());
     }
   }
+
+  @override
+  Future<FirebaseResult<String?>> updateTask(RequestCreateTask params) async {
+    try {
+      final userIdExist = await db
+          .child('task')
+          .orderByChild('taskId')
+          .equalTo(params.taskId)
+          .get();
+
+      if (userIdExist.exists) {
+        final Map<String, dynamic> updates = {
+          ...params.toJson(),
+          'updateAt': DateTime.now().toIso8601String(),
+        };
+        // 2) Créer une nouvelle entrée
+        await db.child('task/${params.taskId}').update(updates);
+
+        // 4) Retourner le key généré
+        return FirebaseSuccess(params.taskId);
+      }
+      return FirebaseError("impossible d'effectuer cette action");
+    } catch (e) {
+      return FirebaseError(e.toString());
+    }
+  }
 }

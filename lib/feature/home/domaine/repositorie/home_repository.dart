@@ -25,4 +25,12 @@ abstract class HomeRepository{
   // ---------------------------------------------------------------------------------------------
   Future<Either<Failure, String?>> createTask(RequestCreateTask request);
 
+  // ---------------------------------------------------------------------------------------------
+  // cette interface permet de modifier une tache 
+  // il prend en paramètre un objet RequestCreateTask qui contient les parametre de la requette 
+  // il retourne un objet String? qui contient l'id de la tache cree
+  // ---------------------------------------------------------------------------------------------
+  Future<Either<Failure, String?>> updateTask(RequestCreateTask request);
+
+
 }

@@ -7,9 +7,10 @@ import 'package:grace_church/feature/home/domaine/entities/response/home_respons
 
 
 class AIAnalyzingScreen extends StatefulWidget {
-  const AIAnalyzingScreen({super.key, required this.task});
+  const AIAnalyzingScreen({super.key, required this.task, required this.actionType});
 
   final TaskResponse task;
+  final String actionType;
   
   @override
   State<AIAnalyzingScreen> createState() => _AIAnalyzingScreenState();
@@ -31,7 +32,7 @@ class _AIAnalyzingScreenState extends State<AIAnalyzingScreen>
       if (mounted) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ConfirmationScreen(task: widget.task)),
+          MaterialPageRoute(builder: (context) => ConfirmationScreen(task: widget.task, actionType: widget.actionType)),
         );
       }
     });

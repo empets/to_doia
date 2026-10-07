@@ -55,7 +55,7 @@ extension CreateTaskEventPatterns on CreateTaskEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( ChangeTitleCreateTaskEvent value)?  changeTitle,TResult Function( ChangeDateCreateTaskEvent value)?  changeDate,TResult Function( ChangeTimeCreateTaskEvent value)?  changeTime,TResult Function( ChangeRecurringCreateTaskEvent value)?  changeRecurring,TResult Function( ChangeContentCreateTaskEvent value)?  changeContent,TResult Function( ChangeStatusCreateTaskEvent value)?  changeStatus,TResult Function( ChangeTaskIdCreateTaskEvent value)?  changeTaskId,TResult Function( SubmitCreateTaskEvent value)?  submit,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( ChangeTitleCreateTaskEvent value)?  changeTitle,TResult Function( ChangeDateCreateTaskEvent value)?  changeDate,TResult Function( ChangeTimeCreateTaskEvent value)?  changeTime,TResult Function( ChangeRecurringCreateTaskEvent value)?  changeRecurring,TResult Function( ChangeContentCreateTaskEvent value)?  changeContent,TResult Function( ChangeStatusCreateTaskEvent value)?  changeStatus,TResult Function( ChangeTaskIdCreateTaskEvent value)?  changeTaskId,TResult Function( ActionTypeInfoCreateTaskEvent value)?  actionType,TResult Function( SubmitCreateTaskEvent value)?  submit,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case ChangeTitleCreateTaskEvent() when changeTitle != null:
@@ -65,7 +65,8 @@ return changeTime(_that);case ChangeRecurringCreateTaskEvent() when changeRecurr
 return changeRecurring(_that);case ChangeContentCreateTaskEvent() when changeContent != null:
 return changeContent(_that);case ChangeStatusCreateTaskEvent() when changeStatus != null:
 return changeStatus(_that);case ChangeTaskIdCreateTaskEvent() when changeTaskId != null:
-return changeTaskId(_that);case SubmitCreateTaskEvent() when submit != null:
+return changeTaskId(_that);case ActionTypeInfoCreateTaskEvent() when actionType != null:
+return actionType(_that);case SubmitCreateTaskEvent() when submit != null:
 return submit(_that);case _:
   return orElse();
 
@@ -84,7 +85,7 @@ return submit(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( ChangeTitleCreateTaskEvent value)  changeTitle,required TResult Function( ChangeDateCreateTaskEvent value)  changeDate,required TResult Function( ChangeTimeCreateTaskEvent value)  changeTime,required TResult Function( ChangeRecurringCreateTaskEvent value)  changeRecurring,required TResult Function( ChangeContentCreateTaskEvent value)  changeContent,required TResult Function( ChangeStatusCreateTaskEvent value)  changeStatus,required TResult Function( ChangeTaskIdCreateTaskEvent value)  changeTaskId,required TResult Function( SubmitCreateTaskEvent value)  submit,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( ChangeTitleCreateTaskEvent value)  changeTitle,required TResult Function( ChangeDateCreateTaskEvent value)  changeDate,required TResult Function( ChangeTimeCreateTaskEvent value)  changeTime,required TResult Function( ChangeRecurringCreateTaskEvent value)  changeRecurring,required TResult Function( ChangeContentCreateTaskEvent value)  changeContent,required TResult Function( ChangeStatusCreateTaskEvent value)  changeStatus,required TResult Function( ChangeTaskIdCreateTaskEvent value)  changeTaskId,required TResult Function( ActionTypeInfoCreateTaskEvent value)  actionType,required TResult Function( SubmitCreateTaskEvent value)  submit,}){
 final _that = this;
 switch (_that) {
 case ChangeTitleCreateTaskEvent():
@@ -94,7 +95,8 @@ return changeTime(_that);case ChangeRecurringCreateTaskEvent():
 return changeRecurring(_that);case ChangeContentCreateTaskEvent():
 return changeContent(_that);case ChangeStatusCreateTaskEvent():
 return changeStatus(_that);case ChangeTaskIdCreateTaskEvent():
-return changeTaskId(_that);case SubmitCreateTaskEvent():
+return changeTaskId(_that);case ActionTypeInfoCreateTaskEvent():
+return actionType(_that);case SubmitCreateTaskEvent():
 return submit(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -112,7 +114,7 @@ return submit(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( ChangeTitleCreateTaskEvent value)?  changeTitle,TResult? Function( ChangeDateCreateTaskEvent value)?  changeDate,TResult? Function( ChangeTimeCreateTaskEvent value)?  changeTime,TResult? Function( ChangeRecurringCreateTaskEvent value)?  changeRecurring,TResult? Function( ChangeContentCreateTaskEvent value)?  changeContent,TResult? Function( ChangeStatusCreateTaskEvent value)?  changeStatus,TResult? Function( ChangeTaskIdCreateTaskEvent value)?  changeTaskId,TResult? Function( SubmitCreateTaskEvent value)?  submit,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( ChangeTitleCreateTaskEvent value)?  changeTitle,TResult? Function( ChangeDateCreateTaskEvent value)?  changeDate,TResult? Function( ChangeTimeCreateTaskEvent value)?  changeTime,TResult? Function( ChangeRecurringCreateTaskEvent value)?  changeRecurring,TResult? Function( ChangeContentCreateTaskEvent value)?  changeContent,TResult? Function( ChangeStatusCreateTaskEvent value)?  changeStatus,TResult? Function( ChangeTaskIdCreateTaskEvent value)?  changeTaskId,TResult? Function( ActionTypeInfoCreateTaskEvent value)?  actionType,TResult? Function( SubmitCreateTaskEvent value)?  submit,}){
 final _that = this;
 switch (_that) {
 case ChangeTitleCreateTaskEvent() when changeTitle != null:
@@ -122,7 +124,8 @@ return changeTime(_that);case ChangeRecurringCreateTaskEvent() when changeRecurr
 return changeRecurring(_that);case ChangeContentCreateTaskEvent() when changeContent != null:
 return changeContent(_that);case ChangeStatusCreateTaskEvent() when changeStatus != null:
 return changeStatus(_that);case ChangeTaskIdCreateTaskEvent() when changeTaskId != null:
-return changeTaskId(_that);case SubmitCreateTaskEvent() when submit != null:
+return changeTaskId(_that);case ActionTypeInfoCreateTaskEvent() when actionType != null:
+return actionType(_that);case SubmitCreateTaskEvent() when submit != null:
 return submit(_that);case _:
   return null;
 
@@ -140,7 +143,7 @@ return submit(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String title)?  changeTitle,TResult Function( String date)?  changeDate,TResult Function( String time)?  changeTime,TResult Function( bool recurring)?  changeRecurring,TResult Function( String content)?  changeContent,TResult Function( String status)?  changeStatus,TResult Function( String taskId)?  changeTaskId,TResult Function()?  submit,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String title)?  changeTitle,TResult Function( String date)?  changeDate,TResult Function( String time)?  changeTime,TResult Function( bool recurring)?  changeRecurring,TResult Function( String content)?  changeContent,TResult Function( String status)?  changeStatus,TResult Function( String taskId)?  changeTaskId,TResult Function( String actionType)?  actionType,TResult Function()?  submit,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case ChangeTitleCreateTaskEvent() when changeTitle != null:
 return changeTitle(_that.title);case ChangeDateCreateTaskEvent() when changeDate != null:
@@ -149,7 +152,8 @@ return changeTime(_that.time);case ChangeRecurringCreateTaskEvent() when changeR
 return changeRecurring(_that.recurring);case ChangeContentCreateTaskEvent() when changeContent != null:
 return changeContent(_that.content);case ChangeStatusCreateTaskEvent() when changeStatus != null:
 return changeStatus(_that.status);case ChangeTaskIdCreateTaskEvent() when changeTaskId != null:
-return changeTaskId(_that.taskId);case SubmitCreateTaskEvent() when submit != null:
+return changeTaskId(_that.taskId);case ActionTypeInfoCreateTaskEvent() when actionType != null:
+return actionType(_that.actionType);case SubmitCreateTaskEvent() when submit != null:
 return submit();case _:
   return orElse();
 
@@ -168,7 +172,7 @@ return submit();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String title)  changeTitle,required TResult Function( String date)  changeDate,required TResult Function( String time)  changeTime,required TResult Function( bool recurring)  changeRecurring,required TResult Function( String content)  changeContent,required TResult Function( String status)  changeStatus,required TResult Function( String taskId)  changeTaskId,required TResult Function()  submit,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String title)  changeTitle,required TResult Function( String date)  changeDate,required TResult Function( String time)  changeTime,required TResult Function( bool recurring)  changeRecurring,required TResult Function( String content)  changeContent,required TResult Function( String status)  changeStatus,required TResult Function( String taskId)  changeTaskId,required TResult Function( String actionType)  actionType,required TResult Function()  submit,}) {final _that = this;
 switch (_that) {
 case ChangeTitleCreateTaskEvent():
 return changeTitle(_that.title);case ChangeDateCreateTaskEvent():
@@ -177,7 +181,8 @@ return changeTime(_that.time);case ChangeRecurringCreateTaskEvent():
 return changeRecurring(_that.recurring);case ChangeContentCreateTaskEvent():
 return changeContent(_that.content);case ChangeStatusCreateTaskEvent():
 return changeStatus(_that.status);case ChangeTaskIdCreateTaskEvent():
-return changeTaskId(_that.taskId);case SubmitCreateTaskEvent():
+return changeTaskId(_that.taskId);case ActionTypeInfoCreateTaskEvent():
+return actionType(_that.actionType);case SubmitCreateTaskEvent():
 return submit();case _:
   throw StateError('Unexpected subclass');
 
@@ -195,7 +200,7 @@ return submit();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String title)?  changeTitle,TResult? Function( String date)?  changeDate,TResult? Function( String time)?  changeTime,TResult? Function( bool recurring)?  changeRecurring,TResult? Function( String content)?  changeContent,TResult? Function( String status)?  changeStatus,TResult? Function( String taskId)?  changeTaskId,TResult? Function()?  submit,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String title)?  changeTitle,TResult? Function( String date)?  changeDate,TResult? Function( String time)?  changeTime,TResult? Function( bool recurring)?  changeRecurring,TResult? Function( String content)?  changeContent,TResult? Function( String status)?  changeStatus,TResult? Function( String taskId)?  changeTaskId,TResult? Function( String actionType)?  actionType,TResult? Function()?  submit,}) {final _that = this;
 switch (_that) {
 case ChangeTitleCreateTaskEvent() when changeTitle != null:
 return changeTitle(_that.title);case ChangeDateCreateTaskEvent() when changeDate != null:
@@ -204,7 +209,8 @@ return changeTime(_that.time);case ChangeRecurringCreateTaskEvent() when changeR
 return changeRecurring(_that.recurring);case ChangeContentCreateTaskEvent() when changeContent != null:
 return changeContent(_that.content);case ChangeStatusCreateTaskEvent() when changeStatus != null:
 return changeStatus(_that.status);case ChangeTaskIdCreateTaskEvent() when changeTaskId != null:
-return changeTaskId(_that.taskId);case SubmitCreateTaskEvent() when submit != null:
+return changeTaskId(_that.taskId);case ActionTypeInfoCreateTaskEvent() when actionType != null:
+return actionType(_that.actionType);case SubmitCreateTaskEvent() when submit != null:
 return submit();case _:
   return null;
 
@@ -668,6 +674,72 @@ class _$ChangeTaskIdCreateTaskEventCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') $Res call({Object? taskId = null,}) {
   return _then(ChangeTaskIdCreateTaskEvent(
 null == taskId ? _self.taskId : taskId // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class ActionTypeInfoCreateTaskEvent implements CreateTaskEvent {
+   ActionTypeInfoCreateTaskEvent(this.actionType);
+  
+
+ final  String actionType;
+
+/// Create a copy of CreateTaskEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ActionTypeInfoCreateTaskEventCopyWith<ActionTypeInfoCreateTaskEvent> get copyWith => _$ActionTypeInfoCreateTaskEventCopyWithImpl<ActionTypeInfoCreateTaskEvent>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActionTypeInfoCreateTaskEvent&&(identical(other.actionType, actionType) || other.actionType == actionType));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,actionType);
+
+@override
+String toString() {
+  return 'CreateTaskEvent.actionType(actionType: $actionType)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ActionTypeInfoCreateTaskEventCopyWith<$Res> implements $CreateTaskEventCopyWith<$Res> {
+  factory $ActionTypeInfoCreateTaskEventCopyWith(ActionTypeInfoCreateTaskEvent value, $Res Function(ActionTypeInfoCreateTaskEvent) _then) = _$ActionTypeInfoCreateTaskEventCopyWithImpl;
+@useResult
+$Res call({
+ String actionType
+});
+
+
+
+
+}
+/// @nodoc
+class _$ActionTypeInfoCreateTaskEventCopyWithImpl<$Res>
+    implements $ActionTypeInfoCreateTaskEventCopyWith<$Res> {
+  _$ActionTypeInfoCreateTaskEventCopyWithImpl(this._self, this._then);
+
+  final ActionTypeInfoCreateTaskEvent _self;
+  final $Res Function(ActionTypeInfoCreateTaskEvent) _then;
+
+/// Create a copy of CreateTaskEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? actionType = null,}) {
+  return _then(ActionTypeInfoCreateTaskEvent(
+null == actionType ? _self.actionType : actionType // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

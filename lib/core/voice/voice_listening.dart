@@ -1,4 +1,3 @@
-
 // lib/screens/voice_listening_screen.dart
 import 'dart:async';
 import 'dart:math';
@@ -14,13 +13,16 @@ import 'package:grace_church/core/ia_analyse/ai_analyzing_screen.dart';
 import 'package:grace_church/core/injetction/injection_container.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:grace_church/feature/home/domaine/usecase/create_task_usecase.dart';
-import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/create_task_bloc.dart';
+import 'package:grace_church/feature/home/domaine/usecase/update_task_from_usercase.dart';
+import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/create_or_update_task_bloc.dart';
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/event/create_tast_event.dart';
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/state/create_tast_state.dart';
 import 'package:grace_church/feature/home/presentation/bloc/voice_task.dart';
 
 class VoiceListeningScreen extends StatefulWidget {
-  const VoiceListeningScreen({super.key});
+  const VoiceListeningScreen({super.key, required this.actionType});
+
+  final String actionType;
 
   @override
   State<VoiceListeningScreen> createState() => _VoiceListeningScreenState();
@@ -223,8 +225,10 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          FormTastBloc(createTaskUseCase: getIt<CreateTaskUseCase>()),
+      create: (context) => FormTastBloc(
+        createTaskUseCase: getIt<CreateTaskUseCase>(),
+        updateTaskUseCase: getIt<UpdateTaskUseCase>(),
+      ),
       child: PopScope(
         canPop: false,
         onPopInvokedWithResult: (didPop, _) {
@@ -287,10 +291,14 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
                   previous.status != current.status,
               listener: (context, stateForm) {
                 if (stateForm.status.isSuccess) {
+                  
+
+
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (context) => AIAnalyzingScreen(
+                        actionType: widget.actionType,
                         task: TaskResponse(
                           title: stateForm.title.value,
                           date: stateForm.date.value,

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:grace_church/core/constante/constantes.dart';
 import 'package:grace_church/core/models/task.dart';
 import 'package:grace_church/core/voice/voice_listening.dart';
 import 'package:grace_church/feature/home/presentation/widget/empty_state.dart';
@@ -154,7 +155,9 @@ class _HomeScreenState extends State<HomeScreen>
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => VoiceListeningScreen(),
+                          builder: (context) => VoiceListeningScreen(
+                            actionType: TypeCreateTaskOrUpdate.CREATE_TASK,
+                          ),
                         ),
                       );
                     },

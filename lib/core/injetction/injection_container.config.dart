@@ -32,6 +32,8 @@ import '../../feature/home/domaine/repositorie/voic_task_repository.dart'
 import '../../feature/home/domaine/usecase/create_task_from_voice.dart'
     as _i324;
 import '../../feature/home/domaine/usecase/create_task_usecase.dart' as _i320;
+import '../../feature/home/domaine/usecase/update_task_from_usercase.dart'
+    as _i49;
 import '../../feature/taches/data/repository/home_repository_impl.dart'
     as _i321;
 import '../../feature/taches/data/service/remote/task_remote_repository.dart'
@@ -75,6 +77,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i320.CreateTaskUseCase>(
       () => _i320.CreateTaskUseCase(gh<_i282.HomeRepository>()),
+    );
+    gh.lazySingleton<_i49.UpdateTaskUseCase>(
+      () => _i49.UpdateTaskUseCase(gh<_i282.HomeRepository>()),
     );
     gh.lazySingleton<_i1062.TaskRepository>(
       () => _i321.TaskRepositoryImpl(gh<_i763.TaskRemoteRepository>()),

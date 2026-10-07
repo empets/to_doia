@@ -2,21 +2,26 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:formz/formz.dart';
+import 'package:grace_church/core/constante/constantes.dart';
 import 'package:grace_church/core/extention/app_extention.dart';
 import 'package:grace_church/core/service_systeme/model/formz_model/text_formz.dart';
 import 'package:grace_church/feature/home/domaine/entities/request/home_request.dart';
 import 'package:grace_church/feature/home/domaine/usecase/create_task_usecase.dart';
+import 'package:grace_church/feature/home/domaine/usecase/update_task_from_usercase.dart';
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/event/create_tast_event.dart';
 
 import 'state/create_tast_state.dart';
 
 class FormTastBloc extends Bloc<CreateTaskEvent, CreateTastState> {
-  FormTastBloc({required this.createTaskUseCase})
-    : super(CreateTastState.initial()) {
+  FormTastBloc({
+    required this.createTaskUseCase,
+    required this.updateTaskUseCase,
+  }) : super(CreateTastState.initial()) {
     on<CreateTaskEvent>(createTast);
   }
 
   final CreateTaskUseCase createTaskUseCase;
+  final UpdateTaskUseCase updateTaskUseCase;
 
   bool _validate({
     TextFormz? title,
@@ -24,12 +29,14 @@ class FormTastBloc extends Bloc<CreateTaskEvent, CreateTastState> {
     TextFormz? time,
     TextFormz? content,
     TextFormz? eventStatus,
+    TextFormz? actionType,
   }) => Formz.validate([
     title ?? state.title,
     date ?? state.date,
     time ?? state.time,
     content ?? state.content,
     eventStatus ?? state.eventStatus,
+    actionType ?? state.actionType,
   ]);
 
   Future<void> createTast(
@@ -106,37 +113,82 @@ class FormTastBloc extends Bloc<CreateTaskEvent, CreateTastState> {
           state.copyWith(taskId: taskId, status: FormzSubmissionStatus.initial),
         );
         break;
+      case ActionTypeInfoCreateTaskEvent(:final actionType):
+        final input = TextFormz.dirty(actionType);
+        emit(
+          state.copyWith(
+            actionType: input,
+            status: FormzSubmissionStatus.initial,
+            isValide: _validate(actionType: input),
+          ),
+        );
+        break;
 
       case SubmitCreateTaskEvent():
         if (state.isValide) {
           emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
 
-          final response = await createTaskUseCase.call(
-            RequestCreateTask(
-              title: state.title.value,
-              date: state.date.value,
-              time: state.time.value,
-              recurring: state.recurring,
-              content: state.content.value,
-              status: state.eventStatus.value,
-            ),
-          );
+          if (state.actionType.value.contains(
+            TypeCreateTaskOrUpdate.CREATE_TASK,
+          )) {
+            final response = await createTaskUseCase.call(
+              RequestCreateTask(
+                title: state.title.value,
+                date: state.date.value,
+                time: state.time.value,
+                recurring: state.recurring,
+                content: state.content.value,
+                status: state.eventStatus.value,
+              ),
+            );
 
-          emit(
-            response.fold(
-              (failure) {
-                log(
-                  "SubmitCreateTaskEvent failure: ${failure.message.getOrEmpty()}",
-                );
-                return state.copyWith(
-                  errorMessage: failure.message.getOrEmpty(),
-                  status: FormzSubmissionStatus.failure,
-                );
-              },
-              (success) =>
-                  state.copyWith(status: FormzSubmissionStatus.success),
-            ),
-          );
+            emit(
+              response.fold(
+                (failure) {
+                  log(
+                    "SubmitCreateTaskEvent failure: ${failure.message.getOrEmpty()}",
+                  );
+                  return state.copyWith(
+                    errorMessage: failure.message.getOrEmpty(),
+                    status: FormzSubmissionStatus.failure,
+                  );
+                },
+                (success) =>
+                    state.copyWith(status: FormzSubmissionStatus.success),
+              ),
+            );
+          }
+
+          if (state.actionType.value.contains(
+            TypeCreateTaskOrUpdate.CREATE_TASK,
+          )) {
+            final response = await updateTaskUseCase.call(
+              RequestCreateTask(
+                title: state.title.value,
+                date: state.date.value,
+                time: state.time.value,
+                recurring: state.recurring,
+                content: state.content.value,
+                status: state.eventStatus.value,
+              ),
+            );
+
+            emit(
+              response.fold(
+                (failure) {
+                  log(
+                    "SubmitCreateTaskEvent failure: ${failure.message.getOrEmpty()}",
+                  );
+                  return state.copyWith(
+                    errorMessage: failure.message.getOrEmpty(),
+                    status: FormzSubmissionStatus.failure,
+                  );
+                },
+                (success) =>
+                    state.copyWith(status: FormzSubmissionStatus.success),
+              ),
+            );
+          }
         }
 
         break;
