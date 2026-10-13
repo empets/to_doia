@@ -14,61 +14,30 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TaskSectionEvent {
 
- String? get id;
-/// Create a copy of TaskSectionEvent
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$TaskSectionEventCopyWith<TaskSectionEvent> get copyWith => _$TaskSectionEventCopyWithImpl<TaskSectionEvent>(this as TaskSectionEvent, _$identity);
+
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskSectionEvent&&(identical(other.id, id) || other.id == id));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskSectionEvent);
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id);
+int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'TaskSectionEvent(id: $id)';
+  return 'TaskSectionEvent()';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $TaskSectionEventCopyWith<$Res>  {
-  factory $TaskSectionEventCopyWith(TaskSectionEvent value, $Res Function(TaskSectionEvent) _then) = _$TaskSectionEventCopyWithImpl;
-@useResult
-$Res call({
- String? id
-});
-
-
-
-
-}
-/// @nodoc
-class _$TaskSectionEventCopyWithImpl<$Res>
-    implements $TaskSectionEventCopyWith<$Res> {
-  _$TaskSectionEventCopyWithImpl(this._self, this._then);
-
-  final TaskSectionEvent _self;
-  final $Res Function(TaskSectionEvent) _then;
-
-/// Create a copy of TaskSectionEvent
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,}) {
-  return _then(_self.copyWith(
-id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String?,
-  ));
-}
-
+class $TaskSectionEventCopyWith<$Res>  {
+$TaskSectionEventCopyWith(TaskSectionEvent _, $Res Function(TaskSectionEvent) __);
 }
 
 
@@ -86,11 +55,12 @@ extension TaskSectionEventPatterns on TaskSectionEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( FetchTaskSectionEvent value)?  fetch,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( FetchTaskSectionEvent value)?  fetch,TResult Function( ChangeTaskSectionEvent value)?  changeTask,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case FetchTaskSectionEvent() when fetch != null:
-return fetch(_that);case _:
+return fetch(_that);case ChangeTaskSectionEvent() when changeTask != null:
+return changeTask(_that);case _:
   return orElse();
 
 }
@@ -108,11 +78,12 @@ return fetch(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( FetchTaskSectionEvent value)  fetch,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( FetchTaskSectionEvent value)  fetch,required TResult Function( ChangeTaskSectionEvent value)  changeTask,}){
 final _that = this;
 switch (_that) {
 case FetchTaskSectionEvent():
-return fetch(_that);case _:
+return fetch(_that);case ChangeTaskSectionEvent():
+return changeTask(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -129,11 +100,12 @@ return fetch(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( FetchTaskSectionEvent value)?  fetch,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( FetchTaskSectionEvent value)?  fetch,TResult? Function( ChangeTaskSectionEvent value)?  changeTask,}){
 final _that = this;
 switch (_that) {
 case FetchTaskSectionEvent() when fetch != null:
-return fetch(_that);case _:
+return fetch(_that);case ChangeTaskSectionEvent() when changeTask != null:
+return changeTask(_that);case _:
   return null;
 
 }
@@ -150,10 +122,11 @@ return fetch(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String? id)?  fetch,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String? id)?  fetch,TResult Function( TaskResponse? task)?  changeTask,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case FetchTaskSectionEvent() when fetch != null:
-return fetch(_that.id);case _:
+return fetch(_that.id);case ChangeTaskSectionEvent() when changeTask != null:
+return changeTask(_that.task);case _:
   return orElse();
 
 }
@@ -171,10 +144,11 @@ return fetch(_that.id);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String? id)  fetch,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String? id)  fetch,required TResult Function( TaskResponse? task)  changeTask,}) {final _that = this;
 switch (_that) {
 case FetchTaskSectionEvent():
-return fetch(_that.id);case _:
+return fetch(_that.id);case ChangeTaskSectionEvent():
+return changeTask(_that.task);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -191,10 +165,11 @@ return fetch(_that.id);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String? id)?  fetch,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String? id)?  fetch,TResult? Function( TaskResponse? task)?  changeTask,}) {final _that = this;
 switch (_that) {
 case FetchTaskSectionEvent() when fetch != null:
-return fetch(_that.id);case _:
+return fetch(_that.id);case ChangeTaskSectionEvent() when changeTask != null:
+return changeTask(_that.task);case _:
   return null;
 
 }
@@ -209,11 +184,11 @@ class FetchTaskSectionEvent implements TaskSectionEvent {
    FetchTaskSectionEvent(this.id);
   
 
-@override final  String? id;
+ final  String? id;
 
 /// Create a copy of TaskSectionEvent
 /// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
+@JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $FetchTaskSectionEventCopyWith<FetchTaskSectionEvent> get copyWith => _$FetchTaskSectionEventCopyWithImpl<FetchTaskSectionEvent>(this, _$identity);
 
@@ -239,7 +214,7 @@ String toString() {
 /// @nodoc
 abstract mixin class $FetchTaskSectionEventCopyWith<$Res> implements $TaskSectionEventCopyWith<$Res> {
   factory $FetchTaskSectionEventCopyWith(FetchTaskSectionEvent value, $Res Function(FetchTaskSectionEvent) _then) = _$FetchTaskSectionEventCopyWithImpl;
-@override @useResult
+@useResult
 $Res call({
  String? id
 });
@@ -258,7 +233,7 @@ class _$FetchTaskSectionEventCopyWithImpl<$Res>
 
 /// Create a copy of TaskSectionEvent
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,}) {
+@pragma('vm:prefer-inline') $Res call({Object? id = freezed,}) {
   return _then(FetchTaskSectionEvent(
 freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,
@@ -266,6 +241,84 @@ as String?,
 }
 
 
+}
+
+/// @nodoc
+
+
+class ChangeTaskSectionEvent implements TaskSectionEvent {
+   ChangeTaskSectionEvent(this.task);
+  
+
+ final  TaskResponse? task;
+
+/// Create a copy of TaskSectionEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ChangeTaskSectionEventCopyWith<ChangeTaskSectionEvent> get copyWith => _$ChangeTaskSectionEventCopyWithImpl<ChangeTaskSectionEvent>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChangeTaskSectionEvent&&(identical(other.task, task) || other.task == task));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,task);
+
+@override
+String toString() {
+  return 'TaskSectionEvent.changeTask(task: $task)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ChangeTaskSectionEventCopyWith<$Res> implements $TaskSectionEventCopyWith<$Res> {
+  factory $ChangeTaskSectionEventCopyWith(ChangeTaskSectionEvent value, $Res Function(ChangeTaskSectionEvent) _then) = _$ChangeTaskSectionEventCopyWithImpl;
+@useResult
+$Res call({
+ TaskResponse? task
+});
+
+
+$TaskResponseCopyWith<$Res>? get task;
+
+}
+/// @nodoc
+class _$ChangeTaskSectionEventCopyWithImpl<$Res>
+    implements $ChangeTaskSectionEventCopyWith<$Res> {
+  _$ChangeTaskSectionEventCopyWithImpl(this._self, this._then);
+
+  final ChangeTaskSectionEvent _self;
+  final $Res Function(ChangeTaskSectionEvent) _then;
+
+/// Create a copy of TaskSectionEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? task = freezed,}) {
+  return _then(ChangeTaskSectionEvent(
+freezed == task ? _self.task : task // ignore: cast_nullable_to_non_nullable
+as TaskResponse?,
+  ));
+}
+
+/// Create a copy of TaskSectionEvent
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$TaskResponseCopyWith<$Res>? get task {
+    if (_self.task == null) {
+    return null;
+  }
+
+  return $TaskResponseCopyWith<$Res>(_self.task!, (value) {
+    return _then(_self.copyWith(task: value));
+  });
+}
 }
 
 // dart format on

@@ -306,9 +306,23 @@ class _TasksScreenState extends State<TasksScreen> {
                     Expanded(
                       child: stateTaskList.data.isEmpty
                           ? EmptyTaskState(onTapMic: widget.onMicTap)
-                          : ListView(
-                              padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-                              children: _buildSections(stateTaskList.data),
+                          : BlocBuilder<
+                              GetListBloc,
+                              ApiState<List<TaskResponse>>
+                            >(
+                              builder: (context, state) {
+                                
+
+                                return ListView(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    20,
+                                    8,
+                                    20,
+                                    24,
+                                  ),
+                                  children: _buildSections(stateTaskList.data),
+                                );
+                              },
                             ),
                     ),
                   ],

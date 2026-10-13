@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CreateTastState {
 
- TextFormz get title; TextFormz get date; TextFormz get time; bool get recurring; TextFormz get content; TextFormz get eventStatus; String get taskId; TextFormz get actionType; FormzSubmissionStatus get status; String get errorMessage; bool get isValide;
+ TextFormz get title; TextFormz get date; TextFormz get time; bool get recurring; TextFormz get content; TextFormz get eventStatus; TextFormz get taskId; TextFormz get actionType; FormzSubmissionStatus get status; String get errorMessage; bool get isValide;
 /// Create a copy of CreateTastState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -45,7 +45,7 @@ abstract mixin class $CreateTastStateCopyWith<$Res>  {
   factory $CreateTastStateCopyWith(CreateTastState value, $Res Function(CreateTastState) _then) = _$CreateTastStateCopyWithImpl;
 @useResult
 $Res call({
- TextFormz title, TextFormz date, TextFormz time, bool recurring, TextFormz content, TextFormz eventStatus, String taskId, TextFormz actionType, FormzSubmissionStatus status, String errorMessage, bool isValide
+ TextFormz title, TextFormz date, TextFormz time, bool recurring, TextFormz content, TextFormz eventStatus, TextFormz taskId, TextFormz actionType, FormzSubmissionStatus status, String errorMessage, bool isValide
 });
 
 
@@ -71,7 +71,7 @@ as TextFormz,recurring: null == recurring ? _self.recurring : recurring // ignor
 as bool,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as TextFormz,eventStatus: null == eventStatus ? _self.eventStatus : eventStatus // ignore: cast_nullable_to_non_nullable
 as TextFormz,taskId: null == taskId ? _self.taskId : taskId // ignore: cast_nullable_to_non_nullable
-as String,actionType: null == actionType ? _self.actionType : actionType // ignore: cast_nullable_to_non_nullable
+as TextFormz,actionType: null == actionType ? _self.actionType : actionType // ignore: cast_nullable_to_non_nullable
 as TextFormz,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as FormzSubmissionStatus,errorMessage: null == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String,isValide: null == isValide ? _self.isValide : isValide // ignore: cast_nullable_to_non_nullable
@@ -160,7 +160,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( TextFormz title,  TextFormz date,  TextFormz time,  bool recurring,  TextFormz content,  TextFormz eventStatus,  String taskId,  TextFormz actionType,  FormzSubmissionStatus status,  String errorMessage,  bool isValide)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( TextFormz title,  TextFormz date,  TextFormz time,  bool recurring,  TextFormz content,  TextFormz eventStatus,  TextFormz taskId,  TextFormz actionType,  FormzSubmissionStatus status,  String errorMessage,  bool isValide)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CreateTastState() when $default != null:
 return $default(_that.title,_that.date,_that.time,_that.recurring,_that.content,_that.eventStatus,_that.taskId,_that.actionType,_that.status,_that.errorMessage,_that.isValide);case _:
@@ -181,7 +181,7 @@ return $default(_that.title,_that.date,_that.time,_that.recurring,_that.content,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( TextFormz title,  TextFormz date,  TextFormz time,  bool recurring,  TextFormz content,  TextFormz eventStatus,  String taskId,  TextFormz actionType,  FormzSubmissionStatus status,  String errorMessage,  bool isValide)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( TextFormz title,  TextFormz date,  TextFormz time,  bool recurring,  TextFormz content,  TextFormz eventStatus,  TextFormz taskId,  TextFormz actionType,  FormzSubmissionStatus status,  String errorMessage,  bool isValide)  $default,) {final _that = this;
 switch (_that) {
 case _CreateTastState():
 return $default(_that.title,_that.date,_that.time,_that.recurring,_that.content,_that.eventStatus,_that.taskId,_that.actionType,_that.status,_that.errorMessage,_that.isValide);case _:
@@ -201,7 +201,7 @@ return $default(_that.title,_that.date,_that.time,_that.recurring,_that.content,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( TextFormz title,  TextFormz date,  TextFormz time,  bool recurring,  TextFormz content,  TextFormz eventStatus,  String taskId,  TextFormz actionType,  FormzSubmissionStatus status,  String errorMessage,  bool isValide)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( TextFormz title,  TextFormz date,  TextFormz time,  bool recurring,  TextFormz content,  TextFormz eventStatus,  TextFormz taskId,  TextFormz actionType,  FormzSubmissionStatus status,  String errorMessage,  bool isValide)?  $default,) {final _that = this;
 switch (_that) {
 case _CreateTastState() when $default != null:
 return $default(_that.title,_that.date,_that.time,_that.recurring,_that.content,_that.eventStatus,_that.taskId,_that.actionType,_that.status,_that.errorMessage,_that.isValide);case _:
@@ -225,7 +225,7 @@ class _CreateTastState implements CreateTastState {
 @override final  bool recurring;
 @override final  TextFormz content;
 @override final  TextFormz eventStatus;
-@override final  String taskId;
+@override final  TextFormz taskId;
 @override final  TextFormz actionType;
 @override final  FormzSubmissionStatus status;
 @override final  String errorMessage;
@@ -261,7 +261,7 @@ abstract mixin class _$CreateTastStateCopyWith<$Res> implements $CreateTastState
   factory _$CreateTastStateCopyWith(_CreateTastState value, $Res Function(_CreateTastState) _then) = __$CreateTastStateCopyWithImpl;
 @override @useResult
 $Res call({
- TextFormz title, TextFormz date, TextFormz time, bool recurring, TextFormz content, TextFormz eventStatus, String taskId, TextFormz actionType, FormzSubmissionStatus status, String errorMessage, bool isValide
+ TextFormz title, TextFormz date, TextFormz time, bool recurring, TextFormz content, TextFormz eventStatus, TextFormz taskId, TextFormz actionType, FormzSubmissionStatus status, String errorMessage, bool isValide
 });
 
 
@@ -287,7 +287,7 @@ as TextFormz,recurring: null == recurring ? _self.recurring : recurring // ignor
 as bool,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as TextFormz,eventStatus: null == eventStatus ? _self.eventStatus : eventStatus // ignore: cast_nullable_to_non_nullable
 as TextFormz,taskId: null == taskId ? _self.taskId : taskId // ignore: cast_nullable_to_non_nullable
-as String,actionType: null == actionType ? _self.actionType : actionType // ignore: cast_nullable_to_non_nullable
+as TextFormz,actionType: null == actionType ? _self.actionType : actionType // ignore: cast_nullable_to_non_nullable
 as TextFormz,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as FormzSubmissionStatus,errorMessage: null == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String,isValide: null == isValide ? _self.isValide : isValide // ignore: cast_nullable_to_non_nullable

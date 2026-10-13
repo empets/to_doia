@@ -20,9 +20,15 @@ import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/sta
 import 'package:grace_church/feature/taches/presentation/pages/widget/empty_data.dart';
 
 class ManualCreateScreen extends StatefulWidget {
-  const ManualCreateScreen({super.key, this.task, this.actionType = ''});
+  const ManualCreateScreen({
+    super.key,
+    this.task,
+    this.actionType = '',
+    this.isPope = false,
+  });
   final TaskResponse? task;
   final String actionType;
+  final bool isPope;
 
   @override
   State<ManualCreateScreen> createState() => _ManualCreateScreenState();
@@ -130,7 +136,9 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
       context.read<FormTastBloc>().add(
         CreateTaskEvent.changeTime(_controllerTime.text),
       );
-      context.read<FormTastBloc>().add(CreateTaskEvent.changeTaskId("1"));
+      context.read<FormTastBloc>().add(
+        CreateTaskEvent.changeTaskId(widget.task?.taskId ?? ""),
+      );
       context.read<FormTastBloc>().add(
         CreateTaskEvent.changeStatus(_controllerStatus.text),
       );
@@ -202,9 +210,11 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                 // Conseil vocal
                 GestureDetector(
                   onTap: () {
-                    Navigator.of(
-                      context,
-                    ).push(fadeRoute( VoiceListeningScreen(actionType: widget.actionType)));
+                    Navigator.of(context).push(
+                      fadeRoute(
+                        VoiceListeningScreen(actionType: widget.actionType),
+                      ),
+                    );
                   },
                   child: Container(
                     padding: const EdgeInsets.all(14),
@@ -426,7 +436,23 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                             ),
                           );
                         }
+                        if (widget.actionType.contains(
+                          TypeCreateTaskOrUpdate.UPDATE_TASK,
+                        )) {
+                          Navigator.pop(
+                            context,
+                            widget.task!.copyWith(
+                              title: state.title.value,
+                              date: state.date.value,
+                              time: state.time.value,
+                              recurring: state.recurring,
+                              content: state.content.value,
+                              taskId: widget.task?.taskId ?? '',
+                            ),
+                          );
+                        }
                       }
+
                       if (state.status.isFailure) {
                         AppAlert.showError(context, state.errorMessage);
                       }

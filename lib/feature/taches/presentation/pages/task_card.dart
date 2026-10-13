@@ -1,5 +1,20 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:grace_church/core/constante/constantes.dart';
+import 'package:grace_church/core/extention/app_extention.dart';
+import 'package:grace_church/core/injetction/injection_container.dart';
+import 'package:grace_church/core/service_systeme/model/api/api_state.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
+import 'package:grace_church/feature/home/domaine/usecase/create_task_usecase.dart';
+import 'package:grace_church/feature/home/domaine/usecase/update_task_from_usercase.dart';
+import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/create_or_update_task_bloc.dart';
+import 'package:grace_church/feature/taches/presentation/bloc/get_task/event/task_event.dart';
+import 'package:grace_church/feature/taches/presentation/bloc/get_task/get_list_bloc.dart';
+import 'package:grace_church/feature/taches/presentation/pages/manual_create_screen.dart';
 
 class TaskCard extends StatefulWidget {
   final TaskResponse task;
@@ -49,7 +64,7 @@ class _TaskCardState extends State<TaskCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Checkbox
                 GestureDetector(
@@ -64,11 +79,11 @@ class _TaskCardState extends State<TaskCard> {
                           ? _primary
                           : Colors.transparent,
                       border: Border.all(
-                        color: false ? _primary : _primary.withOpacity(0.5),
+                        color: _primary.withOpacity(0.5),
                         width: 2,
                       ),
                     ),
-                    child: true
+                    child: t.status.contains("TERMINER")
                         ? const Icon(
                             Icons.check_rounded,
                             color: Colors.white,
@@ -77,32 +92,52 @@ class _TaskCardState extends State<TaskCard> {
                         : null,
                   ),
                 ),
+
                 const SizedBox(width: 12),
 
-                // Titre
+                // Textes : prennent l'espace disponible et passent à la ligne
                 Expanded(
-                  child: Text(
-                    t.title,
-                    style: TextStyle(
-                      color: true
-                          ? const Color(0xFF6B7280)
-                          : const Color(0xFF1A1A2E),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      decoration: true
-                          ? TextDecoration.lineThrough
-                          : TextDecoration.none,
-                      decorationColor: const Color(0xFF6B7280),
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        t.title,
+                        softWrap: true,
+                        style: GoogleFonts.roboto(
+                          color: const Color(0xFF6B7280),
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w600,
+                          decoration: t.status.contains("ANNULER")
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none,
+                          decorationColor: const Color(0xFF6B7280),
+                        ),
+                      ),
+                      Text(
+                        t.content,
+                        softWrap: true,
+                        style: GoogleFonts.roboto(
+                          color: const Color(0xFF6B7280),
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w500,
+                          decoration: t.status.contains("ANNULER")
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none,
+                          decorationColor: const Color(0xFF6B7280),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+
+                const SizedBox(width: 8),
 
                 // Menu "···"
                 GestureDetector(
                   onTap: () => setState(() => _menuOpen = !_menuOpen),
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    child: const Icon(
+                  child: const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Icon(
                       Icons.more_horiz_rounded,
                       color: Color(0xFF6B7280),
                       size: 18,
@@ -118,19 +153,53 @@ class _TaskCardState extends State<TaskCard> {
               child: Wrap(
                 spacing: 8,
                 children: [
-                  _Tag(icon: Icons.calendar_today_rounded, text: t.date),
-                  _Tag(icon: Icons.access_time_rounded, text: t.time),
-                  if (t.recurring)
-                    _Tag(
-                      icon: Icons.repeat_rounded,
-                      text: "Répétition",
-                      color: _primary,
+                  _Tag(icon: Icons.calendar_today_rounded, text: ""),
+                  Expanded(
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          if (t.date.isNotEmpty)
+                            TextSpan(
+                              text: formatDateString(t.date),
+                              style: GoogleFonts.roboto(
+                                color: Colors.grey.shade600,
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.w600,
+                                decoration: t.status.contains("ANNULER")
+                                    ? TextDecoration.lineThrough
+                                    : TextDecoration.none,
+                              ),
+                            ),
+                          if (t.time.isNotEmpty)
+                            TextSpan(
+                              text: ' à ${t.time}',
+                              style: GoogleFonts.roboto(
+                                color: Colors.grey.shade600,
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
+                  ),
+                  // if (t.recurring)
+                  //   _Tag(
+                  //     icon: Icons.repeat_rounded,
+                  //     text: "Répétition",
+                  //     color: _primary,
+                  //   ),
                   if (t.status.contains("TERMINER"))
                     _Tag(
                       icon: Icons.check_circle_rounded,
                       text: 'Terminée',
                       color: const Color(0xFF10B981),
+                    ),
+                  if (t.status.contains("ENCOURS"))
+                    _Tag(
+                      icon: Icons.access_time_rounded,
+                      text: 'En cours',
+                      color: const Color(0xFFF59E0B),
                     ),
                 ],
               ),
@@ -168,11 +237,43 @@ class _TaskCardState extends State<TaskCard> {
                         },
                       ),
                     const Divider(height: 1, color: Color(0xFFE5E7EB)),
-                    _MenuItem(
-                      icon: Icons.edit_outlined,
-                      color: const Color(0xFFF59E0B),
-                      label: 'Modifier',
-                      onTap: () => setState(() => _menuOpen = false),
+
+                    BlocBuilder<GetListBloc, ApiState<List<TaskResponse>>>(
+                      builder: (context, state) {
+                        return _MenuItem(
+                          icon: Icons.edit_outlined,
+                          color: const Color(0xFFF59E0B),
+                          label: 'Modifier',
+                          onTap: () async {
+                            //
+                            final result = await Navigator.of(context)
+                                .push<TaskResponse>(
+                                  MaterialPageRoute(
+                                    builder: (context) => BlocProvider(
+                                      create: (context) => FormTastBloc(
+                                        createTaskUseCase:
+                                            getIt<CreateTaskUseCase>(),
+                                        updateTaskUseCase:
+                                            getIt<UpdateTaskUseCase>(),
+                                      ),
+                                      child: ManualCreateScreen(
+                                        task: widget.task,
+                                        actionType:
+                                            TypeCreateTaskOrUpdate.UPDATE_TASK,
+                                        isPope: true,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                            if (result != null) {
+                              context.read<GetListBloc>().add(
+                                TaskSectionEvent.changeTask(result),
+                              );
+                              setState(() => _menuOpen = false);
+                            }
+                          },
+                        );
+                      },
                     ),
                     const Divider(height: 1, color: Color(0xFFE5E7EB)),
                     _MenuItem(
@@ -235,13 +336,13 @@ class _MenuItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
       child: Row(
         children: [
-          Icon(icon, color: color, size: 18),
+          Icon(icon, color: color, size: 13.h),
           const SizedBox(width: 12),
           Text(
             label,
-            style: TextStyle(
+            style: GoogleFonts.roboto(
               color: color,
-              fontSize: 14,
+              fontSize: 11.sp,
               fontWeight: FontWeight.w600,
             ),
           ),

@@ -44,11 +44,37 @@ class GetListBloc extends Bloc<TaskSectionEvent, ApiState<List<TaskResponse>>> {
               emit(ApiState<List<TaskResponse>>.failed(l.message));
             },
             (r) {
-              log("new tacke ==> ${[r]}");
               emit(ApiState<List<TaskResponse>>.success(r));
             },
           );
         }
+      case ChangeTaskSectionEvent(:final task):
+        print("x-------->>> ${task?.taskId}");
+        if (state is SuccessState<List<TaskResponse>>) {
+          if (task != null) {
+            final updatedTasks =
+                (state as SuccessState<List<TaskResponse>>).data;
+
+            final newTasks = updatedTasks.map((t) {
+              if (t.taskId.trim() == task.taskId.trim()) {
+                return t.copyWith(
+                  status: task.status,
+                  title: task.title,
+                  date: task.date,
+                  time: task.time,
+                  recurring: task.recurring,
+                  content: task.content,
+                );
+              }
+
+              return t;
+            }).toList();
+
+            emit(ApiState<List<TaskResponse>>.success(newTasks));
+          }
+        }
     }
   }
 }
+
+

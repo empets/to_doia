@@ -109,8 +109,9 @@ class FormTastBloc extends Bloc<CreateTaskEvent, CreateTastState> {
         break;
 
       case ChangeTaskIdCreateTaskEvent(:final taskId):
+        final input = TextFormz.dirty(taskId);
         emit(
-          state.copyWith(taskId: taskId, status: FormzSubmissionStatus.initial),
+          state.copyWith(taskId: input, status: FormzSubmissionStatus.initial),
         );
         break;
       case ActionTypeInfoCreateTaskEvent(:final actionType):
@@ -160,8 +161,9 @@ class FormTastBloc extends Bloc<CreateTaskEvent, CreateTastState> {
           }
 
           if (state.actionType.value.contains(
-            TypeCreateTaskOrUpdate.CREATE_TASK,
+            TypeCreateTaskOrUpdate.UPDATE_TASK,
           )) {
+            log("SubmitCreateTaskEvent failure: ${state.title.value}");
             final response = await updateTaskUseCase.call(
               RequestCreateTask(
                 title: state.title.value,
@@ -170,15 +172,13 @@ class FormTastBloc extends Bloc<CreateTaskEvent, CreateTastState> {
                 recurring: state.recurring,
                 content: state.content.value,
                 status: state.eventStatus.value,
+                taskId: state.taskId.value,
               ),
             );
 
             emit(
               response.fold(
                 (failure) {
-                  log(
-                    "SubmitCreateTaskEvent failure: ${failure.message.getOrEmpty()}",
-                  );
                   return state.copyWith(
                     errorMessage: failure.message.getOrEmpty(),
                     status: FormzSubmissionStatus.failure,

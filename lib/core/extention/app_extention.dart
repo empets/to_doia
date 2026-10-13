@@ -978,6 +978,7 @@ String formatNotificationTimer(String createdAtString) {
   }
 }
 
+// 28/10/2026
 String formatDate(DateTime date) {
   const jours = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
   const mois = [
@@ -998,6 +999,29 @@ String formatDate(DateTime date) {
   final jour = jours[date.weekday - 1];
   final numero = date.day.toString().padLeft(2, '0');
   return '$jour $numero ${mois[date.month - 1]}';
+}
+
+String formatDateString(String dateString) {
+  try {
+    final parts = dateString.trim().split('/');
+
+    if (parts.length != 3) return dateString;
+
+    final jour = int.parse(parts[0]);
+    final mois = int.parse(parts[1]);
+    final annee = int.parse(parts[2]);
+
+    final date = DateTime(annee, mois, jour);
+
+    // Vérifie que la date existe réellement.
+    if (date.day != jour || date.month != mois || date.year != annee) {
+      return dateString;
+    }
+
+    return formatDate(date);
+  } catch (_) {
+    return dateString;
+  }
 }
 
 /// true si aujourd'hui est le jour de [date] (format 'yyyy-MM-dd') ou après.

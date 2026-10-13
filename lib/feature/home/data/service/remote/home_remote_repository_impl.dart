@@ -73,6 +73,7 @@ class HomeRemoteRepositoryImpl implements HomeRemoteRepository {
 
   @override
   Future<FirebaseResult<String?>> updateTask(RequestCreateTask params) async {
+    log("Ref ---------------->>: ${params.taskId}");
     try {
       final userIdExist = await db
           .child('task')

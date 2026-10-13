@@ -17,7 +17,11 @@ import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/sta
 import 'package:grace_church/feature/taches/presentation/pages/manual_create_screen.dart';
 
 class ConfirmationScreen extends StatelessWidget {
-  const ConfirmationScreen({super.key, required this.task, required this.actionType});
+  const ConfirmationScreen({
+    super.key,
+    required this.task,
+    required this.actionType,
+  });
 
   final TaskResponse task;
   final String actionType;
@@ -114,7 +118,7 @@ class ConfirmationScreen extends StatelessWidget {
                             children: [
                               if (task.date.isNotEmpty)
                                 TextSpan(
-                                  text: formatDate(DateTime.parse(task.date)),
+                                  text: formatDateString(task.date),
                                   style: GoogleFonts.roboto(
                                     color: Colors.grey.shade600,
                                     fontSize: 12.sp,
@@ -202,10 +206,6 @@ class ConfirmationScreen extends StatelessWidget {
                     child: BlocConsumer<FormTastBloc, CreateTastState>(
                       listener: (context, state) {
                         if (state.status.isSuccess) {
-
-                          
-
-
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -260,7 +260,7 @@ class ConfirmationScreen extends StatelessWidget {
                   ),
                 ],
               ),
-               SizedBox(height: 10.h),
+              SizedBox(height: 10.h),
 
               SizedBox(
                 width: double.infinity,
