@@ -49,7 +49,6 @@ class GetListBloc extends Bloc<TaskSectionEvent, ApiState<List<TaskResponse>>> {
           );
         }
       case ChangeTaskSectionEvent(:final task):
-        print("x-------->>> ${task?.taskId}");
         if (state is SuccessState<List<TaskResponse>>) {
           if (task != null) {
             final updatedTasks =
@@ -73,6 +72,44 @@ class GetListBloc extends Bloc<TaskSectionEvent, ApiState<List<TaskResponse>>> {
             emit(ApiState<List<TaskResponse>>.success(newTasks));
           }
         }
+
+        case ChangeTaskStatusSectionEvent(:final task, :final status):
+          if (state is SuccessState<List<TaskResponse>>) {
+            if (task != null) {
+              final updatedTasks =
+                  (state as SuccessState<List<TaskResponse>>).data;
+
+              final newTasks = updatedTasks.map((t) {
+                if (t.taskId.trim() == task.taskId.trim()) {
+                  return t.copyWith(
+                  status: status,
+                  title: task.title,
+                  date: task.date,
+                  time: task.time,
+                  recurring: task.recurring,
+                  content: task.content,
+
+                  );
+                }
+                return t;
+              }).toList();
+
+              emit(ApiState<List<TaskResponse>>.success(newTasks));
+            }
+          }
+       case SearchTaskSectionEvent(:final search):
+            if (state is SuccessState<List<TaskResponse>>) {
+            if (search != null) {
+              final updatedTasks =
+                  (state as SuccessState<List<TaskResponse>>).data;
+
+              final newTasks = updatedTasks.where((t) {
+                return t.title.toLowerCase().contains(search.toLowerCase()) || t.content.toLowerCase().contains(search.toLowerCase());
+              }).toList();
+
+              emit(ApiState<List<TaskResponse>>.success(newTasks.isNotEmpty ? newTasks : <TaskResponse>[],refresh: true));
+            }
+          }
     }
   }
 }

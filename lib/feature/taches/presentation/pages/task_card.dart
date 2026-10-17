@@ -43,255 +43,368 @@ class _TaskCardState extends State<TaskCard> {
   Widget build(BuildContext context) {
     final t = widget.task;
 
-    return GestureDetector(
-      onTap: () => setState(() => _menuOpen = false),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: false ? null : Border.all(color: _primary.withOpacity(0.08)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Checkbox
-                GestureDetector(
-                  onTap: widget.onToggle,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    width: 22,
-                    height: 22,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: t.status.contains("TERMINER")
-                          ? _primary
-                          : Colors.transparent,
-                      border: Border.all(
-                        color: _primary.withOpacity(0.5),
-                        width: 2,
-                      ),
-                    ),
-                    child: t.status.contains("TERMINER")
-                        ? const Icon(
-                            Icons.check_rounded,
-                            color: Colors.white,
-                            size: 13,
-                          )
-                        : null,
+    return t.status.contains(TypeTaskStatus.SUPPRIMER)
+        ? const SizedBox()
+        : GestureDetector(
+            onTap: () => setState(() => _menuOpen = false),
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: false
+                    ? null
+                    : Border.all(color: _primary.withOpacity(0.08)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
                   ),
-                ),
-
-                const SizedBox(width: 12),
-
-                // Textes : prennent l'espace disponible et passent à la ligne
-                Expanded(
-                  child: Column(
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        t.title,
-                        softWrap: true,
-                        style: GoogleFonts.roboto(
-                          color: const Color(0xFF6B7280),
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.w600,
-                          decoration: t.status.contains("ANNULER")
-                              ? TextDecoration.lineThrough
-                              : TextDecoration.none,
-                          decorationColor: const Color(0xFF6B7280),
+                      // Checkbox
+                      BlocBuilder<GetListBloc, ApiState<List<TaskResponse>>>(
+                        builder: (context, state) {
+                          return GestureDetector(
+                            onTap: t.status.contains(TypeTaskStatus.TERMINER) ? () {
+                                context.read<GetListBloc>().add(
+                                        TaskSectionEvent.changeTaskStatus(
+                                          task: widget.task,
+                                          status: TypeTaskStatus.ENCOURS,
+                                        ),
+                                      );
+                            } :((){
+                               context.read<GetListBloc>().add(
+                                        TaskSectionEvent.changeTaskStatus(
+                                          task: widget.task,
+                                          status: TypeTaskStatus.TERMINER,
+                                        ),
+                                      ); 
+
+                            }),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              width: 22,
+                              height: 22,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: t.status.contains("TERMINER")
+                                    ? _primary
+                                    : Colors.transparent,
+                                border: Border.all(
+                                  color: _primary.withOpacity(0.5),
+                                  width: 2,
+                                ),
+                              ),
+                              child: t.status.contains("TERMINER")
+                                  ? const Icon(
+                                      Icons.check_rounded,
+                                      color: Colors.white,
+                                      size: 13,
+                                    )
+                                  : null,
+                            ),
+                          );
+                        },
+                      ),
+
+                      const SizedBox(width: 12),
+
+                      // Textes : prennent l'espace disponible et passent à la ligne
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              t.title,
+                              softWrap: true,
+                              style: GoogleFonts.roboto(
+                                color: const Color(0xFF6B7280),
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.w600,
+                                decoration: t.status.contains(TypeTaskStatus.ANNULER)
+                                    ? TextDecoration.lineThrough
+                                    : TextDecoration.none,
+                                decorationColor: const Color(0xFF6B7280),
+                              ),
+                            ),
+                            Text(
+                              t.content,
+                              softWrap: true,
+                              style: GoogleFonts.roboto(
+                                color: const Color(0xFF6B7280),
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w500,
+                                decoration: t.status.contains(TypeTaskStatus.ANNULER)
+                                    ? TextDecoration.lineThrough
+                                    : TextDecoration.none,
+                                decorationColor: const Color(0xFF6B7280),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      Text(
-                        t.content,
-                        softWrap: true,
-                        style: GoogleFonts.roboto(
-                          color: const Color(0xFF6B7280),
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.w500,
-                          decoration: t.status.contains("ANNULER")
-                              ? TextDecoration.lineThrough
-                              : TextDecoration.none,
-                          decorationColor: const Color(0xFF6B7280),
+
+                      const SizedBox(width: 8),
+
+                      // Menu "···"
+                      GestureDetector(
+                        onTap: () => setState(() => _menuOpen = !_menuOpen),
+                        child: const Padding(
+                          padding: EdgeInsets.all(4),
+                          child: Icon(
+                            Icons.more_horiz_rounded,
+                            color: Color(0xFF6B7280),
+                            size: 18,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ),
 
-                const SizedBox(width: 8),
+                  // Méta (date + heure + récurrence)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 34, top: 6),
+                    child: Wrap(
+                      spacing: 8,
+                      children: [
+                        Row(
+                          children: [
+                            _Tag(icon: Icons.calendar_today_rounded, text: ""),
+                            Expanded(
+                              child: RichText(
+                                text: TextSpan(
+                                  children: [
+                                    if (t.date.isNotEmpty)
+                                      TextSpan(
+                                        text: formatDateString(t.date),
+                                        style: GoogleFonts.roboto(
+                                          color: Colors.grey.shade600,
+                                          fontSize: 11.sp,
+                                          fontWeight: FontWeight.w600,
+                                          decoration:
+                                              t.status.contains("ANNULER")
+                                              ? TextDecoration.lineThrough
+                                              : TextDecoration.none,
+                                        ),
+                                      ),
+                                    if (t.time.isNotEmpty)
+                                      TextSpan(
+                                        text: ' à ${t.time}',
+                                        style: GoogleFonts.roboto(
+                                          color: Colors.grey.shade600,
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            if (t.status.contains("TERMINER"))
+                              _Tag(
+                                icon: Icons.check_circle_rounded,
+                                text: 'Terminée',
+                                color: const Color(0xFF10B981),
+                              ),
+                            if (widget.task.status.contains(
+                              TypeTaskStatus.ENCOURS,
+                            ))
+                              _Tag(
+                                icon: Icons.access_time_rounded,
+                                text:
+                                    widget.task.status.contains(
+                                      TypeTaskStatus.ENCOURS,
+                                    )
+                                    ? 'En cours'
+                                    : '',
+                                color: const Color(0xFFF59E0B),
+                              ),
+                          ],
+                        ),
 
-                // Menu "···"
-                GestureDetector(
-                  onTap: () => setState(() => _menuOpen = !_menuOpen),
-                  child: const Padding(
-                    padding: EdgeInsets.all(4),
-                    child: Icon(
-                      Icons.more_horiz_rounded,
-                      color: Color(0xFF6B7280),
-                      size: 18,
+                        // if (t.recurring)
+                        //   _Tag(
+                        //     icon: Icons.repeat_rounded,
+                        //     text: "Répétition",
+                        //     color: _primary,
+                        //   ),
+                      ],
                     ),
                   ),
-                ),
-              ],
-            ),
 
-            // Méta (date + heure + récurrence)
-            Padding(
-              padding: const EdgeInsets.only(left: 34, top: 6),
-              child: Wrap(
-                spacing: 8,
-                children: [
-                  _Tag(icon: Icons.calendar_today_rounded, text: ""),
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
+                  // Menu contextuel
+                  if (_menuOpen)
+                    Container(
+                      margin: const EdgeInsets.only(top: 12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF4F6FB),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: const Color(0xFFE5E7EB)),
+                      ),
+                      child: Column(
                         children: [
-                          if (t.date.isNotEmpty)
-                            TextSpan(
-                              text: formatDateString(t.date),
-                              style: GoogleFonts.roboto(
-                                color: Colors.grey.shade600,
-                                fontSize: 11.sp,
-                                fontWeight: FontWeight.w600,
-                                decoration: t.status.contains("ANNULER")
-                                    ? TextDecoration.lineThrough
-                                    : TextDecoration.none,
+                          if (true)
+                            if (!widget.task.status.contains(
+                              TypeTaskStatus.TERMINER,
+                            )) ...[
+                              BlocBuilder<
+                                GetListBloc,
+                                ApiState<List<TaskResponse>>
+                              >(
+                                builder: (context, state) {
+                                  return _MenuItem(
+                                    icon: Icons.check_circle_outline_rounded,
+                                    color: const Color(0xFF10B981),
+                                    label: 'Marquer comme terminée',
+                                    onTap: () {
+                                      context.read<GetListBloc>().add(
+                                        TaskSectionEvent.changeTaskStatus(
+                                          task: widget.task,
+                                          status: TypeTaskStatus.TERMINER,
+                                        ),
+                                      );
+                                      setState(() => _menuOpen = false);
+                                      widget.onToggle();
+                                    },
+                                  );
+                                },
                               ),
-                            ),
-                          if (t.time.isNotEmpty)
-                            TextSpan(
-                              text: ' à ${t.time}',
-                              style: GoogleFonts.roboto(
-                                color: Colors.grey.shade600,
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w600,
+                              // if (true)
+                              //   _MenuItem(
+                              //     icon: Icons.refresh_rounded,
+                              //     color: _primary,
+                              //     label: 'Réactiver la tâche',
+                              //     onTap: () {
+                              //       setState(() => _menuOpen = false);
+                              //       // widget.onRestart();
+                              //     },
+                              //   ),
+                              const Divider(
+                                height: 1,
+                                color: Color(0xFFE5E7EB),
                               ),
-                            ),
+                            ],
+
+                                if (!widget.task.status.contains(
+                              TypeTaskStatus.ANNULER,
+                            )) ...[
+                              BlocBuilder<
+                                GetListBloc,
+                                ApiState<List<TaskResponse>>
+                              >(
+                                builder: (context, state) {
+                                  return _MenuItem(
+                                    icon: Icons.close,
+                                    color: Colors.grey,  
+                                    label: 'Annuler',
+                                    onTap: () {
+                                      context.read<GetListBloc>().add(
+                                        TaskSectionEvent.changeTaskStatus(
+                                          task: widget.task,
+                                          status: TypeTaskStatus.ANNULER,
+                                        ),
+                                      );
+                                      setState(() => _menuOpen = false);
+                                      widget.onToggle();
+                                    },
+                                  );
+                                },
+                              ),
+                              // if (true)
+                              //   _MenuItem(
+                              //     icon: Icons.refresh_rounded,
+                              //     color: _primary,
+                              //     label: 'Réactiver la tâche',
+                              //     onTap: () {
+                              //       setState(() => _menuOpen = false);
+                              //       // widget.onRestart();
+                              //     },
+                              //   ),
+                              const Divider(
+                                height: 1,
+                                color: Color(0xFFE5E7EB),
+                              ),
+                            ],
+
+                          BlocBuilder<
+                            GetListBloc,
+                            ApiState<List<TaskResponse>>
+                          >(
+                            builder: (context, state) {
+                              return _MenuItem(
+                                icon: Icons.edit_outlined,
+                                color: const Color(0xFFF59E0B),
+                                label: 'Modifier',
+                                onTap: () async {
+                                  //
+                                  final result = await Navigator.of(context)
+                                      .push<TaskResponse>(
+                                        MaterialPageRoute(
+                                          builder: (context) => BlocProvider(
+                                            create: (context) => FormTastBloc(
+                                              createTaskUseCase:
+                                                  getIt<CreateTaskUseCase>(),
+                                              updateTaskUseCase:
+                                                  getIt<UpdateTaskUseCase>(),
+                                            ),
+                                            child: ManualCreateScreen(
+                                              task: widget.task,
+                                              actionType: TypeCreateTaskOrUpdate
+                                                  .UPDATE_TASK,
+                                              isPope: true,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                  if (result != null) {
+                                    context.read<GetListBloc>().add(
+                                      TaskSectionEvent.changeTask(result),
+                                    );
+                                    setState(() => _menuOpen = false);
+                                  }
+                                },
+                              );
+                            },
+                          ),
+                          const Divider(height: 1, color: Color(0xFFE5E7EB)),
+                          BlocBuilder<
+                            GetListBloc,
+                            ApiState<List<TaskResponse>>
+                          >(
+                            builder: (context, state) {
+                              return _MenuItem(
+                                icon: Icons.delete_outline_rounded,
+                                color: const Color(0xFFEF4444),
+                                label: 'Supprimer',
+                                onTap: () {
+                                  context.read<GetListBloc>().add(
+                                    TaskSectionEvent.changeTaskStatus(
+                                      task: widget.task,
+                                      status: TypeTaskStatus.SUPPRIMER,
+                                    ),
+                                  );
+                                  setState(() => _menuOpen = false);
+                                  widget.onDelete();
+                                },
+                              );
+                            },
+                          ),
                         ],
                       ),
-                    ),
-                  ),
-                  // if (t.recurring)
-                  //   _Tag(
-                  //     icon: Icons.repeat_rounded,
-                  //     text: "Répétition",
-                  //     color: _primary,
-                  //   ),
-                  if (t.status.contains("TERMINER"))
-                    _Tag(
-                      icon: Icons.check_circle_rounded,
-                      text: 'Terminée',
-                      color: const Color(0xFF10B981),
-                    ),
-                  if (t.status.contains("ENCOURS"))
-                    _Tag(
-                      icon: Icons.access_time_rounded,
-                      text: 'En cours',
-                      color: const Color(0xFFF59E0B),
                     ),
                 ],
               ),
             ),
-
-            // Menu contextuel
-            if (_menuOpen)
-              Container(
-                margin: const EdgeInsets.only(top: 12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF4F6FB),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFE5E7EB)),
-                ),
-                child: Column(
-                  children: [
-                    if (true)
-                      _MenuItem(
-                        icon: Icons.check_circle_outline_rounded,
-                        color: const Color(0xFF10B981),
-                        label: 'Marquer comme terminée',
-                        onTap: () {
-                          setState(() => _menuOpen = false);
-                          widget.onToggle();
-                        },
-                      ),
-                    if (true)
-                      _MenuItem(
-                        icon: Icons.refresh_rounded,
-                        color: _primary,
-                        label: 'Réactiver la tâche',
-                        onTap: () {
-                          setState(() => _menuOpen = false);
-                          // widget.onRestart();
-                        },
-                      ),
-                    const Divider(height: 1, color: Color(0xFFE5E7EB)),
-
-                    BlocBuilder<GetListBloc, ApiState<List<TaskResponse>>>(
-                      builder: (context, state) {
-                        return _MenuItem(
-                          icon: Icons.edit_outlined,
-                          color: const Color(0xFFF59E0B),
-                          label: 'Modifier',
-                          onTap: () async {
-                            //
-                            final result = await Navigator.of(context)
-                                .push<TaskResponse>(
-                                  MaterialPageRoute(
-                                    builder: (context) => BlocProvider(
-                                      create: (context) => FormTastBloc(
-                                        createTaskUseCase:
-                                            getIt<CreateTaskUseCase>(),
-                                        updateTaskUseCase:
-                                            getIt<UpdateTaskUseCase>(),
-                                      ),
-                                      child: ManualCreateScreen(
-                                        task: widget.task,
-                                        actionType:
-                                            TypeCreateTaskOrUpdate.UPDATE_TASK,
-                                        isPope: true,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                            if (result != null) {
-                              context.read<GetListBloc>().add(
-                                TaskSectionEvent.changeTask(result),
-                              );
-                              setState(() => _menuOpen = false);
-                            }
-                          },
-                        );
-                      },
-                    ),
-                    const Divider(height: 1, color: Color(0xFFE5E7EB)),
-                    _MenuItem(
-                      icon: Icons.delete_outline_rounded,
-                      color: const Color(0xFFEF4444),
-                      label: 'Supprimer',
-                      onTap: () {
-                        setState(() => _menuOpen = false);
-                        widget.onDelete();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 }
 
@@ -309,9 +422,12 @@ class _Tag extends StatelessWidget {
   Widget build(BuildContext context) => Row(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Icon(icon, size: 12, color: color),
+      Icon(icon, size: 12.sp, color: color),
       const SizedBox(width: 3),
-      Text(text, style: TextStyle(color: color, fontSize: 12)),
+      Text(
+        text,
+        style: GoogleFonts.roboto(color: color, fontSize: 10.sp),
+      ),
     ],
   );
 }
@@ -333,11 +449,11 @@ class _MenuItem extends StatelessWidget {
     onTap: onTap,
     borderRadius: BorderRadius.circular(12),
     child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
       child: Row(
         children: [
           Icon(icon, color: color, size: 13.h),
-          const SizedBox(width: 12),
+          SizedBox(width: 8.w),
           Text(
             label,
             style: GoogleFonts.roboto(

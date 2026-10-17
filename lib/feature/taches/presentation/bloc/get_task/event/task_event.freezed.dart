@@ -55,12 +55,14 @@ extension TaskSectionEventPatterns on TaskSectionEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( FetchTaskSectionEvent value)?  fetch,TResult Function( ChangeTaskSectionEvent value)?  changeTask,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( FetchTaskSectionEvent value)?  fetch,TResult Function( ChangeTaskSectionEvent value)?  changeTask,TResult Function( ChangeTaskStatusSectionEvent value)?  changeTaskStatus,TResult Function( SearchTaskSectionEvent value)?  search,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case FetchTaskSectionEvent() when fetch != null:
 return fetch(_that);case ChangeTaskSectionEvent() when changeTask != null:
-return changeTask(_that);case _:
+return changeTask(_that);case ChangeTaskStatusSectionEvent() when changeTaskStatus != null:
+return changeTaskStatus(_that);case SearchTaskSectionEvent() when search != null:
+return search(_that);case _:
   return orElse();
 
 }
@@ -78,12 +80,14 @@ return changeTask(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( FetchTaskSectionEvent value)  fetch,required TResult Function( ChangeTaskSectionEvent value)  changeTask,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( FetchTaskSectionEvent value)  fetch,required TResult Function( ChangeTaskSectionEvent value)  changeTask,required TResult Function( ChangeTaskStatusSectionEvent value)  changeTaskStatus,required TResult Function( SearchTaskSectionEvent value)  search,}){
 final _that = this;
 switch (_that) {
 case FetchTaskSectionEvent():
 return fetch(_that);case ChangeTaskSectionEvent():
-return changeTask(_that);case _:
+return changeTask(_that);case ChangeTaskStatusSectionEvent():
+return changeTaskStatus(_that);case SearchTaskSectionEvent():
+return search(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -100,12 +104,14 @@ return changeTask(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( FetchTaskSectionEvent value)?  fetch,TResult? Function( ChangeTaskSectionEvent value)?  changeTask,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( FetchTaskSectionEvent value)?  fetch,TResult? Function( ChangeTaskSectionEvent value)?  changeTask,TResult? Function( ChangeTaskStatusSectionEvent value)?  changeTaskStatus,TResult? Function( SearchTaskSectionEvent value)?  search,}){
 final _that = this;
 switch (_that) {
 case FetchTaskSectionEvent() when fetch != null:
 return fetch(_that);case ChangeTaskSectionEvent() when changeTask != null:
-return changeTask(_that);case _:
+return changeTask(_that);case ChangeTaskStatusSectionEvent() when changeTaskStatus != null:
+return changeTaskStatus(_that);case SearchTaskSectionEvent() when search != null:
+return search(_that);case _:
   return null;
 
 }
@@ -122,11 +128,13 @@ return changeTask(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String? id)?  fetch,TResult Function( TaskResponse? task)?  changeTask,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String? id)?  fetch,TResult Function( TaskResponse? task)?  changeTask,TResult Function( TaskResponse? task,  String status)?  changeTaskStatus,TResult Function( String? search)?  search,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case FetchTaskSectionEvent() when fetch != null:
 return fetch(_that.id);case ChangeTaskSectionEvent() when changeTask != null:
-return changeTask(_that.task);case _:
+return changeTask(_that.task);case ChangeTaskStatusSectionEvent() when changeTaskStatus != null:
+return changeTaskStatus(_that.task,_that.status);case SearchTaskSectionEvent() when search != null:
+return search(_that.search);case _:
   return orElse();
 
 }
@@ -144,11 +152,13 @@ return changeTask(_that.task);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String? id)  fetch,required TResult Function( TaskResponse? task)  changeTask,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String? id)  fetch,required TResult Function( TaskResponse? task)  changeTask,required TResult Function( TaskResponse? task,  String status)  changeTaskStatus,required TResult Function( String? search)  search,}) {final _that = this;
 switch (_that) {
 case FetchTaskSectionEvent():
 return fetch(_that.id);case ChangeTaskSectionEvent():
-return changeTask(_that.task);case _:
+return changeTask(_that.task);case ChangeTaskStatusSectionEvent():
+return changeTaskStatus(_that.task,_that.status);case SearchTaskSectionEvent():
+return search(_that.search);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -165,11 +175,13 @@ return changeTask(_that.task);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String? id)?  fetch,TResult? Function( TaskResponse? task)?  changeTask,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String? id)?  fetch,TResult? Function( TaskResponse? task)?  changeTask,TResult? Function( TaskResponse? task,  String status)?  changeTaskStatus,TResult? Function( String? search)?  search,}) {final _that = this;
 switch (_that) {
 case FetchTaskSectionEvent() when fetch != null:
 return fetch(_that.id);case ChangeTaskSectionEvent() when changeTask != null:
-return changeTask(_that.task);case _:
+return changeTask(_that.task);case ChangeTaskStatusSectionEvent() when changeTaskStatus != null:
+return changeTaskStatus(_that.task,_that.status);case SearchTaskSectionEvent() when search != null:
+return search(_that.search);case _:
   return null;
 
 }
@@ -319,6 +331,152 @@ $TaskResponseCopyWith<$Res>? get task {
     return _then(_self.copyWith(task: value));
   });
 }
+}
+
+/// @nodoc
+
+
+class ChangeTaskStatusSectionEvent implements TaskSectionEvent {
+   ChangeTaskStatusSectionEvent({required this.task, required this.status});
+  
+
+ final  TaskResponse? task;
+ final  String status;
+
+/// Create a copy of TaskSectionEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ChangeTaskStatusSectionEventCopyWith<ChangeTaskStatusSectionEvent> get copyWith => _$ChangeTaskStatusSectionEventCopyWithImpl<ChangeTaskStatusSectionEvent>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChangeTaskStatusSectionEvent&&(identical(other.task, task) || other.task == task)&&(identical(other.status, status) || other.status == status));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,task,status);
+
+@override
+String toString() {
+  return 'TaskSectionEvent.changeTaskStatus(task: $task, status: $status)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ChangeTaskStatusSectionEventCopyWith<$Res> implements $TaskSectionEventCopyWith<$Res> {
+  factory $ChangeTaskStatusSectionEventCopyWith(ChangeTaskStatusSectionEvent value, $Res Function(ChangeTaskStatusSectionEvent) _then) = _$ChangeTaskStatusSectionEventCopyWithImpl;
+@useResult
+$Res call({
+ TaskResponse? task, String status
+});
+
+
+$TaskResponseCopyWith<$Res>? get task;
+
+}
+/// @nodoc
+class _$ChangeTaskStatusSectionEventCopyWithImpl<$Res>
+    implements $ChangeTaskStatusSectionEventCopyWith<$Res> {
+  _$ChangeTaskStatusSectionEventCopyWithImpl(this._self, this._then);
+
+  final ChangeTaskStatusSectionEvent _self;
+  final $Res Function(ChangeTaskStatusSectionEvent) _then;
+
+/// Create a copy of TaskSectionEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? task = freezed,Object? status = null,}) {
+  return _then(ChangeTaskStatusSectionEvent(
+task: freezed == task ? _self.task : task // ignore: cast_nullable_to_non_nullable
+as TaskResponse?,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+/// Create a copy of TaskSectionEvent
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$TaskResponseCopyWith<$Res>? get task {
+    if (_self.task == null) {
+    return null;
+  }
+
+  return $TaskResponseCopyWith<$Res>(_self.task!, (value) {
+    return _then(_self.copyWith(task: value));
+  });
+}
+}
+
+/// @nodoc
+
+
+class SearchTaskSectionEvent implements TaskSectionEvent {
+   SearchTaskSectionEvent(this.search);
+  
+
+ final  String? search;
+
+/// Create a copy of TaskSectionEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SearchTaskSectionEventCopyWith<SearchTaskSectionEvent> get copyWith => _$SearchTaskSectionEventCopyWithImpl<SearchTaskSectionEvent>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SearchTaskSectionEvent&&(identical(other.search, search) || other.search == search));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,search);
+
+@override
+String toString() {
+  return 'TaskSectionEvent.search(search: $search)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SearchTaskSectionEventCopyWith<$Res> implements $TaskSectionEventCopyWith<$Res> {
+  factory $SearchTaskSectionEventCopyWith(SearchTaskSectionEvent value, $Res Function(SearchTaskSectionEvent) _then) = _$SearchTaskSectionEventCopyWithImpl;
+@useResult
+$Res call({
+ String? search
+});
+
+
+
+
+}
+/// @nodoc
+class _$SearchTaskSectionEventCopyWithImpl<$Res>
+    implements $SearchTaskSectionEventCopyWith<$Res> {
+  _$SearchTaskSectionEventCopyWithImpl(this._self, this._then);
+
+  final SearchTaskSectionEvent _self;
+  final $Res Function(SearchTaskSectionEvent) _then;
+
+/// Create a copy of TaskSectionEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? search = freezed,}) {
+  return _then(SearchTaskSectionEvent(
+freezed == search ? _self.search : search // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
 }
 
 // dart format on

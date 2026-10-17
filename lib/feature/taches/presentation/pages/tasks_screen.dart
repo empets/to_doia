@@ -136,15 +136,22 @@ class _TasksScreenState extends State<TasksScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     EmptyTaskState(
+                      isRefreshing: true,
                       onTapMic: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => VoiceListeningScreen(
-                              actionType: TypeCreateTaskOrUpdate.UPDATE_TASK,
+                        if (stateTaskList.refresh == true) {
+                          context.read<GetListBloc>().add(
+                            TaskSectionEvent.fetch(null),
+                          );
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => VoiceListeningScreen(
+                                actionType: TypeCreateTaskOrUpdate.UPDATE_TASK,
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        }
                       },
                     ),
                   ],
@@ -165,7 +172,7 @@ class _TasksScreenState extends State<TasksScreen> {
                 child: Column(
                   children: [
                     // ── Header ─────────────────────────────────────────────────────────
-                    SizedBox(height: 20.h),
+                    SizedBox(height: 29.h),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
                       child: Row(
@@ -229,24 +236,42 @@ class _TasksScreenState extends State<TasksScreen> {
                                     ),
                                     const SizedBox(width: 10),
                                     Expanded(
-                                      child: TextField(
-                                        onChanged: (v) =>
-                                            setState(() => _search = v),
-                                        style: const TextStyle(
-                                          color: Color(0xFF1A1A2E),
-                                          fontSize: 14,
-                                        ),
-                                        decoration: const InputDecoration(
-                                          hintText: 'Rechercher une tâche...',
-                                          hintStyle: TextStyle(
-                                            color: Color(0xFF6B7280),
+                                      child:
+                                          BlocBuilder<
+                                            GetListBloc,
+                                            ApiState<List<TaskResponse>>
+                                          >(
+                                            builder: (context, state) {
+                                              return TextField(
+                                                onChanged: (v) {
+                                                  context
+                                                      .read<GetListBloc>()
+                                                      .add(
+                                                        TaskSectionEvent.search(
+                                                          v,
+                                                        ),
+                                                      );
+                                                  // setState(() => _search = v);
+                                                },
+                                                style: const TextStyle(
+                                                  color: Color(0xFF1A1A2E),
+                                                  fontSize: 14,
+                                                ),
+                                                decoration: const InputDecoration(
+                                                  hintText:
+                                                      'Rechercher une tâche...',
+                                                  hintStyle: TextStyle(
+                                                    color: Color(0xFF6B7280),
+                                                  ),
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                        vertical: 14,
+                                                      ),
+                                                ),
+                                              );
+                                            },
                                           ),
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.symmetric(
-                                            vertical: 14,
-                                          ),
-                                        ),
-                                      ),
                                     ),
                                   ],
                                 ),
@@ -305,14 +330,15 @@ class _TasksScreenState extends State<TasksScreen> {
                     // ── Liste ───────────────────────────────────────────────────────────
                     Expanded(
                       child: stateTaskList.data.isEmpty
-                          ? EmptyTaskState(onTapMic: widget.onMicTap)
+                          ? EmptyTaskState(
+                              isRefreshing: false,
+                              onTapMic: widget.onMicTap,
+                            )
                           : BlocBuilder<
                               GetListBloc,
                               ApiState<List<TaskResponse>>
                             >(
                               builder: (context, state) {
-                                
-
                                 return ListView(
                                   padding: const EdgeInsets.fromLTRB(
                                     20,

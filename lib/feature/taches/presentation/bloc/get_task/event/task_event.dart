@@ -7,4 +7,9 @@ abstract class TaskSectionEvent with _$TaskSectionEvent {
   factory TaskSectionEvent.fetch(String? id) = FetchTaskSectionEvent;
   factory TaskSectionEvent.changeTask(TaskResponse? task) =
       ChangeTaskSectionEvent;
+  factory TaskSectionEvent.changeTaskStatus(
+          {required TaskResponse? task, required String status}) =
+      ChangeTaskStatusSectionEvent;
+
+  factory TaskSectionEvent.search(String? search) = SearchTaskSectionEvent;
 }

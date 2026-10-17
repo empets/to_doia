@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class EmptyTaskState extends StatelessWidget {
   final VoidCallback onTapMic;
-  const EmptyTaskState({required this.onTapMic});
+  final bool isRefreshing;
+  const EmptyTaskState({required this.onTapMic, required this.isRefreshing});
 
   @override
   Widget build(BuildContext context) => Center(
@@ -28,13 +30,13 @@ class EmptyTaskState extends StatelessWidget {
               color: const Color(0xFF6366F1),
               borderRadius: BorderRadius.circular(32),
             ),
-            child: const Row(
+            child:  Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.mic_rounded, color: Colors.white, size: 18),
+                Icon( isRefreshing ? Icons.refresh_rounded : Icons.mic_rounded, color: Colors.white, size: 18),
                 SizedBox(width: 8),
                 Text(
-                  'Créer une tâche',
+                 isRefreshing? 'Rafraîchir' : 'Créer une tâche',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
@@ -44,6 +46,8 @@ class EmptyTaskState extends StatelessWidget {
             ),
           ),
         ),
+          SizedBox(height: 14.h),
+          
       ],
     ),
   );
