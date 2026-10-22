@@ -7,7 +7,11 @@ class EmptyTaskState extends StatelessWidget {
   final bool isRefreshing;
   final VoidCallback onRefresh;
 
-  const EmptyTaskState({required this.onTapMic, required this.isRefreshing, required this.onRefresh});
+  const EmptyTaskState({
+    required this.onTapMic,
+    required this.isRefreshing,
+    required this.onRefresh,
+  });
 
   @override
   Widget build(BuildContext context) => Center(
@@ -16,7 +20,7 @@ class EmptyTaskState extends StatelessWidget {
       children: [
         const Text('📋', style: TextStyle(fontSize: 52)),
         const SizedBox(height: 14),
-         Text(
+        Text(
           'Aucune tâche trouvée suite à votre recherche',
           style: GoogleFonts.roboto(
             color: Color(0xFF1A1A2E),
@@ -25,49 +29,53 @@ class EmptyTaskState extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-       if(isRefreshing)...[
-           GestureDetector(
-          onTap: onRefresh,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            decoration: BoxDecoration(
-              color: const Color(0xFF6366F1),
-              borderRadius: BorderRadius.circular(20.r),
-            ),
-            child:  Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon( Icons.refresh_rounded, color: Colors.white, size: 18),
-                SizedBox(width: 8),
-                Text(
-                 'Rafraîchir',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
+        if (isRefreshing) ...[
+          GestureDetector(
+            onTap: onRefresh,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF6366F1),
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.refresh_rounded, color: Colors.white, size: 18),
+                  SizedBox(width: 8),
+                  Text(
+                    'Rafraîchir',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-        SizedBox(height: 14.h),
+          SizedBox(height: 14.h),
         ],
         GestureDetector(
           onTap: onTapMic,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
-              border: Border.all(color: isRefreshing? Color(0xFF6366F1) : Colors.transparent),
-              color: isRefreshing ? Colors.transparent : const Color(0xFF6366F1),
+              border: Border.all(
+                color: isRefreshing ? Color(0xFF6366F1) : Colors.transparent,
+              ),
+              color: isRefreshing
+                  ? Colors.transparent
+                  : const Color(0xFF6366F1),
               borderRadius: BorderRadius.circular(32),
             ),
-            child:  Row(
-               mainAxisSize: MainAxisSize.min,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(  Icons.mic_rounded, color: Colors.black, size: 18),
+                Icon(Icons.mic_rounded, color: Colors.black, size: 18),
                 SizedBox(width: 8),
                 Text(
-                 'Créer une nouvelle tâche',
+                  'Créer une nouvelle tâche',
                   style: GoogleFonts.roboto(
                     color: Colors.black,
                     fontWeight: FontWeight.w500,
@@ -77,28 +85,55 @@ class EmptyTaskState extends StatelessWidget {
             ),
           ),
         ),
-    
+
         SizedBox(height: 14.h),
-          
       ],
     ),
   );
 }
 
-
-
-
 class SectionHeader extends StatelessWidget {
   final String title;
   final int count;
-  const SectionHeader({required this.title, required this.count});
+  final bool isHome;
+  final void Function()? onPressed;
+  const SectionHeader({required this.title, required this.count, this.isHome = false, this.onPressed});
 
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(bottom: 10, top: 4),
     child: Row(
       children: [
-        Text(
+        if(isHome)...[
+           Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    "Aujourd'hui",
+                    style: GoogleFonts.roboto(
+                      color: Color(0xFF1A1A2E),
+                      fontSize: 17.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: onPressed,
+                  child: Text(
+                    'Voir tout',
+                    style: GoogleFonts.roboto(
+                      color: Color(0xFF6366F1),
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+        ],
+        if(!isHome)...[
+           Text(
           title,
           style: const TextStyle(
             color: Color(0xFF1A1A2E),
@@ -122,6 +157,9 @@ class SectionHeader extends StatelessWidget {
             ),
           ),
         ),
+
+        ]
+       
       ],
     ),
   );
@@ -158,8 +196,6 @@ class IconBtn extends StatelessWidget {
     ),
   );
 }
-
-
 
 class Label extends StatelessWidget {
   final String text;

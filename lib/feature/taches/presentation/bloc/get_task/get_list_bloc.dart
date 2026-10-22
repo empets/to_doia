@@ -22,32 +22,32 @@
 //     Emitter<ApiState<List<TaskResponse>>> emit,
 //   ) async {
 //     switch (event) {
-      // case FetchTaskSectionEvent(:final id):
-      //   if (id != null) {
-      //     emit(ApiState<List<TaskResponse>>.load());
-      //     final response = await getTaskListUseCase.call(
-      //       RequestNotParams(id: id),
-      //     );
-      //     response.fold(
-      //       (l) {
-      //         emit(ApiState<List<TaskResponse>>.failed(l.message));
-      //       },
-      //       (r) {
-      //         emit(ApiState<List<TaskResponse>>.success(r));
-      //       },
-      //     );
-      //   } else {
-      //     emit(ApiState<List<TaskResponse>>.load());
-      //     final response = await getTaskListUseCase.call(RequestNotParams());
-      //     response.fold(
-      //       (l) {
-      //         emit(ApiState<List<TaskResponse>>.failed(l.message));
-      //       },
-      //       (r) {
-      //         emit(ApiState<List<TaskResponse>>.success(r));
-      //       },
-      //     );
-      //   }
+//       case FetchTaskSectionEvent(:final id):
+//         if (id != null) {
+//           emit(ApiState<List<TaskResponse>>.load());
+//           final response = await getTaskListUseCase.call(
+//             RequestNotParams(id: id),
+//           );
+//           response.fold(
+//             (l) {
+//               emit(ApiState<List<TaskResponse>>.failed(l.message));
+//             },
+//             (r) {
+//               emit(ApiState<List<TaskResponse>>.success(r));
+//             },
+//           );
+//         } else {
+//           emit(ApiState<List<TaskResponse>>.load());
+//           final response = await getTaskListUseCase.call(RequestNotParams());
+//           response.fold(
+//             (l) {
+//               emit(ApiState<List<TaskResponse>>.failed(l.message));
+//             },
+//             (r) {
+//               emit(ApiState<List<TaskResponse>>.success(r));
+//             },
+//           );
+//         }
 //       case ChangeTaskSectionEvent(:final task):
 //         if (state is SuccessState<List<TaskResponse>>) {
 //           if (task != null) {
@@ -134,12 +134,118 @@
 
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:grace_church/core/extention/app_extention.dart';
 import 'package:grace_church/core/service_systeme/model/api/api_state.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:grace_church/feature/taches/domaine/entities/request/task_request.dart';
 import 'package:grace_church/feature/taches/domaine/usecase/get_task_list_usecase.dart';
 import 'package:grace_church/feature/taches/presentation/bloc/get_task/event/task_event.dart';
 import 'package:injectable/injectable.dart';
+
+// @lazySingleton
+// class GetListBloc extends Bloc<TaskSectionEvent, ApiState<List<TaskResponse>>> {
+//   GetListBloc({required this.getTaskListUseCase})
+//       : super(ApiState<List<TaskResponse>>.initial()) {
+//     on<TaskSectionEvent>(_getList);
+//   }
+
+//   final GetTaskListUseCase getTaskListUseCase;
+
+//   /// Source de vérité : jamais filtrée.
+//   List<TaskResponse> _allTasks = [];
+
+//   /// Filtres courants.
+//   String _search = '';
+//   String _status = '';
+
+//   /// Applique recherche + statut sur la liste complète.
+//   List<TaskResponse> _applyFilter() {
+//     final query = _search.trim().toLowerCase();
+//     final st = _status.trim().toLowerCase();
+
+//     return _allTasks.where((t) {
+//       final matchSearch = query.isEmpty ||
+//           t.title.toLowerCase().contains(query) ||
+//           t.content.toLowerCase().contains(query);
+
+//       final matchStatus = st.isEmpty || t.status.toLowerCase() == st;
+
+//       return matchSearch && matchStatus;
+//     }).toList();
+//   }
+
+//   /// Met à jour une tâche dans la liste complète.
+//   List<TaskResponse> _replaceTask(TaskResponse task, {String? status}) {
+//     return _allTasks.map((t) {
+//       if (t.taskId.trim() != task.taskId.trim()) return t;
+//       return t.copyWith(
+//         status: status ?? task.status,
+//         title: task.title,
+//         date: task.date,
+//         time: task.time,
+//         recurring: task.recurring,
+//         content: task.content,
+//       );
+//     }).toList();
+//   }
+
+//   Future<void> _getList(
+//     TaskSectionEvent event,
+//     Emitter<ApiState<List<TaskResponse>>> emit,
+//   ) async {
+//     switch (event) {
+//            case FetchTaskSectionEvent(:final id):
+//         if (id != null) {
+//           emit(ApiState<List<TaskResponse>>.load());
+//           final response = await getTaskListUseCase.call(
+//             RequestNotParams(id: id),
+//           );
+//           response.fold(
+//             (l) {
+//               emit(ApiState<List<TaskResponse>>.failed(l.message));
+//             },
+//             (r) {
+//               emit(ApiState<List<TaskResponse>>.success(r));
+//             },
+//           );
+//         } else {
+//           emit(ApiState<List<TaskResponse>>.load());
+//           final response = await getTaskListUseCase.call(RequestNotParams());
+//           response.fold(
+//             (l) {
+//               emit(ApiState<List<TaskResponse>>.failed(l.message));
+//             },
+//             (r) {
+//               emit(ApiState<List<TaskResponse>>.success(r));
+//             },
+//           );
+//         }
+
+//       case ChangeTaskSectionEvent(:final task):
+//         if (task == null) return;
+
+//         _allTasks = _replaceTask(task);
+//         emit(ApiState<List<TaskResponse>>.success(_applyFilter()));
+
+//       case ChangeTaskStatusSectionEvent(:final task, :final status):
+//         if (task == null) return;
+
+//         _allTasks = _replaceTask(task, status: status);
+//         emit(ApiState<List<TaskResponse>>.success(_applyFilter()));
+
+//       case SearchTaskSectionEvent(:final search, :final status):
+//         _search = search ?? '';
+//         _status = status ?? '';
+
+//         emit(ApiState<List<TaskResponse>>.success(
+//           _applyFilter(),
+//           refresh: true,
+//         ));
+//     }
+//   }
+// }
+
+
 
 @lazySingleton
 class GetListBloc extends Bloc<TaskSectionEvent, ApiState<List<TaskResponse>>> {
@@ -157,23 +263,24 @@ class GetListBloc extends Bloc<TaskSectionEvent, ApiState<List<TaskResponse>>> {
   String _search = '';
   String _status = '';
 
-  /// Applique recherche + statut sur la liste complète.
+  /// Recherche (titre OU contenu) + statut, toujours sur la liste complète.
   List<TaskResponse> _applyFilter() {
     final query = _search.trim().toLowerCase();
     final st = _status.trim().toLowerCase();
+    final noStatus = st.isEmpty || st == 'toutes';
 
     return _allTasks.where((t) {
       final matchSearch = query.isEmpty ||
           t.title.toLowerCase().contains(query) ||
           t.content.toLowerCase().contains(query);
 
-      final matchStatus = st.isEmpty || t.status.toLowerCase() == st;
+      // final matchStatus = noStatus || t.status.trim().toLowerCase() == st;noStatus || t.effectiveStatus.toLowerCase() == st;
+       final matchStatus =  noStatus || t.effectiveStatus.toLowerCase() == st;;
 
       return matchSearch && matchStatus;
     }).toList();
   }
 
-  /// Met à jour une tâche dans la liste complète.
   List<TaskResponse> _replaceTask(TaskResponse task, {String? status}) {
     return _allTasks.map((t) {
       if (t.taskId.trim() != task.taskId.trim()) return t;
@@ -193,49 +300,36 @@ class GetListBloc extends Bloc<TaskSectionEvent, ApiState<List<TaskResponse>>> {
     Emitter<ApiState<List<TaskResponse>>> emit,
   ) async {
     switch (event) {
-           case FetchTaskSectionEvent(:final id):
-        if (id != null) {
-          emit(ApiState<List<TaskResponse>>.load());
-          final response = await getTaskListUseCase.call(
-            RequestNotParams(id: id),
-          );
-          response.fold(
-            (l) {
-              emit(ApiState<List<TaskResponse>>.failed(l.message));
-            },
-            (r) {
-              emit(ApiState<List<TaskResponse>>.success(r));
-            },
-          );
-        } else {
-          emit(ApiState<List<TaskResponse>>.load());
-          final response = await getTaskListUseCase.call(RequestNotParams());
-          response.fold(
-            (l) {
-              emit(ApiState<List<TaskResponse>>.failed(l.message));
-            },
-            (r) {
-              emit(ApiState<List<TaskResponse>>.success(r));
-            },
-          );
-        }
+      case FetchTaskSectionEvent(:final id):
+        _search = '';
+        _status = '';
+        emit(ApiState<List<TaskResponse>>.load());
+
+        final response = await getTaskListUseCase.call(
+          id != null ? RequestNotParams(id: id) : RequestNotParams(),
+        );
+
+        response.fold(
+          (l) => emit(ApiState<List<TaskResponse>>.failed(l.message)),
+          (r) {
+            _allTasks = r;
+            emit(ApiState<List<TaskResponse>>.success(_applyFilter()));
+          },
+        );
 
       case ChangeTaskSectionEvent(:final task):
         if (task == null) return;
-
         _allTasks = _replaceTask(task);
         emit(ApiState<List<TaskResponse>>.success(_applyFilter()));
 
       case ChangeTaskStatusSectionEvent(:final task, :final status):
         if (task == null) return;
-
         _allTasks = _replaceTask(task, status: status);
         emit(ApiState<List<TaskResponse>>.success(_applyFilter()));
 
       case SearchTaskSectionEvent(:final search, :final status):
         _search = search ?? '';
         _status = status ?? '';
-
         emit(ApiState<List<TaskResponse>>.success(
           _applyFilter(),
           refresh: true,
@@ -243,4 +337,3 @@ class GetListBloc extends Bloc<TaskSectionEvent, ApiState<List<TaskResponse>>> {
     }
   }
 }
-

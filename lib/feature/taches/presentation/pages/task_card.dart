@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:grace_church/core/alert/app_alerte.dart';
 import 'package:grace_church/core/constante/constantes.dart';
 import 'package:grace_church/core/extention/app_extention.dart';
 import 'package:grace_church/core/injetction/injection_container.dart';
@@ -74,22 +75,35 @@ class _TaskCardState extends State<TaskCard> {
                       BlocBuilder<GetListBloc, ApiState<List<TaskResponse>>>(
                         builder: (context, state) {
                           return GestureDetector(
-                            onTap: t.status.contains(TypeTaskStatus.TERMINER) ? () {
-                                context.read<GetListBloc>().add(
-                                        TaskSectionEvent.changeTaskStatus(
-                                          task: widget.task,
-                                          status: TypeTaskStatus.ENCOURS,
-                                        ),
-                                      );
-                            } :((){
-                               context.read<GetListBloc>().add(
+                            onTap: t.status.contains(TypeTaskStatus.TERMINER)
+                                ? () {
+                                    context.read<GetListBloc>().add(
+                                      TaskSectionEvent.changeTaskStatus(
+                                        task: widget.task,
+                                        status: TypeTaskStatus.ENCOURS,
+                                      ),
+                                    );
+                                  }
+                                : (() {
+                                    final isExpired = isDateExpired(
+                                      widget.task.date,
+                                      widget.task.time,
+                                    );
+                                    if (isExpired) {
+                                      context.read<GetListBloc>().add(
                                         TaskSectionEvent.changeTaskStatus(
                                           task: widget.task,
                                           status: TypeTaskStatus.TERMINER,
                                         ),
-                                      ); 
-
-                            }),
+                                      );
+                                    }
+                                    if (!isExpired) {
+                                      AppAlert.showInfo(
+                                        context,
+                                        'Cette tâche ne peut pas être marquée comme terminée car sa date d\'échéance est dépassée.',
+                                      );
+                                    }
+                                  }),
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
                               width: 22,
@@ -130,7 +144,8 @@ class _TaskCardState extends State<TaskCard> {
                                 color: const Color(0xFF6B7280),
                                 fontSize: 11.sp,
                                 fontWeight: FontWeight.w600,
-                                decoration: t.status.contains(TypeTaskStatus.ANNULER)
+                                decoration:
+                                    t.status.contains(TypeTaskStatus.ANNULER)
                                     ? TextDecoration.lineThrough
                                     : TextDecoration.none,
                                 decorationColor: const Color(0xFF6B7280),
@@ -143,7 +158,8 @@ class _TaskCardState extends State<TaskCard> {
                                 color: const Color(0xFF6B7280),
                                 fontSize: 10.sp,
                                 fontWeight: FontWeight.w500,
-                                decoration: t.status.contains(TypeTaskStatus.ANNULER)
+                                decoration:
+                                    t.status.contains(TypeTaskStatus.ANNULER)
                                     ? TextDecoration.lineThrough
                                     : TextDecoration.none,
                                 decorationColor: const Color(0xFF6B7280),
@@ -266,12 +282,25 @@ class _TaskCardState extends State<TaskCard> {
                                     color: const Color(0xFF10B981),
                                     label: 'Marquer comme terminée',
                                     onTap: () {
-                                      context.read<GetListBloc>().add(
-                                        TaskSectionEvent.changeTaskStatus(
-                                          task: widget.task,
-                                          status: TypeTaskStatus.TERMINER,
-                                        ),
+                                      final isExpired = isDateExpired(
+                                        widget.task.date,
+                                        widget.task.time,
                                       );
+                                      if (isExpired) {
+                                        context.read<GetListBloc>().add(
+                                          TaskSectionEvent.changeTaskStatus(
+                                            task: widget.task,
+                                            status: TypeTaskStatus.TERMINER,
+                                          ),
+                                        );
+                                      }
+                                      if (!isExpired) {
+                                        AppAlert.showInfo(
+                                          context,
+                                          'Cette tâche ne peut pas être marquée comme terminée car sa date d\'échéance est dépassée.',
+                                        );
+                                      }
+
                                       setState(() => _menuOpen = false);
                                       widget.onToggle();
                                     },
@@ -294,46 +323,43 @@ class _TaskCardState extends State<TaskCard> {
                               ),
                             ],
 
-                                if (!widget.task.status.contains(
-                              TypeTaskStatus.ANNULER,
-                            )) ...[
-                              BlocBuilder<
-                                GetListBloc,
-                                ApiState<List<TaskResponse>>
-                              >(
-                                builder: (context, state) {
-                                  return _MenuItem(
-                                    icon: Icons.close,
-                                    color: Colors.grey,  
-                                    label: 'Annuler',
-                                    onTap: () {
-                                      context.read<GetListBloc>().add(
-                                        TaskSectionEvent.changeTaskStatus(
-                                          task: widget.task,
-                                          status: TypeTaskStatus.ANNULER,
-                                        ),
-                                      );
-                                      setState(() => _menuOpen = false);
-                                      widget.onToggle();
-                                    },
-                                  );
-                                },
-                              ),
-                              // if (true)
-                              //   _MenuItem(
-                              //     icon: Icons.refresh_rounded,
-                              //     color: _primary,
-                              //     label: 'Réactiver la tâche',
-                              //     onTap: () {
-                              //       setState(() => _menuOpen = false);
-                              //       // widget.onRestart();
-                              //     },
-                              //   ),
-                              const Divider(
-                                height: 1,
-                                color: Color(0xFFE5E7EB),
-                              ),
-                            ],
+                          if (!widget.task.status.contains(
+                            TypeTaskStatus.ANNULER,
+                          )) ...[
+                            BlocBuilder<
+                              GetListBloc,
+                              ApiState<List<TaskResponse>>
+                            >(
+                              builder: (context, state) {
+                                return _MenuItem(
+                                  icon: Icons.close,
+                                  color: Colors.grey,
+                                  label: 'Annuler',
+                                  onTap: () {
+                                    context.read<GetListBloc>().add(
+                                      TaskSectionEvent.changeTaskStatus(
+                                        task: widget.task,
+                                        status: TypeTaskStatus.ANNULER,
+                                      ),
+                                    );
+                                    setState(() => _menuOpen = false);
+                                    widget.onToggle();
+                                  },
+                                );
+                              },
+                            ),
+                            // if (true)
+                            //   _MenuItem(
+                            //     icon: Icons.refresh_rounded,
+                            //     color: _primary,
+                            //     label: 'Réactiver la tâche',
+                            //     onTap: () {
+                            //       setState(() => _menuOpen = false);
+                            //       // widget.onRestart();
+                            //     },
+                            //   ),
+                            const Divider(height: 1, color: Color(0xFFE5E7EB)),
+                          ],
 
                           BlocBuilder<
                             GetListBloc,

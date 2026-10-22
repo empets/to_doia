@@ -4,4 +4,5 @@ import 'package:grace_church/feature/home/domaine/entities/response/home_respons
 
 abstract class VoiceTaskRepository {
   Future<Either<Failure, TaskResponse>> createTaskFromVoice(String audioPath);
+  Future<Either<Failure, GraceResponse>> chat(List<Map<String, String>> messages);
 }

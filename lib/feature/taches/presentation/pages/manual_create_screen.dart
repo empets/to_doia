@@ -168,6 +168,7 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
       child: Column(
         children: [
           // ── Header ───────────────────────────────────────────────────────────
+          SizedBox(height: 20.h),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             child: Row(
@@ -192,7 +193,9 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                 ),
                 const SizedBox(width: 14),
                 Text(
-                  'Nouvelle tâche',
+                  widget.actionType == TypeCreateTaskOrUpdate.CREATE_TASK
+                      ? 'Nouvelle tâche'
+                      : 'Modifier la tâche',
                   style: GoogleFonts.roboto(
                     color: Color(0xFF1A1A2E),
                     fontSize: 15.h,

@@ -32,6 +32,8 @@ import '../../feature/home/domaine/repositorie/voic_task_repository.dart'
 import '../../feature/home/domaine/usecase/create_task_from_voice.dart'
     as _i324;
 import '../../feature/home/domaine/usecase/create_task_usecase.dart' as _i320;
+import '../../feature/home/domaine/usecase/shara_navigation_usecase.dart'
+    as _i174;
 import '../../feature/home/domaine/usecase/update_task_from_usercase.dart'
     as _i49;
 import '../../feature/taches/data/repository/home_repository_impl.dart'
@@ -92,6 +94,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i324.CreateTaskFromVoiceUseCase>(
       () => _i324.CreateTaskFromVoiceUseCase(gh<_i722.VoiceTaskRepository>()),
+    );
+    gh.lazySingleton<_i174.SharaNavigationUsecase>(
+      () => _i174.SharaNavigationUsecase(gh<_i722.VoiceTaskRepository>()),
     );
     gh.lazySingleton<_i439.GetListBloc>(
       () =>

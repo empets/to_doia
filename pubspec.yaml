@@ -192,6 +192,8 @@ dependencies:
   dio: ^5.4.0
   record: ^6.0.0
   audioplayers: ^6.1.0
+  flutter_tts: ^4.2.5
+  speech_to_text: ^7.4.0
   
 
 

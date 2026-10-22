@@ -13,7 +13,6 @@ class AppAlert {
     String? imageIcon,
     Duration duration = const Duration(seconds: 3),
     bool showOnTop = false,
-
   }) {
     _showAppSnackBar(
       context,
@@ -63,7 +62,7 @@ class AppAlert {
     _showAppSnackBar(
       context,
       message: message,
-      backgroundColor: Colors.lime,
+      backgroundColor: const Color(0xFF6366F1),
       icon: Icons.info,
       iconRight: iconRight,
       imageIcon: imageIcon,
@@ -147,18 +146,18 @@ class AppAlert {
                   ),
                 ),
               ),
-              if(showEditButton)...[
-                 GestureDetector(
-                onTap: onTap,
-                child: Container(
-                  padding: EdgeInsets.all(5.w),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(5.r),
+              if (showEditButton) ...[
+                GestureDetector(
+                  onTap: onTap,
+                  child: Container(
+                    padding: EdgeInsets.all(5.w),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(5.r),
+                    ),
+                    child: Icon(editButtonIcon, color: Colors.white),
                   ),
-                  child: Icon(editButtonIcon, color: Colors.white),
                 ),
-              ),
               ],
               if (iconRight != null) ...[
                 IconButton(
@@ -185,7 +184,7 @@ class AppAlert {
       builder: (_) {
         return Dialog(
           backgroundColor: Colors.transparent,
-           insetPadding: const EdgeInsets.all(1),
+          insetPadding: const EdgeInsets.all(1),
           child: child,
         );
       },
@@ -212,14 +211,14 @@ class AppBottomSheet {
         barrierLabel: '',
         barrierColor: Colors.black54,
         transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (_, __, ___) => Align(
+        pageBuilder: (_, _, _) => Align(
           alignment: Alignment.topCenter,
           child: Material(
             color: Colors.transparent,
             child: contentBuilder(initialChildSize),
           ),
         ),
-        transitionBuilder: (_, animation, __, child) {
+        transitionBuilder: (_, animation, _, child) {
           return SlideTransition(
             position:
                 Tween<Offset>(

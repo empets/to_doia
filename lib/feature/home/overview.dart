@@ -9,8 +9,11 @@ import 'package:grace_church/core/succes_screen/success_screen.dart';
 import 'package:grace_church/core/transcription/transcription_screen.dart';
 import 'package:grace_church/core/voice/voice_listening.dart';
 import 'package:grace_church/feature/home/domaine/usecase/create_task_from_voice.dart';
+import 'package:grace_church/feature/home/domaine/usecase/shara_navigation_usecase.dart';
+import 'package:grace_church/feature/home/presentation/bloc/shara/shara_navigate_bloc.dart';
 import 'package:grace_church/feature/home/presentation/bloc/voice_task.dart';
 import 'package:grace_church/feature/home/presentation/page/home_screen.dart';
+import 'package:grace_church/feature/home/presentation/widget/chart_whithe_grace.dart';
 import 'package:grace_church/feature/onboarding/splash_screen.dart';
 import 'package:grace_church/feature/setting/setting_screen.dart';
 import 'package:grace_church/feature/setting/sub_setting_screen.dart';
@@ -27,6 +30,10 @@ class SmartReminderApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(
+          create: (context) =>
+              SharaNavigationBloc(getIt<SharaNavigationUsecase>()),
+        ),
         BlocProvider(
           create: (context) => VoiceTaskCubit(
             createTask: getIt<CreateTaskFromVoiceUseCase>(),
@@ -217,6 +224,10 @@ class _AppShellState extends State<AppShell> {
     ].contains(_screen);
 
     return Scaffold(
+      appBar: AppBar(
+        title: VoiceWaveform(height: 100, isRecording: true, amplitude: 0.1),
+        backgroundColor: const Color(0xFFF4F6FB),
+      ),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 260),
         transitionBuilder: (child, anim) => FadeTransition(
@@ -256,7 +267,7 @@ class _AppShellState extends State<AppShell> {
       // ── Flux vocal ─────────────────────────────────────────────────────────
       case AppScreen.listening:
         return VoiceListeningScreen(
-          actionType:' TypeCreateTaskOrUpdate.CREATE_TASK,'
+          actionType: ' TypeCreateTaskOrUpdate.CREATE_TASK,',
           // onStop: _stopListening,
           // onCancel: () => _go(AppScreen.home),
         );
@@ -290,12 +301,12 @@ class _AppShellState extends State<AppShell> {
       // ── Tâches ─────────────────────────────────────────────────────────────
       case AppScreen.tasks:
         return TasksScreen(
-          tasks: _tasks,
-          onToggle: _toggleTask,
-          onDelete: _deleteTask,
-          onRestart: _restartTask,
-          onMicTap: _startListening,
-          onAddManual: () => _go(AppScreen.manualCreate),
+          // tasks: _tasks,
+          // onToggle: _toggleTask,
+          // onDelete: _deleteTask,
+          // onRestart: _restartTask,
+          // onMicTap: _startListening,
+          // onAddManual: () => _go(AppScreen.manualCreate),
         );
 
       case AppScreen.manualCreate:

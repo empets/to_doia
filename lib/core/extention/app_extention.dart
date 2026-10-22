@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:intl/intl.dart';
 
 Future<bool> isEmulator() async {
@@ -1043,3 +1044,44 @@ extension StringCasing on String {
       .join(' ');
 }
 
+
+extension TaskResponseX on TaskResponse {
+  /// Suppose date = "yyyy-MM-dd" et time = "HH:mm". Adapte si ton format diffère.
+  DateTime? get dateTime {
+    try {
+      final d = DateTime.parse(date);
+      final p = time.split(':');
+      return DateTime(d.year, d.month, d.day, int.parse(p[0]), int.parse(p[1]));
+    } catch (_) {
+      return null;
+    }
+  }
+
+  String get effectiveStatus {
+    final s = status.trim().toUpperCase();
+    if (s == 'TERMINER' || s == 'ANNULER') return s;
+
+    final dt = dateTime;
+    if (dt == null) return s;
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final day = DateTime(dt.year, dt.month, dt.day);
+
+    if (day.isAfter(today)) return 'AVENIR';
+    if (day == today) return 'ENCOURS';
+    return s; // date passée : statut enregistré
+  }
+}
+
+
+bool isDateExpired(String date, String time) {
+  try {
+    final d = DateTime.parse(date);
+    final p = time.split(':');
+    final dt = DateTime(d.year, d.month, d.day, int.parse(p[0]), int.parse(p[1]));
+    return dt.isBefore(DateTime.now());
+  } catch (_) {
+    return false;
+  }
+}

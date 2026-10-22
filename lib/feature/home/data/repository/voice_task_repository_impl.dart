@@ -9,7 +9,6 @@ import 'package:grace_church/feature/home/data/service/remote/groq_remote_data_s
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:grace_church/feature/home/domaine/repositorie/voic_task_repository.dart';
 
-
 @LazySingleton(as: VoiceTaskRepository)
 class VoiceTaskRepositoryImpl implements VoiceTaskRepository {
   const VoiceTaskRepositoryImpl(this._remote);
@@ -22,9 +21,7 @@ class VoiceTaskRepositoryImpl implements VoiceTaskRepository {
     try {
       final transcript = await _remote.transcribe(audioPath);
       final model = await _remote.extractTask(transcript);
-      return Right(
-        TaskResponseModel.toDomain(model),
-      );
+      return Right(TaskResponseModel.toDomain(model));
     } on ServerException catch (e) {
       return Left(Failure(e.message));
     } on SocketException {
@@ -35,4 +32,23 @@ class VoiceTaskRepositoryImpl implements VoiceTaskRepository {
       return const Left(Failure('Réponse invalide du serveur'));
     }
   }
+
+  @override
+Future<Either<Failure, GraceResponse>> chat(
+  List<Map<String, String>> messages,
+) async {
+  try {
+    final response = await _remote.chat(messages);
+
+    return Right(response);
+  } on ServerException catch (e) {
+    return Left(Failure(e.message));
+  } on SocketException {
+    return const Left(Failure('Pas de connexion internet'));
+  } on TimeoutException {
+    return const Left(Failure('Délai dépassé, réessaie'));
+  } on FormatException {
+    return const Left(Failure('Réponse invalide du serveur'));
+  }
+}
 }
