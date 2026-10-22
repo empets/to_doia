@@ -1,14 +1,21 @@
 // lib/screens/tasks_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:grace_church/core/constante/constantes.dart';
+import 'package:grace_church/core/extention/app_extention.dart';
+import 'package:grace_church/core/injetction/injection_container.dart';
 import 'package:grace_church/core/models/task.dart';
 import 'package:grace_church/core/service_systeme/model/api/api_state.dart';
 import 'package:grace_church/core/voice/voice_listening.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
+import 'package:grace_church/feature/home/domaine/usecase/create_task_usecase.dart';
+import 'package:grace_church/feature/home/domaine/usecase/update_task_from_usercase.dart';
+import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/create_or_update_task_bloc.dart';
 import 'package:grace_church/feature/taches/presentation/bloc/get_task/event/task_event.dart';
 import 'package:grace_church/feature/taches/presentation/bloc/get_task/get_list_bloc.dart';
+import 'package:grace_church/feature/taches/presentation/pages/manual_create_screen.dart';
 import 'package:grace_church/feature/taches/presentation/pages/task_card.dart';
 import 'package:grace_church/feature/taches/presentation/pages/widget/empty_data.dart';
 
@@ -39,7 +46,7 @@ class _TasksScreenState extends State<TasksScreen> {
   String _filter = 'Toutes';
   String _search = '';
   bool _searchOpen = false;
-  final _filters = ['Toutes', 'À faire', 'Terminées', "Aujourd'hui", 'À venir'];
+  final _filters = ['Toutes', 'ENCOURS', 'TERMINER', "AVENIR", 'ANNULER'];
 
   List<Task> get _filtered {
     var list = widget.tasks;
@@ -102,6 +109,10 @@ class _TasksScreenState extends State<TasksScreen> {
     return widgets.isEmpty ? [const SizedBox.shrink()] : widgets;
   }
 
+  TextEditingController _searchController = TextEditingController();
+  String capitalizer(String s) =>
+    s.isEmpty ? s : '${s[0].toUpperCase()}${s.substring(1)}';
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<GetListBloc, ApiState<List<TaskResponse>>>(
@@ -128,37 +139,7 @@ class _TasksScreenState extends State<TasksScreen> {
         }
 
         if (stateTaskList is SuccessState<List<TaskResponse>>) {
-          if (stateTaskList.data.isEmpty) {
-            return Scaffold(
-              backgroundColor: const Color(0xFFF4F6FB),
-              body: SafeArea(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    EmptyTaskState(
-                      isRefreshing: true,
-                      onTapMic: () {
-                        if (stateTaskList.refresh == true) {
-                          context.read<GetListBloc>().add(
-                            TaskSectionEvent.fetch(null),
-                          );
-                        } else {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => VoiceListeningScreen(
-                                actionType: TypeCreateTaskOrUpdate.UPDATE_TASK,
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
+         
 
           return RefreshIndicator(
             color: const Color(0xFF6366F1),
@@ -192,16 +173,41 @@ class _TasksScreenState extends State<TasksScreen> {
                                 ? Icons.close_rounded
                                 : Icons.search_rounded,
                             active: _searchOpen,
-                            onTap: () => setState(() {
-                              _searchOpen = !_searchOpen;
-                              if (!_searchOpen) _search = '';
-                            }),
+                            onTap: () {
+                              setState(() {
+                                _searchOpen = !_searchOpen;
+                                if (!_searchOpen) {
+                                  _search = '';
+                                  if (_searchController.text.isNotEmpty) {
+                                    context.read<GetListBloc>().add(
+                                      TaskSectionEvent.fetch(null),
+                                    );
+                                    _searchController.clear();
+                                  }
+                                }
+                              });
+                            },
                           ),
                           const SizedBox(width: 8),
                           IconBtn(
                             icon: Icons.add_rounded,
                             primary: true,
-                            onTap: widget.onAddManual,
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => BlocProvider(
+                                    create: (context) => FormTastBloc(
+                                      createTaskUseCase: getIt<CreateTaskUseCase>(),
+                                      updateTaskUseCase: getIt<UpdateTaskUseCase>(),
+                                    ),
+                                    child: ManualCreateScreen(
+                                      actionType: TypeCreateTaskOrUpdate.CREATE_TASK,
+                                      isPope: true,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -229,7 +235,7 @@ class _TasksScreenState extends State<TasksScreen> {
                                 ),
                                 child: Row(
                                   children: [
-                                    const Icon(
+                                    Icon(
                                       Icons.search_rounded,
                                       color: Color(0xFF6366F1),
                                       size: 18,
@@ -243,12 +249,19 @@ class _TasksScreenState extends State<TasksScreen> {
                                           >(
                                             builder: (context, state) {
                                               return TextField(
+                                                controller: _searchController,
                                                 onChanged: (v) {
                                                   context
                                                       .read<GetListBloc>()
                                                       .add(
                                                         TaskSectionEvent.search(
-                                                          v,
+                                                          search: v,
+                                                          status:
+                                                              _filter.isEmpty
+                                                              ? ''
+                                                              : _filter.contains('Toutes')
+                                                                  ? ''
+                                                                  : _filter,
                                                         ),
                                                       );
                                                   // setState(() => _search = v);
@@ -288,52 +301,117 @@ class _TasksScreenState extends State<TasksScreen> {
                         padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                         children: _filters
                             .map(
-                              (f) => Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: GestureDetector(
-                                  onTap: () => setState(() => _filter = f),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 8,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: _filter == f
-                                          ? const Color(0xFF6366F1)
-                                          : Colors.white,
-                                      borderRadius: BorderRadius.circular(20),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.04),
-                                          blurRadius: 6,
+                              (f) => BlocBuilder<
+                                GetListBloc,
+                                ApiState<List<TaskResponse>>
+                              >(
+                                builder: (context, state) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 8),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() => _filter = f);
+                                        if(_filter.isNotEmpty && !_filter.contains("Toutes")){
+                                             context.read<GetListBloc>().add(
+                                              TaskSectionEvent.fetch(null),
+                                            );
+
+                                        }else{
+                                            context.read<GetListBloc>().add(
+                                          TaskSectionEvent.search(
+                                            search: _searchController.text.trim().isEmpty
+                                                ? ''
+                                                : _searchController.text.trim(),
+                                            status: _filter.isEmpty
+                                                ? ''
+                                                : _filter.contains('Toutes')? '' : _filter,
+                                          ),
+                                        );
+
+                                        }
+                                      
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 8,
                                         ),
-                                      ],
-                                    ),
-                                    child: Text(
-                                      f,
-                                      style: TextStyle(
-                                        color: _filter == f
-                                            ? Colors.white
-                                            : const Color(0xFF6B7280),
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
+                                        decoration: BoxDecoration(
+                                          color: _filter == f
+                                              ? const Color(0xFF6366F1)
+                                              : Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(
+                                                0.04,
+                                              ),
+                                              blurRadius: 6,
+                                            ),
+                                          ],
+                                        ),
+                                        child: Text(
+                                        capitalizer(f).capitalizeWords,
+                                          style: TextStyle(
+                                            color: _filter == f
+                                                ? Colors.white
+                                                : const Color(0xFF6B7280),
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
+                                  );
+                                },
                               ),
                             )
                             .toList(),
                       ),
                     ),
 
+                    SizedBox(height: 15.h),
+                    
+          
+
                     // ── Liste ───────────────────────────────────────────────────────────
                     Expanded(
-                      child: stateTaskList.data.isEmpty
-                          ? EmptyTaskState(
-                              isRefreshing: false,
-                              onTapMic: widget.onMicTap,
-                            )
+                      child: stateTaskList.data.isEmpty && stateTaskList.refresh == true
+                          ?  SingleChildScrollView(
+                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              SizedBox(height: 0.1.sh),
+                                              EmptyTaskState(
+                                                isRefreshing: true,
+                                                onRefresh: () {
+                                               _searchController.value = TextEditingValue.empty;
+
+                          context.read<GetListBloc>().add(
+                            TaskSectionEvent.fetch(null),
+                          );
+                          setState(() {
+                            _filter = 'Toutes';
+                            
+                           
+                          });
+                                                },
+                                                onTapMic: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => VoiceListeningScreen(
+                                  actionType: TypeCreateTaskOrUpdate.UPDATE_TASK,
+                                ),
+                              ),
+                            );
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                        )
                           : BlocBuilder<
                               GetListBloc,
                               ApiState<List<TaskResponse>>

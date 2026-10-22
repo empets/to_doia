@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class EmptyTaskState extends StatelessWidget {
   final VoidCallback onTapMic;
   final bool isRefreshing;
-  const EmptyTaskState({required this.onTapMic, required this.isRefreshing});
+  final VoidCallback onRefresh;
+
+  const EmptyTaskState({required this.onTapMic, required this.isRefreshing, required this.onRefresh});
 
   @override
   Widget build(BuildContext context) => Center(
@@ -13,30 +16,31 @@ class EmptyTaskState extends StatelessWidget {
       children: [
         const Text('📋', style: TextStyle(fontSize: 52)),
         const SizedBox(height: 14),
-        const Text(
-          'Aucune tâche',
-          style: TextStyle(
+         Text(
+          'Aucune tâche trouvée suite à votre recherche',
+          style: GoogleFonts.roboto(
             color: Color(0xFF1A1A2E),
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
           ),
         ),
         const SizedBox(height: 20),
-        GestureDetector(
-          onTap: onTapMic,
+       if(isRefreshing)...[
+           GestureDetector(
+          onTap: onRefresh,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
               color: const Color(0xFF6366F1),
-              borderRadius: BorderRadius.circular(32),
+              borderRadius: BorderRadius.circular(20.r),
             ),
             child:  Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon( isRefreshing ? Icons.refresh_rounded : Icons.mic_rounded, color: Colors.white, size: 18),
+                Icon( Icons.refresh_rounded, color: Colors.white, size: 18),
                 SizedBox(width: 8),
                 Text(
-                 isRefreshing? 'Rafraîchir' : 'Créer une tâche',
+                 'Rafraîchir',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
@@ -46,7 +50,35 @@ class EmptyTaskState extends StatelessWidget {
             ),
           ),
         ),
-          SizedBox(height: 14.h),
+        SizedBox(height: 14.h),
+        ],
+        GestureDetector(
+          onTap: onTapMic,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            decoration: BoxDecoration(
+              border: Border.all(color: isRefreshing? Color(0xFF6366F1) : Colors.transparent),
+              color: isRefreshing ? Colors.transparent : const Color(0xFF6366F1),
+              borderRadius: BorderRadius.circular(32),
+            ),
+            child:  Row(
+               mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(  Icons.mic_rounded, color: Colors.black, size: 18),
+                SizedBox(width: 8),
+                Text(
+                 'Créer une nouvelle tâche',
+                  style: GoogleFonts.roboto(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+    
+        SizedBox(height: 14.h),
           
       ],
     ),

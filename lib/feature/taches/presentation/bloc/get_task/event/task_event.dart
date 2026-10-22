@@ -11,5 +11,6 @@ abstract class TaskSectionEvent with _$TaskSectionEvent {
           {required TaskResponse? task, required String status}) =
       ChangeTaskStatusSectionEvent;
 
-  factory TaskSectionEvent.search(String? search) = SearchTaskSectionEvent;
+  factory TaskSectionEvent.search({String? search, String? status}) =
+      SearchTaskSectionEvent;
 }

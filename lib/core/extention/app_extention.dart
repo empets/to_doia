@@ -777,6 +777,7 @@ String removeFromFirstDigit(String text) {
   return text;
 }
 
+
 /// Extrait uniquement les nombres avec unités M ou Gb d'une phrase
 /// Exemple Télécharger 500 MB
 /// Résultat 500 MB
@@ -1035,3 +1036,10 @@ bool isDateReached(String date) {
   final day = DateTime(target.year, target.month, target.day);
   return !today.isBefore(day);
 }
+
+extension StringCasing on String {
+  String get capitalizeWords => split(' ')
+      .map((w) => w.isEmpty ? w : '${w[0].toUpperCase()}${w.substring(1).toLowerCase()}')
+      .join(' ');
+}
+
