@@ -8,6 +8,7 @@ class EmptyTaskState extends StatelessWidget {
   final VoidCallback onRefresh;
 
   const EmptyTaskState({
+    super.key,
     required this.onTapMic,
     required this.isRefreshing,
     required this.onRefresh,
@@ -97,69 +98,72 @@ class SectionHeader extends StatelessWidget {
   final int count;
   final bool isHome;
   final void Function()? onPressed;
-  const SectionHeader({required this.title, required this.count, this.isHome = false, this.onPressed});
+  const SectionHeader({
+    super.key,
+    required this.title,
+    required this.count,
+    this.isHome = false,
+    this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(bottom: 10, top: 4),
     child: Row(
       children: [
-        if(isHome)...[
-           Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    "Aujourd'hui",
-                    style: GoogleFonts.roboto(
-                      color: Color(0xFF1A1A2E),
-                      fontSize: 17.sp,
-                      fontWeight: FontWeight.w700,
-                    ),
+        if (isHome) ...[
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  "Aujourd'hui",
+                  style: GoogleFonts.roboto(
+                    color: Color(0xFF1A1A2E),
+                    fontSize: 17.sp,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
-                TextButton(
-                  onPressed: onPressed,
-                  child: Text(
-                    'Voir tout',
-                    style: GoogleFonts.roboto(
-                      color: Color(0xFF6366F1),
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
+              ),
+              TextButton(
+                onPressed: onPressed,
+                child: Text(
+                  'Voir tout',
+                  style: GoogleFonts.roboto(
+                    color: Color(0xFF6366F1),
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-              ],
-            ),
-
+              ),
+            ],
+          ),
         ],
-        if(!isHome)...[
-           Text(
-          title,
-          style: const TextStyle(
-            color: Color(0xFF1A1A2E),
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-          decoration: BoxDecoration(
-            color: const Color(0xFF6366F1).withOpacity(0.12),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Text(
-            '$count',
+        if (!isHome) ...[
+          Text(
+            title,
             style: const TextStyle(
-              color: Color(0xFF6366F1),
-              fontSize: 11,
+              color: Color(0xFF1A1A2E),
+              fontSize: 15,
               fontWeight: FontWeight.w700,
             ),
           ),
-        ),
-
-        ]
-       
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: const Color(0xFF6366F1).withOpacity(0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              '$count',
+              style: const TextStyle(
+                color: Color(0xFF6366F1),
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
       ],
     ),
   );
@@ -170,6 +174,7 @@ class IconBtn extends StatelessWidget {
   final bool active, primary;
   final VoidCallback onTap;
   const IconBtn({
+    super.key,
     required this.icon,
     required this.onTap,
     this.active = false,
@@ -199,26 +204,29 @@ class IconBtn extends StatelessWidget {
 
 class Label extends StatelessWidget {
   final String text;
-  const Label(this.text);
+  final TextStyle? style;
+  const Label(this.text, {super.key, this.style});
   @override
   Widget build(BuildContext context) => Text(
     text,
-    style: const TextStyle(
-      color: Color(0xFF6B7280),
-      fontSize: 11,
-      fontWeight: FontWeight.w700,
-      letterSpacing: 0.6,
-    ),
+    style:
+        style ??
+        GoogleFonts.roboto(
+          color: Color(0xFF6B7280),
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.6,
+        ),
   );
 }
 
 class FieldBox extends StatelessWidget {
   final IconData icon;
   final String text;
-  const FieldBox({required this.icon, required this.text});
+  const FieldBox({super.key, required this.icon, required this.text});
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+    padding: EdgeInsets.symmetric(horizontal: 14, vertical: 13),
     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(14),

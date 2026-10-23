@@ -8,8 +8,12 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:grace_church/core/constante/constantes.dart';
+import 'package:grace_church/core/extention/app_extention.dart';
+import 'package:grace_church/core/service_systeme/error/failure.dart';
 import 'package:grace_church/core/voice/voice_listening.dart';
 import 'package:grace_church/feature/home/data/service/remote/groq_remote_data_soucre.dart';
+import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
+import 'package:grace_church/feature/home/domaine/usecase/shara_navigation_usecase.dart';
 import 'package:grace_church/feature/home/overview.dart';
 import 'package:grace_church/feature/home/presentation/bloc/shara/shara_navigate_bloc.dart';
 import 'package:grace_church/feature/home/presentation/page/home_screen.dart';
@@ -675,11 +679,11 @@ class _GraceVoiceViewState extends State<GraceVoiceView> {
 
     if (text.isEmpty) return;
 
-    context.read<SharaNavigationBloc>().add(
-      SendGraceMessageEvent([
-        {'role': 'user', 'content': text},
-      ]),
-    );
+    // context.read<SharaNavigationBloc>().add(
+    //   SendGraceMessageEvent([
+    //     {'role': 'user', 'content': text},
+    //   ]),
+    // );
 
     _controller.clear();
   }
@@ -810,8 +814,7 @@ class _GraceVoiceViewState extends State<GraceVoiceView> {
 
           final action = state.response.action;
 
-          if (action.shouldNavigate &&
-              action.destination != null &&
+          if (action.destination != null &&
               action.destination!.trim().isNotEmpty) {
             switch (action.destination!.toLowerCase()) {
               case 'tasks':
@@ -918,4 +921,321 @@ class _GraceVoiceViewState extends State<GraceVoiceView> {
       ),
     );
   }
+}
+
+// BlocConsumer<SharaNavigationBloc, SharaNavigationState>(
+//   listener: (context, state) {
+//     if (state is SharaNavigationSuccess) {
+//           debugPrint('GRACE MESSAGE: ${state.response.message}');
+//           debugPrint('GRACE ACTION: ${state.response.action.type}');
+//           debugPrint('GRACE DESTINATION: ${state.response.action.destination}');
+//           setState(() {
+//             _message = state.response.message;
+//           });
+
+//           final action = state.response.action;
+
+//           if (action.destination != null &&
+//               action.destination!.trim().isNotEmpty) {
+//             switch (action.destination!.toLowerCase()) {
+//               case 'tasks':
+//               case 'mes_taches':
+//                 Navigator.push(
+//                   context,
+//                   MaterialPageRoute(builder: (context) => TasksScreen()),
+//                 );
+//                 break;
+
+//               case 'home':
+//               case 'accueil':
+//                 Navigator.push(
+//                   context,
+//                   MaterialPageRoute(
+//                     builder: (context) => HomeScreen(
+//                       tasks: [],
+//                       onMicTap: () {},
+//                       onViewTasks: () {},
+//                       onNotif: () {},
+//                     ),
+//                   ),
+//                 );
+//                 break;
+
+//               default:
+//                 debugPrint('Destination inconnue : ${action.destination}');
+//             }
+//           }
+//         }
+
+//         if (state is SharaNavigationError) {
+//           setState(() {
+//             _message = state.message;
+//           });
+//         }
+//   },
+//   builder: (context, state) {
+//     final isListening = state is SharaNavigationListening;
+//     final isThinking = state is SharaNavigationLoading;
+//     final amplitude = isListening ? state.amplitude : 0.0;
+//     final message = switch (state) {
+//       SharaNavigationSuccess(:final response) => response.message,
+//       SharaNavigationError(:final message) => message,
+//       SharaNavigationListening() => 'Je t’écoute…',
+//       SharaNavigationLoading() => 'Shara réfléchit…',
+//       _ => 'Dis « Shara » ou touche le micro.',
+//     };
+
+//     return Scaffold(
+//       backgroundColor: const Color(0xFF10111B),
+//       appBar: AppBar(title: const Text('Shara')),
+//       body: SafeArea(
+//         child: Padding(
+//           padding: const EdgeInsets.all(24),
+//           child: Column(
+//             children: [
+//               const Spacer(),
+//               VoiceWaveform(
+//                 isRecording: isListening,
+//                 isThinking: isThinking,
+//                 amplitude: amplitude,
+//               ),
+//               const SizedBox(height: 32),
+//               Text(message,
+//                   textAlign: TextAlign.center,
+//                   style: const TextStyle(color: Colors.white, fontSize: 18)),
+//               const Spacer(),
+//               IconButton.filled(
+//                 iconSize: 36,
+//                 onPressed: () => context.read<SharaNavigationBloc>().add(
+//                       isListening
+//                           ? SharaStopListening()
+//                           : SharaStartListening(),
+//                     ),
+//                 icon: Icon(isListening ? Icons.stop : Icons.mic),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   },
+// )
+
+/// ========================
+///                         AI
+/// ========================
+///
+
+sealed class SharaNavigationEvent {}
+
+class SharaWakeWordDetected extends SharaNavigationEvent {} // "Shara" entendu
+
+class SharaStartListening extends SharaNavigationEvent {} // bouton micro
+
+class SharaStopListening extends SharaNavigationEvent {}
+
+class SharaAmplitudeChanged extends SharaNavigationEvent {
+  SharaAmplitudeChanged(this.db);
+  final double db;
+}
+
+// shara_navigation_state.dart
+sealed class SharaNavigationState {}
+
+class SharaNavigationIdle extends SharaNavigationState {}
+
+class SharaNavigationListening extends SharaNavigationState {
+  SharaNavigationListening(this.amplitude);
+  final double amplitude; // 0..1
+}
+
+class SharaNavigationLoading extends SharaNavigationState {}
+
+/// Réponse reçue : la vue navigue, le bloc lit le message à voix haute.
+class SharaNavigationSuccess extends SharaNavigationState {
+  SharaNavigationSuccess(this.response);
+  final SharaResponse response;
+}
+
+class SharaNavigationError extends SharaNavigationState {
+  SharaNavigationError(this.message);
+  final String message;
+}
+
+// shara_navigation_bloc.dart
+class SharaNavigationBloc
+    extends Bloc<SharaNavigationEvent, SharaNavigationState> {
+  SharaNavigationBloc({
+    required SharaInteractUsecase interact,
+    required AudioRecorder recorder,
+    required FlutterTts tts,
+    this.autoListenAfterReply = false,
+  }) : _interact = interact,
+       _recorder = recorder,
+       _tts = tts,
+       super(SharaNavigationIdle()) {
+    on<SharaWakeWordDetected>(_onStart);
+    on<SharaStartListening>(_onStart);
+    on<SharaAmplitudeChanged>(_onAmplitude);
+    on<SharaStopListening>(_onStop);
+    _initTts();
+  }
+
+  final SharaInteractUsecase _interact;
+  final AudioRecorder _recorder;
+  final FlutterTts _tts;
+  final bool autoListenAfterReply;
+
+  static const _silenceThreshold = 0.25;
+  static const _silenceDuration = Duration(milliseconds: 1500);
+  static const _maxDuration = Duration(seconds: 30);
+
+  final List<Map<String, String>> _history = [];
+  StreamSubscription<Amplitude>? _ampSub;
+  DateTime? _startedAt;
+  DateTime _lastVoiceAt = DateTime.now();
+  bool _heardSpeech = false;
+
+  Future<void> _initTts() async {
+    await _tts.setLanguage('fr-FR');
+    await _tts.setSpeechRate(0.5);
+    await _tts.awaitSpeakCompletion(true);
+  }
+
+  Future<void> _onStart(
+    SharaNavigationEvent event,
+    Emitter<SharaNavigationState> emit,
+  ) async {
+    // Ignore le wake word pendant l'écoute, la réflexion ou la lecture.
+    if (state is SharaNavigationListening ||
+        state is SharaNavigationLoading ||
+        state is SharaNavigationSuccess) {
+      return;
+    }
+
+    if (!await _recorder.hasPermission()) {
+      emit(SharaNavigationError('Autorise le micro pour parler à Shara.'));
+      return;
+    }
+
+    final dir = await getTemporaryDirectory();
+    final path =
+        '${dir.path}/shara_${DateTime.now().millisecondsSinceEpoch}.m4a';
+
+    await _recorder.start(
+      const RecordConfig(encoder: AudioEncoder.aacLc),
+      path: path,
+    );
+
+    _startedAt = DateTime.now();
+    _lastVoiceAt = _startedAt!;
+    _heardSpeech = false;
+
+    _ampSub = _recorder
+        .onAmplitudeChanged(const Duration(milliseconds: 80))
+        .listen((a) => add(SharaAmplitudeChanged(a.current)));
+
+    emit(SharaNavigationListening(0));
+  }
+
+  void _onAmplitude(
+    SharaAmplitudeChanged event,
+    Emitter<SharaNavigationState> emit,
+  ) {
+    if (state is! SharaNavigationListening) return;
+
+    // dB (-160..0) -> 0..1
+    final level = ((event.db + 50) / 50).clamp(0.0, 1.0);
+    final now = DateTime.now();
+
+    if (level > _silenceThreshold) {
+      _heardSpeech = true;
+      _lastVoiceAt = now;
+    }
+
+    emit(SharaNavigationListening(level));
+
+    final silent =
+        _heardSpeech && now.difference(_lastVoiceAt) > _silenceDuration;
+    final tooLong = now.difference(_startedAt!) > _maxDuration;
+    if (silent || tooLong) add(SharaStopListening());
+  }
+
+  Future<void> _onStop(
+    SharaStopListening event,
+    Emitter<SharaNavigationState> emit,
+  ) async {
+    if (state is! SharaNavigationListening) return;
+    emit(SharaNavigationLoading());
+
+    await _ampSub?.cancel();
+    final path = await _recorder.stop();
+    final seconds = DateTime.now().difference(_startedAt!).inSeconds;
+
+    // Rien entendu : on ne gaspille pas un appel API.
+    if (path == null || !_heardSpeech) {
+      emit(SharaNavigationIdle());
+      return;
+    }
+
+    final result = await _interact({
+      'audioPath': path,
+      'history': List<Map<String, String>>.from(_history),
+      'recordTime': seconds,
+    });
+
+    SharaResponse? response;
+    Failure? failure;
+    result.fold(
+      (l) => failure = l,
+      (r) => response = SharaResponse(action: r.action, message: r.message),
+    );
+
+    if (failure != null || response == null) {
+      emit(SharaNavigationError(failure?.message ?? 'Erreur inconnue'));
+      return;
+    }
+
+    final r = response!;
+
+    _history
+      ..add({'role': 'user', 'content': r.transcript})
+      ..add({'role': 'assistant', 'content': r.message});
+    if (_history.length > 12) _history.removeRange(0, _history.length - 12);
+
+    emit(SharaNavigationSuccess(r)); // la vue navigue / crée la tâche
+    await _tts.speak(r.message); // attend la fin de la lecture
+    emit(SharaNavigationIdle());
+
+    // Mode conversation : si Shara a posé une question, on réécoute.
+    if (autoListenAfterReply && r.action.type == 'none') {
+      add(SharaStartListening());
+    }
+  }
+
+  @override
+  Future<void> close() async {
+    await _ampSub?.cancel();
+    await _tts.stop();
+    await _recorder.dispose();
+    return super.close();
+  }
+}
+
+class SharaResponse {
+  final String message;
+  final SharaAction action;
+  final String transcript; // texte de l'utilisateur, rempli par le repository
+
+  const SharaResponse({
+    required this.message,
+    required this.action,
+    this.transcript = '',
+  });
+
+  SharaResponse copyWith({String? transcript}) => SharaResponse(
+    message: message,
+    action: action,
+    transcript: transcript ?? this.transcript,
+  );
 }

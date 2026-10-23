@@ -1,16 +1,22 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
-import 'package:http/http.dart' as http;
+
 import 'package:grace_church/core/service_systeme/error/failure.dart';
 import 'package:grace_church/feature/home/data/model/home_responses_models.dart';
-
+import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
+import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
 
 abstract class GroqRemoteDataSource {
   Future<String> transcribe(String filePath);
   Future<TaskResponseModel> extractTask(String text);
   Future<GraceResponse> chat(List<Map<String, String>> messages);
+
+  Future<SharaResponse> interact({
+    required String audioPath,
+    required List<Map<String, String>> history,
+    int? recordTime,
+  });
 }
 
 @LazySingleton(as: GroqRemoteDataSource)
@@ -128,7 +134,7 @@ class GroqRemoteDataSourceImpl implements GroqRemoteDataSource {
               {
                 'role': 'system',
                 'content': '''
-                Tu es Grace, une assistante vocale de navigation dans une application Flutter.
+                Tu es Shara, une assistante vocale de navigation dans une application Flutter.
                 Tu dois répondre en français, avec 1 à 3 phrases courtes, sans markdown ni emojis.
                 Tes réponses sont lues à voix haute.
 
@@ -177,7 +183,118 @@ class GroqRemoteDataSourceImpl implements GroqRemoteDataSource {
       ),
     );
   }
+
+  //============>> SHARA
+  @override
+  Future<SharaResponse> interact({
+    required String audioPath,
+    required List<Map<String, String>> history,
+    int? recordTime,
+  }) async {
+    final now = DateTime.now();
+    final today = now.toIso8601String().substring(0, 10);
+    final hhmm =
+        '${now.hour.toString().padLeft(2, '0')}:'
+        '${now.minute.toString().padLeft(2, '0')}';
+
+    final res = await _client
+        .post(
+          Uri.parse('$_base/chat/completions'),
+          headers: {..._auth, 'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'model': 'openai/gpt-oss-20b',
+            'temperature': 0.2,
+            'max_tokens': 600,
+            'response_format': {'type': 'json_object'},
+            'messages': [
+              {
+                'role': 'system',
+                'content':
+                    '''
+          Tu es Shara, une assistante vocale dans une application Flutter.
+          Tu réponds en français, en 1 à 3 phrases courtes, sans markdown ni emojis.
+          Tes réponses sont lues à voix haute.
+
+          Date du jour : $today. Heure actuelle : $hhmm.
+          Résous "demain", "lundi prochain", "ce soir", etc. à partir de cette date.
+
+          Écrans disponibles :
+          - home : accueil
+          - tasks : liste des tâches
+          - create_task : formulaire de création d'une tâche
+          - settings : paramètres
+          - voice : assistant vocal
+
+          Actions possibles :
+          1. "navigate" : uniquement si l'utilisateur demande explicitement d'ouvrir ou consulter un écran.
+          2. "create_task" : si l'utilisateur demande de créer, noter, ajouter ou programmer une tâche/rappel.
+            Dans ce cas, remplis "task". Le "message" confirme brièvement la création
+            (ex : "C'est noté, je crée la tâche pour demain à 9 heures.").
+          3. "none" : question, discussion, ou demande ambiguë.
+
+          Règles :
+          - Ne déclenche jamais d'action sans demande claire.
+          - N'invente pas de destinations.
+          - Si une info essentielle de la tâche manque (titre), utilise "none" et pose une question courte.
+          - Règles de "task" :
+            - "title" : titre court (max 6 mots), à l'infinitif ou nominal.
+            - "content" : résumé bref (1 à 2 phrases), sans hésitations.
+            - "date" : YYYY-MM-DD ou null.
+            - "time" : HH:mm (24h) ou null.
+            - "recurring" : true seulement si la tâche se répète.
+            - "status" : "en_cours" (déjà commencée / à faire maintenant),
+              "a_terminer" (à finir avant une échéance),
+              "annule" (annuler/abandonner),
+              "a_venir" (planifiée plus tard). Défaut : "a_venir".
+
+          Retourne exclusivement un JSON valide, sans texte autour :
+          {
+            "message": "réponse courte à lire à voix haute",
+            "action": {
+              "type": "navigate" | "create_task" | "none",
+              "destination": "home" | "tasks" | "create_task" | "settings" | "voice" | null,
+              "task": {
+                "title": string|null,
+                "content": string|null,
+                "date": "YYYY-MM-DD"|null,
+                "time": "HH:mm"|null,
+                "recurring": boolean,
+                "status": "en_cours"|"a_terminer"|"annule"|"a_venir"
+              } | null
+            }
+          }
+          ''',
+              },
+              ...history,
+            ],
+          }),
+        )
+        .timeout(_timeout);
+
+    final data = _decode(res);
+    final content = data['choices'][0]['message']['content'] as String;
+    final json = jsonDecode(content) as Map<String, dynamic>;
+    log('Shara response: $json');
+
+    final actionJson = (json['action'] as Map<String, dynamic>?) ?? {};
+    final type = (actionJson['type'] as String?) ?? 'none';
+
+    TaskResponseModel? task;
+    final taskJson = actionJson['task'];
+    if (type == 'create_task' && taskJson is Map<String, dynamic>) {
+      task = TaskResponseModel.fromJson({
+        ...taskJson,
+        'recordtime': recordTime,
+      });
+    }
+
+    return SharaResponse(
+      message: (json['message'] as String?) ?? '',
+      action: SharaAction(
+        type: task == null && type == 'create_task' ? 'none' : type,
+        destination: actionJson['destination'] as String?,
+        task: task,
+      ),
+    );
+  }
 }
-
-
-// - "recordtime"" : il correspond au temps d'enregistrement du vocal   

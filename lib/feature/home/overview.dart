@@ -13,7 +13,8 @@ import 'package:grace_church/feature/home/domaine/usecase/shara_navigation_useca
 import 'package:grace_church/feature/home/presentation/bloc/shara/shara_navigate_bloc.dart';
 import 'package:grace_church/feature/home/presentation/bloc/voice_task.dart';
 import 'package:grace_church/feature/home/presentation/page/home_screen.dart';
-import 'package:grace_church/feature/home/presentation/widget/chart_whithe_grace.dart';
+import 'package:grace_church/feature/home/presentation/widget/chart_whithe_grace.dart'
+    hide SharaNavigationBloc;
 import 'package:grace_church/feature/onboarding/splash_screen.dart';
 import 'package:grace_church/feature/setting/setting_screen.dart';
 import 'package:grace_church/feature/setting/sub_setting_screen.dart';
@@ -225,7 +226,7 @@ class _AppShellState extends State<AppShell> {
 
     return Scaffold(
       appBar: AppBar(
-        title: VoiceWaveform(height: 100, isRecording: true, amplitude: 0.1),
+        // title: VoiceWaveform(height: 100, isRecording: true, amplitude: 0.1),
         backgroundColor: const Color(0xFFF4F6FB),
       ),
       body: AnimatedSwitcher(

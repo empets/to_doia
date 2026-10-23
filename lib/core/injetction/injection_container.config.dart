@@ -98,6 +98,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i174.SharaNavigationUsecase>(
       () => _i174.SharaNavigationUsecase(gh<_i722.VoiceTaskRepository>()),
     );
+    gh.lazySingleton<_i174.SharaInteractUsecase>(
+      () => _i174.SharaInteractUsecase(gh<_i722.VoiceTaskRepository>()),
+    );
     gh.lazySingleton<_i439.GetListBloc>(
       () =>
           _i439.GetListBloc(getTaskListUseCase: gh<_i767.GetTaskListUseCase>()),

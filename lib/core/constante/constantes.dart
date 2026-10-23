@@ -11,3 +11,6 @@ class TypeTaskStatus {
   static const String ANNULER = 'ANNULER';
   static const String SUPPRIMER = 'SUPPRIMER';
 }
+
+
+

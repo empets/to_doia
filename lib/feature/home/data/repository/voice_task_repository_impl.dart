@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:dartz/dartz.dart';
-import 'package:grace_church/feature/home/domaine/repositorie/voic_task_repository.dart';
-import 'package:injectable/injectable.dart';
 import 'package:grace_church/core/service_systeme/error/failure.dart';
 import 'package:grace_church/feature/home/data/model/home_responses_models.dart';
 import 'package:grace_church/feature/home/data/service/remote/groq_remote_data_soucre.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:grace_church/feature/home/domaine/repositorie/voic_task_repository.dart';
+import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: VoiceTaskRepository)
 class VoiceTaskRepositoryImpl implements VoiceTaskRepository {
@@ -34,21 +34,50 @@ class VoiceTaskRepositoryImpl implements VoiceTaskRepository {
   }
 
   @override
-Future<Either<Failure, GraceResponse>> chat(
-  List<Map<String, String>> messages,
-) async {
-  try {
-    final response = await _remote.chat(messages);
+  Future<Either<Failure, GraceResponse>> chat(
+    List<Map<String, String>> messages,
+  ) async {
+    try {
+      final response = await _remote.chat(messages);
 
-    return Right(response);
-  } on ServerException catch (e) {
-    return Left(Failure(e.message));
-  } on SocketException {
-    return const Left(Failure('Pas de connexion internet'));
-  } on TimeoutException {
-    return const Left(Failure('Délai dépassé, réessaie'));
-  } on FormatException {
-    return const Left(Failure('Réponse invalide du serveur'));
+      return Right(response);
+    } on ServerException catch (e) {
+      return Left(Failure(e.message));
+    } on SocketException {
+      return const Left(Failure('Pas de connexion internet'));
+    } on TimeoutException {
+      return const Left(Failure('Délai dépassé, réessaie'));
+    } on FormatException {
+      return const Left(Failure('Réponse invalide du serveur'));
+    }
   }
-}
+
+  @override
+  Future<Either<Failure, SharaResponse>> interact({
+    required String audioPath,
+    required List<Map<String, String>> history,
+    int? recordTime,
+  }) async {
+    try {
+      final transcript = await _remote.transcribe(audioPath);
+      final response = await _remote.interact(
+        audioPath: audioPath,
+        history: [
+          ...history,
+          {'role': 'user', 'content': transcript},
+        ],
+        recordTime: recordTime,
+      );
+      return // repository : une seule ligne à changer
+      Right(response.copyWith(transcript: transcript));
+    } on ServerException catch (e) {
+      return Left(Failure(e.message));
+    } on SocketException {
+      return const Left(Failure('Pas de connexion internet'));
+    } on TimeoutException {
+      return const Left(Failure('Délai dépassé, réessaie'));
+    } on FormatException {
+      return const Left(Failure('Réponse invalide du serveur'));
+    }
+  }
 }

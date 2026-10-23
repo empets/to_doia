@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:grace_church/core/constante/constantes.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:intl/intl.dart';
 
@@ -778,7 +779,6 @@ String removeFromFirstDigit(String text) {
   return text;
 }
 
-
 /// Extrait uniquement les nombres avec unités M ou Gb d'une phrase
 /// Exemple Télécharger 500 MB
 /// Résultat 500 MB
@@ -1040,10 +1040,13 @@ bool isDateReached(String date) {
 
 extension StringCasing on String {
   String get capitalizeWords => split(' ')
-      .map((w) => w.isEmpty ? w : '${w[0].toUpperCase()}${w.substring(1).toLowerCase()}')
+      .map(
+        (w) => w.isEmpty
+            ? w
+            : '${w[0].toUpperCase()}${w.substring(1).toLowerCase()}',
+      )
       .join(' ');
 }
-
 
 extension TaskResponseX on TaskResponse {
   /// Suppose date = "yyyy-MM-dd" et time = "HH:mm". Adapte si ton format diffère.
@@ -1074,14 +1077,36 @@ extension TaskResponseX on TaskResponse {
   }
 }
 
-
 bool isDateExpired(String date, String time) {
   try {
     final d = DateTime.parse(date);
     final p = time.split(':');
-    final dt = DateTime(d.year, d.month, d.day, int.parse(p[0]), int.parse(p[1]));
+    final dt = DateTime(
+      d.year,
+      d.month,
+      d.day,
+      int.parse(p[0]),
+      int.parse(p[1]),
+    );
     return dt.isBefore(DateTime.now());
   } catch (_) {
     return false;
   }
+}
+
+String getTaskStatus({required DateTime date, required TimeOfDay time}) {
+  final now = DateTime.now();
+
+  final selectedDateTime = DateTime(
+    date.year,
+    date.month,
+    date.day,
+    time.hour,
+    time.minute,
+  );
+
+  if (selectedDateTime.isAfter(now)) {
+    return TypeTaskStatus.AVENIR;
+  }
+  return TypeTaskStatus.ENCOURS;
 }

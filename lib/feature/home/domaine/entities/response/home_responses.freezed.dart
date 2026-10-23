@@ -851,4 +851,267 @@ as String?,
 
 }
 
+/// @nodoc
+mixin _$SharaResponse {
+
+ String get message; SharaAction get action; String get transcript;
+/// Create a copy of SharaResponse
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SharaResponseCopyWith<SharaResponse> get copyWith => _$SharaResponseCopyWithImpl<SharaResponse>(this as SharaResponse, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SharaResponse&&(identical(other.message, message) || other.message == message)&&(identical(other.action, action) || other.action == action)&&(identical(other.transcript, transcript) || other.transcript == transcript));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,message,action,transcript);
+
+@override
+String toString() {
+  return 'SharaResponse(message: $message, action: $action, transcript: $transcript)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SharaResponseCopyWith<$Res>  {
+  factory $SharaResponseCopyWith(SharaResponse value, $Res Function(SharaResponse) _then) = _$SharaResponseCopyWithImpl;
+@useResult
+$Res call({
+ String message, SharaAction action, String transcript
+});
+
+
+
+
+}
+/// @nodoc
+class _$SharaResponseCopyWithImpl<$Res>
+    implements $SharaResponseCopyWith<$Res> {
+  _$SharaResponseCopyWithImpl(this._self, this._then);
+
+  final SharaResponse _self;
+  final $Res Function(SharaResponse) _then;
+
+/// Create a copy of SharaResponse
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? message = null,Object? action = null,Object? transcript = null,}) {
+  return _then(_self.copyWith(
+message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,action: null == action ? _self.action : action // ignore: cast_nullable_to_non_nullable
+as SharaAction,transcript: null == transcript ? _self.transcript : transcript // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [SharaResponse].
+extension SharaResponsePatterns on SharaResponse {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _SharaResponse value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _SharaResponse() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _SharaResponse value)  $default,){
+final _that = this;
+switch (_that) {
+case _SharaResponse():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _SharaResponse value)?  $default,){
+final _that = this;
+switch (_that) {
+case _SharaResponse() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message,  SharaAction action,  String transcript)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _SharaResponse() when $default != null:
+return $default(_that.message,_that.action,_that.transcript);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message,  SharaAction action,  String transcript)  $default,) {final _that = this;
+switch (_that) {
+case _SharaResponse():
+return $default(_that.message,_that.action,_that.transcript);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message,  SharaAction action,  String transcript)?  $default,) {final _that = this;
+switch (_that) {
+case _SharaResponse() when $default != null:
+return $default(_that.message,_that.action,_that.transcript);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _SharaResponse implements SharaResponse {
+  const _SharaResponse({required this.message, required this.action, this.transcript = ''});
+  
+
+@override final  String message;
+@override final  SharaAction action;
+@override@JsonKey() final  String transcript;
+
+/// Create a copy of SharaResponse
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$SharaResponseCopyWith<_SharaResponse> get copyWith => __$SharaResponseCopyWithImpl<_SharaResponse>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SharaResponse&&(identical(other.message, message) || other.message == message)&&(identical(other.action, action) || other.action == action)&&(identical(other.transcript, transcript) || other.transcript == transcript));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,message,action,transcript);
+
+@override
+String toString() {
+  return 'SharaResponse(message: $message, action: $action, transcript: $transcript)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$SharaResponseCopyWith<$Res> implements $SharaResponseCopyWith<$Res> {
+  factory _$SharaResponseCopyWith(_SharaResponse value, $Res Function(_SharaResponse) _then) = __$SharaResponseCopyWithImpl;
+@override @useResult
+$Res call({
+ String message, SharaAction action, String transcript
+});
+
+
+
+
+}
+/// @nodoc
+class __$SharaResponseCopyWithImpl<$Res>
+    implements _$SharaResponseCopyWith<$Res> {
+  __$SharaResponseCopyWithImpl(this._self, this._then);
+
+  final _SharaResponse _self;
+  final $Res Function(_SharaResponse) _then;
+
+/// Create a copy of SharaResponse
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? message = null,Object? action = null,Object? transcript = null,}) {
+  return _then(_SharaResponse(
+message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,action: null == action ? _self.action : action // ignore: cast_nullable_to_non_nullable
+as SharaAction,transcript: null == transcript ? _self.transcript : transcript // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
 // dart format on
