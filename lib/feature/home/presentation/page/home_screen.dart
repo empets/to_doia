@@ -11,6 +11,9 @@ import 'package:grace_church/core/injetction/injection_container.dart';
 import 'package:grace_church/core/models/task.dart';
 import 'package:grace_church/core/service_systeme/model/api/api_state.dart';
 import 'package:grace_church/core/voice/voice_listening.dart';
+import 'package:grace_church/feature/assistant/app_bar_ia.dart';
+import 'package:grace_church/feature/assistant/shara_ai.dart';
+import 'package:grace_church/feature/assistant/shara_loading_button.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:grace_church/feature/home/domaine/usecase/shara_navigation_usecase.dart';
 import 'package:grace_church/feature/home/presentation/bloc/voice_task.dart';
@@ -539,6 +542,8 @@ class _HomeScreenState extends State<HomeScreen>
   //     ),
   //   );
   // }
+  late bool isListening = false;
+  late bool isLoad = false;
 
   @override
   Widget build(BuildContext context) {
@@ -546,421 +551,349 @@ class _HomeScreenState extends State<HomeScreen>
         .where((t) => !t.done && t.dateLabel == "Aujourd'hui")
         .toList();
 
-    return BlocProvider(
-      create: (context) => SharaNavigationBloc(
-        interact: getIt<SharaInteractUsecase>(),
-        recorder: AudioRecorder(),
-        tts: FlutterTts(),
-      ),
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF4F6FB),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 24.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // ── En-tête ─────────────────────────────────────────
+    return Scaffold(
+      appBar: SharaAppBar(),
+      backgroundColor: const Color(0xFFF4F6FB),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: EdgeInsets.fromLTRB(20.w, 1.h, 20.w, 24.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // ── En-tête ─────────────────────────────────────────
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Que dois-je faire\npour vous ?',
+                      style: GoogleFonts.roboto(
+                        color: const Color(0xFF1A1A2E),
+                        fontSize: 24.sp,
+                        fontWeight: FontWeight.w800,
+                        height: 1.2,
+                      ),
+                    ),
+                  ),
+                  BlocBuilder<GetListBloc, ApiState<List<TaskResponse>>>(
+                    builder: (context, state) {
+                      final active = state is SuccessState<List<TaskResponse>>
+                          ? state.data
+                                .where(
+                                  (t) =>
+                                      t.status.contains(TypeTaskStatus.ENCOURS),
+                                )
+                                .length
+                          : 0;
+
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => TasksScreen()),
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 8.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(
+                              0xFF6366F1,
+                            ).withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(14.r),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.task_alt_rounded,
+                                color: const Color(0xFF6366F1),
+                                size: 16.sp,
+                              ),
+                              SizedBox(width: 6.w),
+                              Text(
+                                '$active tâches',
+                                style: GoogleFonts.roboto(
+                                  color: const Color(0xFF6366F1),
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 20.h),
+
+              // ── Statistiques ────────────────────────────────────
+              BlocBuilder<GetListBloc, ApiState<List<TaskResponse>>>(
+                builder: (context, state) {
+                  if (state is LoadState<List<TaskResponse>>) {
+                    return const StatsRowShimmer();
+                  }
+
+                  if (state is SuccessState<List<TaskResponse>>) {
+                    final tasks = state.data;
+
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: StatCard(
+                            label: "Aujourd'hui",
+                            value: tasks
+                                .where(
+                                  (t) =>
+                                      t.status.contains(TypeTaskStatus.ENCOURS),
+                                )
+                                .length,
+                            emoji: '📅',
+                            color: const Color(0xFF6366F1),
+                          ),
+                        ),
+                        SizedBox(width: 10.w),
+                        Expanded(
+                          child: StatCard(
+                            label: 'À venir',
+                            value: tasks
+                                .where(
+                                  (t) =>
+                                      t.status.contains(TypeTaskStatus.AVENIR),
+                                )
+                                .length,
+                            emoji: '⏳',
+                            color: const Color(0xFF10B981),
+                          ),
+                        ),
+                        SizedBox(width: 10.w),
+                        Expanded(
+                          child: StatCard(
+                            label: 'Terminées',
+                            value: tasks
+                                .where(
+                                  (t) => t.status.contains(
+                                    TypeTaskStatus.TERMINER,
+                                  ),
+                                )
+                                .length,
+                            emoji: '✓',
+                            color: const Color(0xFFF59E0B),
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+
+                  return const SizedBox.shrink();
+                },
+              ),
+
+              // SizedBox(height: 36.h),
+
+              // // ── Micro Shara ─────────────────────────────────────
+              // Center(
+              //   child: Column(
+              //     mainAxisSize: MainAxisSize.min,
+              //     children: [
+              //       GestureDetector(
+              //         onTap: () {
+              //           Navigator.push(
+              //             context,
+              //             MaterialPageRoute(
+              //               builder: (_) => VoiceListeningScreen(
+              //                 actionType: TypeCreateTaskOrUpdate.CREATE_TASK,
+              //               ),
+              //             ),
+              //           );
+              //         },
+              //         child: AnimatedBuilder(
+              //           animation: _pulse,
+              //           builder: (context, child) {
+              //             final pulse = _pulse.value;
+
+              //             return SizedBox(
+              //               width: 180.w,
+              //               height: 180.w,
+              //               child: Stack(
+              //                 alignment: Alignment.center,
+              //                 children: [
+              //                   ...List.generate(3, (i) {
+              //                     final size =
+              //                         100.w + (i + 1) * 26.w + pulse * 8.w;
+
+              //                     return Container(
+              //                       width: size,
+              //                       height: size,
+              //                       decoration: BoxDecoration(
+              //                         shape: BoxShape.circle,
+              //                         color: const Color(
+              //                           0xFF6366F1,
+              //                         ).withValues(alpha: 0.08 - i * 0.02),
+              //                       ),
+              //                     );
+              //                   }),
+              //                   Container(
+              //                     width: 100.w,
+              //                     height: 100.w,
+              //                     decoration: BoxDecoration(
+              //                       shape: BoxShape.circle,
+              //                       gradient: const LinearGradient(
+              //                         begin: Alignment.topLeft,
+              //                         end: Alignment.bottomRight,
+              //                         colors: [
+              //                           Color(0xFF818CF8),
+              //                           Color(0xFF6366F1),
+              //                         ],
+              //                       ),
+              //                       boxShadow: [
+              //                         BoxShadow(
+              //                           color: const Color(
+              //                             0xFF6366F1,
+              //                           ).withValues(alpha: 0.35 + pulse * 0.1),
+              //                           blurRadius: 28 + pulse * 8,
+              //                         ),
+              //                       ],
+              //                     ),
+              //                     child: Icon(
+              //                       Icons.mic_rounded,
+              //                       color: Colors.white,
+              //                       size: 44.sp,
+              //                     ),
+              //                   ),
+              //                 ],
+              //               ),
+              //             );
+              //           },
+              //         ),
+              //       ),
+              //       SizedBox(height: 12.h),
+              //       Text(
+              //         'Appuyez pour parler',
+              //         style: GoogleFonts.roboto(
+              //           color: const Color(0xFF6B7280),
+              //           fontSize: 14.sp,
+              //         ),
+              //       ),
+              //       SizedBox(height: 4.h),
+              //       Text(
+              //         'Créez une tâche avec votre voix',
+              //         textAlign: TextAlign.center,
+              //         style: GoogleFonts.roboto(
+              //           color: const Color(0xFF6B7280),
+              //           fontSize: 12.sp,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              SizedBox(height: 32.h),
+
+              // ── Tâches du jour ──────────────────────────────────
+              if (today.isNotEmpty) ...[
+                SizedBox(height: 28.h),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: Text(
-                        'Que dois-je faire\npour vous ?',
+                        'Liste des tâches',
                         style: GoogleFonts.roboto(
                           color: const Color(0xFF1A1A2E),
-                          fontSize: 24.sp,
-                          fontWeight: FontWeight.w800,
-                          height: 1.2,
+                          fontSize: 17.sp,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
-                    BlocBuilder<GetListBloc, ApiState<List<TaskResponse>>>(
-                      builder: (context, state) {
-                        final active = state is SuccessState<List<TaskResponse>>
-                            ? state.data
-                                  .where(
-                                    (t) => t.status.contains(
-                                      TypeTaskStatus.ENCOURS,
-                                    ),
-                                  )
-                                  .length
-                            : 0;
-
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (_) => TasksScreen()),
-                            );
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 12.w,
-                              vertical: 8.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(
-                                0xFF6366F1,
-                              ).withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(14.r),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.task_alt_rounded,
-                                  color: const Color(0xFF6366F1),
-                                  size: 16.sp,
-                                ),
-                                SizedBox(width: 6.w),
-                                Text(
-                                  '$active tâches',
-                                  style: GoogleFonts.roboto(
-                                    color: const Color(0xFF6366F1),
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
+                    TextButton(
+                      onPressed: widget.onViewTasks,
+                      child: Text(
+                        'Voir tout',
+                        style: GoogleFonts.roboto(
+                          color: const Color(0xFF6366F1),
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ],
                 ),
-
-                SizedBox(height: 20.h),
-
-                // ── Statistiques ────────────────────────────────────
+                SizedBox(height: 8.h),
                 BlocBuilder<GetListBloc, ApiState<List<TaskResponse>>>(
                   builder: (context, state) {
                     if (state is LoadState<List<TaskResponse>>) {
-                      return const StatsRowShimmer();
+                      return const TaskListShimmer(count: 2);
                     }
 
                     if (state is SuccessState<List<TaskResponse>>) {
-                      final tasks = state.data;
+                      final tasks =
+                          state.data
+                              .where(
+                                (t) => t.status.contains(TypeTaskStatus.AVENIR),
+                              )
+                              .toList()
+                            ..sort((a, b) => a.date.compareTo(b.date));
 
-                      return Row(
-                        children: [
-                          Expanded(
-                            child: StatCard(
-                              label: "Aujourd'hui",
-                              value: tasks
-                                  .where(
-                                    (t) => t.status.contains(
-                                      TypeTaskStatus.ENCOURS,
-                                    ),
-                                  )
-                                  .length,
-                              emoji: '📅',
-                              color: const Color(0xFF6366F1),
+                      if (tasks.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
+
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: tasks.take(2).map((task) {
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: 8.h),
+                            child: TaskCard(
+                              task: task,
+                              onToggle: () {},
+                              onDelete: () {},
                             ),
-                          ),
-                          SizedBox(width: 10.w),
-                          Expanded(
-                            child: StatCard(
-                              label: 'À venir',
-                              value: tasks
-                                  .where(
-                                    (t) => t.status.contains(
-                                      TypeTaskStatus.AVENIR,
-                                    ),
-                                  )
-                                  .length,
-                              emoji: '⏳',
-                              color: const Color(0xFF10B981),
-                            ),
-                          ),
-                          SizedBox(width: 10.w),
-                          Expanded(
-                            child: StatCard(
-                              label: 'Terminées',
-                              value: tasks
-                                  .where(
-                                    (t) => t.status.contains(
-                                      TypeTaskStatus.TERMINER,
-                                    ),
-                                  )
-                                  .length,
-                              emoji: '✓',
-                              color: const Color(0xFFF59E0B),
-                            ),
-                          ),
-                        ],
+                          );
+                        }).toList(),
                       );
                     }
 
                     return const SizedBox.shrink();
                   },
                 ),
-
-                SizedBox(height: 36.h),
-
-                // ── Micro Shara ─────────────────────────────────────
-                Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => VoiceListeningScreen(
-                                actionType: TypeCreateTaskOrUpdate.CREATE_TASK,
-                              ),
-                            ),
-                          );
-                        },
-                        child: AnimatedBuilder(
-                          animation: _pulse,
-                          builder: (context, child) {
-                            final pulse = _pulse.value;
-
-                            return SizedBox(
-                              width: 180.w,
-                              height: 180.w,
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  ...List.generate(3, (i) {
-                                    final size =
-                                        100.w + (i + 1) * 26.w + pulse * 8.w;
-
-                                    return Container(
-                                      width: size,
-                                      height: size,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: const Color(
-                                          0xFF6366F1,
-                                        ).withValues(alpha: 0.08 - i * 0.02),
-                                      ),
-                                    );
-                                  }),
-                                  Container(
-                                    width: 100.w,
-                                    height: 100.w,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      gradient: const LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                        colors: [
-                                          Color(0xFF818CF8),
-                                          Color(0xFF6366F1),
-                                        ],
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: const Color(0xFF6366F1)
-                                              .withValues(
-                                                alpha: 0.35 + pulse * 0.1,
-                                              ),
-                                          blurRadius: 28 + pulse * 8,
-                                        ),
-                                      ],
-                                    ),
-                                    child: Icon(
-                                      Icons.mic_rounded,
-                                      color: Colors.white,
-                                      size: 44.sp,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      SizedBox(height: 12.h),
-                      Text(
-                        'Appuyez pour parler',
-                        style: GoogleFonts.roboto(
-                          color: const Color(0xFF6B7280),
-                          fontSize: 14.sp,
-                        ),
-                      ),
-                      SizedBox(height: 4.h),
-                      Text(
-                        'Créez une tâche avec votre voix',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.roboto(
-                          color: const Color(0xFF6B7280),
-                          fontSize: 12.sp,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                SizedBox(height: 32.h),
-
-                // ── Assistant vocal Shara ───────────────────────────
-                BlocConsumer<SharaNavigationBloc, SharaNavigationState>(
-                  listener: (context, state) {
-                    if (state is SharaNavigationSuccess) {
-                      final action = state.response.action;
-                      final destination = action.destination
-                          ?.trim()
-                          .toLowerCase();
-
-                      if (destination == 'tasks' ||
-                          destination == 'mes_taches') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => TasksScreen()),
-                        );
-                      } else if (destination == 'home' ||
-                          destination == 'accueil') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => HomeScreen(
-                              tasks: const [],
-                              onMicTap: () {},
-                              onViewTasks: () {},
-                              onNotif: () {},
-                            ),
-                          ),
-                        );
-                      }
-                    }
-                  },
-                  builder: (context, state) {
-                    final isListening = state is SharaNavigationListening;
-                    final isThinking = state is SharaNavigationLoading;
-                    final amplitude = isListening ? state.amplitude : 0.0;
-
-                    final message = switch (state) {
-                      SharaNavigationSuccess(:final response) =>
-                        response.message,
-                      SharaNavigationError(:final message) => message,
-                      SharaNavigationListening() => 'Je t’écoute…',
-                      SharaNavigationLoading() => 'Shara réfléchit…',
-                      _ => 'Dis « Shara » ou touche le micro.',
-                    };
-
-                    return Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(20.w),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF1A1A2E),
-                        borderRadius: BorderRadius.circular(24.r),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          VoiceWaveform(
-                            isRecording: isListening,
-                            isThinking: isThinking,
-                            amplitude: amplitude,
-                          ),
-                          SizedBox(height: 20.h),
-                          Text(
-                            message,
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.roboto(
-                              color: Colors.white,
-                              fontSize: 16.sp,
-                            ),
-                          ),
-                          SizedBox(height: 16.h),
-                          IconButton.filled(
-                            iconSize: 32.sp,
-                            onPressed: () {
-                              context.read<SharaNavigationBloc>().add(
-                                isListening
-                                    ? SharaStopListening()
-                                    : SharaStartListening(),
-                              );
-                            },
-                            icon: Icon(isListening ? Icons.stop : Icons.mic),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-
-                // ── Tâches du jour ──────────────────────────────────
-                if (today.isNotEmpty) ...[
-                  SizedBox(height: 28.h),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'Liste des tâches',
-                          style: GoogleFonts.roboto(
-                            color: const Color(0xFF1A1A2E),
-                            fontSize: 17.sp,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: widget.onViewTasks,
-                        child: Text(
-                          'Voir tout',
-                          style: GoogleFonts.roboto(
-                            color: const Color(0xFF6366F1),
-                            fontSize: 13.sp,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8.h),
-                  BlocBuilder<GetListBloc, ApiState<List<TaskResponse>>>(
-                    builder: (context, state) {
-                      if (state is LoadState<List<TaskResponse>>) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-
-                      if (state is SuccessState<List<TaskResponse>>) {
-                        final tasks =
-                            state.data
-                                .where(
-                                  (t) =>
-                                      t.status.contains(TypeTaskStatus.AVENIR),
-                                )
-                                .toList()
-                              ..sort((a, b) => a.date.compareTo(b.date));
-
-                        if (tasks.isEmpty) {
-                          return const SizedBox.shrink();
-                        }
-
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: tasks.take(2).map((task) {
-                            return Padding(
-                              padding: EdgeInsets.only(bottom: 8.h),
-                              child: TaskCard(
-                                task: task,
-                                onToggle: () {},
-                                onDelete: () {},
-                              ),
-                            );
-                          }).toList(),
-                        );
-                      }
-
-                      return const SizedBox.shrink();
-                    },
-                  ),
-                ],
               ],
-            ),
+            ],
           ),
         ),
       ),
+
+      floatingActionButton:
+          BlocConsumer<SharaNavigationBloc, SharaNavigationState>(
+            listener: (context, state) {
+              if (state is SharaNavigationLoading) {
+                setState(() => isLoad = true);
+              } else if (state is SharaNavigationSuccess) {
+                setState(() => isLoad = false);
+              } else if (state is SharaNavigationError) {
+                setState(() => isLoad = false);
+              }
+              // TODO: implement listener
+            },
+            builder: (context, state) {
+              return SharaMicButton(
+                isListening: isListening,
+                isLoading: isLoad, // ou state is LoadingState
+                onPressed: () {
+                  setState(() => isListening = !isListening);
+                  context.read<SharaNavigationBloc>().add(
+                    isListening ? SharaStopListening() : SharaStartListening(),
+                  );
+                },
+              );
+            },
+          ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
@@ -1030,6 +963,122 @@ class StatsRowShimmer extends StatelessWidget {
         SizedBox(width: 10),
         StatCardShimmer(),
       ],
+    );
+  }
+}
+
+class ShimmerBox extends StatefulWidget {
+  final double? width;
+  final double height;
+  final double radius;
+
+  const ShimmerBox({
+    super.key,
+    this.width,
+    required this.height,
+    this.radius = 8,
+  });
+
+  @override
+  State<ShimmerBox> createState() => _ShimmerBoxState();
+}
+
+class _ShimmerBoxState extends State<ShimmerBox>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, _) {
+        final dx = -1.0 + 3.0 * _controller.value;
+        return Container(
+          width: widget.width,
+          height: widget.height,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(widget.radius),
+            gradient: LinearGradient(
+              begin: Alignment(dx - 1, 0),
+              end: Alignment(dx + 1, 0),
+              colors: const [
+                Color(0xFFE5E7EB),
+                Color(0xFFF3F4F6),
+                Color(0xFFE5E7EB),
+              ],
+              stops: const [0.1, 0.5, 0.9],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class TaskCardShimmer extends StatelessWidget {
+  const TaskCardShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(14.w),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: const Color(0xFFF0F0F5)),
+      ),
+      child: Row(
+        children: [
+          ShimmerBox(width: 24.w, height: 24.w, radius: 12.r),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ShimmerBox(width: 160.w, height: 14.h),
+                SizedBox(height: 8.h),
+                ShimmerBox(width: 100.w, height: 11.h),
+              ],
+            ),
+          ),
+          SizedBox(width: 12.w),
+          ShimmerBox(width: 20.w, height: 20.w, radius: 6.r),
+        ],
+      ),
+    );
+  }
+}
+
+class TaskListShimmer extends StatelessWidget {
+  final int count;
+  const TaskListShimmer({super.key, this.count = 2});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(
+        count,
+        (_) => Padding(
+          padding: EdgeInsets.only(bottom: 8.h),
+          child: const TaskCardShimmer(),
+        ),
+      ),
     );
   }
 }

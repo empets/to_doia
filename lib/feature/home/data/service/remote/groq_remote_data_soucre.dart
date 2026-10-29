@@ -25,7 +25,8 @@ class GroqRemoteDataSourceImpl implements GroqRemoteDataSource {
   final http.Client _client;
 
   static const _base = 'https://api.groq.com/openai/v1';
-  static const _key = '';
+  static const _key =
+      '[REDACTED]';
   //String.fromEnvironment(GlobalParams.GROQ_API_KEY);
   static const _timeout = Duration(seconds: 30);
 

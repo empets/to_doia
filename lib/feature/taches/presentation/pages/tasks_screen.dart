@@ -9,10 +9,14 @@ import 'package:grace_church/core/extention/app_extention.dart';
 import 'package:grace_church/core/injetction/injection_container.dart';
 import 'package:grace_church/core/service_systeme/model/api/api_state.dart';
 import 'package:grace_church/core/voice/voice_listening.dart';
+import 'package:grace_church/feature/assistant/app_bar_ia.dart';
+import 'package:grace_church/feature/assistant/shara_loading_button.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:grace_church/feature/home/domaine/usecase/create_task_usecase.dart';
 import 'package:grace_church/feature/home/domaine/usecase/update_task_from_usercase.dart';
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/create_or_update_task_bloc.dart';
+import 'package:grace_church/feature/home/presentation/page/home_screen.dart';
+import 'package:grace_church/feature/home/presentation/widget/chart_whithe_grace.dart';
 import 'package:grace_church/feature/taches/presentation/bloc/get_task/event/task_event.dart';
 import 'package:grace_church/feature/taches/presentation/bloc/get_task/get_list_bloc.dart';
 import 'package:grace_church/feature/taches/presentation/pages/manual_create_screen.dart';
@@ -20,10 +24,7 @@ import 'package:grace_church/feature/taches/presentation/pages/task_card.dart';
 import 'package:grace_church/feature/taches/presentation/pages/widget/empty_data.dart';
 
 class TasksScreen extends StatefulWidget {
-  const TasksScreen({
-    super.key,
-
-  });
+  const TasksScreen({super.key});
   @override
   State<TasksScreen> createState() => _TasksScreenState();
 }
@@ -33,7 +34,6 @@ class _TasksScreenState extends State<TasksScreen> {
   String _search = '';
   bool _searchOpen = false;
   final _filters = ['Toutes', 'ENCOURS', 'TERMINER', "AVENIR", 'ANNULER'];
-
 
   // Dans le State du widget
   static const _sections = [
@@ -59,13 +59,7 @@ class _TasksScreenState extends State<TasksScreen> {
 
       widgets.add(SectionHeader(title: s.title, count: list.length));
       widgets.addAll(
-        list.map(
-          (t) => TaskCard(
-            task: t,
-            onToggle: () {},
-            onDelete: () {},
-          ),
-        ),
+        list.map((t) => TaskCard(task: t, onToggle: () {}, onDelete: () {})),
       );
       widgets.add(const SizedBox(height: 12));
     }
@@ -77,6 +71,9 @@ class _TasksScreenState extends State<TasksScreen> {
   String capitalizer(String s) =>
       s.isEmpty ? s : '${s[0].toUpperCase()}${s.substring(1)}';
 
+  late bool isListening = false;
+  late bool isLoad = false;
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<GetListBloc, ApiState<List<TaskResponse>>>(
@@ -86,16 +83,9 @@ class _TasksScreenState extends State<TasksScreen> {
             backgroundColor: const Color(0xFFF4F6FB),
             body: SafeArea(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Center(
-                    child: CircularProgressIndicator.adaptive(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        const Color(0xFF6366F1),
-                      ),
-                      backgroundColor: Colors.white,
-                    ),
-                  ),
+                  const SizedBox(height: 12),
+                  TaskListShimmer(count: 8),
                 ],
               ),
             ),
@@ -110,14 +100,16 @@ class _TasksScreenState extends State<TasksScreen> {
               context.read<GetListBloc>().add(TaskSectionEvent.fetch(null));
             },
             child: Scaffold(
+              appBar: SharaAppBar(),
               backgroundColor: const Color(0xFFF4F6FB),
               body: SafeArea(
+                top: false,
                 child: Column(
                   children: [
                     // ── Header ─────────────────────────────────────────────────────────
                     // SizedBox(height: 29.h),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                      padding: const EdgeInsets.fromLTRB(20, 1, 20, 0),
                       child: Row(
                         children: [
                           const Expanded(
@@ -434,6 +426,35 @@ class _TasksScreenState extends State<TasksScreen> {
                   ],
                 ),
               ),
+              floatingActionButton:
+                  BlocConsumer<SharaNavigationBloc, SharaNavigationState>(
+                    listener: (context, state) {
+                      if (state is SharaNavigationLoading) {
+                        setState(() => isLoad = true);
+                      } else if (state is SharaNavigationSuccess) {
+                        setState(() => isLoad = false);
+                      } else if (state is SharaNavigationError) {
+                        setState(() => isLoad = false);
+                      }
+                      // TODO: implement listener
+                    },
+                    builder: (context, state) {
+                      return SharaMicButton(
+                        isListening: isListening,
+                        isLoading: isLoad, // ou state is LoadingState
+                        onPressed: () {
+                          setState(() => isListening = !isListening);
+                          context.read<SharaNavigationBloc>().add(
+                            isListening
+                                ? SharaStopListening()
+                                : SharaStartListening(),
+                          );
+                        },
+                      );
+                    },
+                  ),
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.endFloat,
             ),
           );
         }
