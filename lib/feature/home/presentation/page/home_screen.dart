@@ -3,20 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grace_church/core/constante/constantes.dart';
-import 'package:grace_church/core/extention/app_extention.dart';
-import 'package:grace_church/core/injetction/injection_container.dart';
 import 'package:grace_church/core/models/task.dart';
 import 'package:grace_church/core/service_systeme/model/api/api_state.dart';
-import 'package:grace_church/core/voice/voice_listening.dart';
 import 'package:grace_church/feature/assistant/app_bar_ia.dart';
-import 'package:grace_church/feature/assistant/shara_ai.dart';
 import 'package:grace_church/feature/assistant/shara_loading_button.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
-import 'package:grace_church/feature/home/domaine/usecase/shara_navigation_usecase.dart';
-import 'package:grace_church/feature/home/presentation/bloc/voice_task.dart';
 import 'package:grace_church/feature/home/presentation/widget/chart_whithe_grace.dart'
     hide BlocConsumer;
 import 'package:grace_church/feature/home/presentation/widget/statcard.dart';
@@ -24,8 +17,6 @@ import 'package:grace_church/feature/taches/presentation/bloc/get_task/event/tas
 import 'package:grace_church/feature/taches/presentation/bloc/get_task/get_list_bloc.dart';
 import 'package:grace_church/feature/taches/presentation/pages/task_card.dart';
 import 'package:grace_church/feature/taches/presentation/pages/tasks_screen.dart';
-import 'package:grace_church/feature/taches/presentation/pages/widget/empty_data.dart';
-import 'package:record/record.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -46,10 +37,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _pulse = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 1400),
-  )..repeat(reverse: true);
+  late final AnimationController _pulse;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulse = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1400),
+    )..repeat(reverse: true);
+  }
 
   @override
   void dispose() {
@@ -542,8 +539,9 @@ class _HomeScreenState extends State<HomeScreen>
   //     ),
   //   );
   // }
-  late bool isListening = false;
-  late bool isLoad = false;
+  // L'état du micro est porté par [SharaNavigationBloc] : pas de booléen
+  // local, sinon l'UI et le bloc se désynchronisent (et le premier tap envoie
+  // un Stop au lieu d'un Start).
 
   @override
   Widget build(BuildContext context) {
@@ -869,26 +867,21 @@ class _HomeScreenState extends State<HomeScreen>
       ),
 
       floatingActionButton:
-          BlocConsumer<SharaNavigationBloc, SharaNavigationState>(
-            listener: (context, state) {
-              if (state is SharaNavigationLoading) {
-                setState(() => isLoad = true);
-              } else if (state is SharaNavigationSuccess) {
-                setState(() => isLoad = false);
-              } else if (state is SharaNavigationError) {
-                setState(() => isLoad = false);
-              }
-              // TODO: implement listener
-            },
+          BlocBuilder<SharaNavigationBloc, SharaNavigationState>(
             builder: (context, state) {
+              final isListening = state is SharaNavigationListening;
+              final isLoading = state is SharaNavigationLoading;
+
               return SharaMicButton(
                 isListening: isListening,
-                isLoading: isLoad, // ou state is LoadingState
+                isLoading: isLoading,
                 onPressed: () {
-                  setState(() => isListening = !isListening);
-                  context.read<SharaNavigationBloc>().add(
-                    isListening ? SharaStopListening() : SharaStartListening(),
-                  );
+                  final bloc = context.read<SharaNavigationBloc>();
+                  if (isListening) {
+                    bloc.add(SharaStopListening());
+                  } else if (!isLoading) {
+                    bloc.add(SharaStartListening());
+                  }
                 },
               );
             },

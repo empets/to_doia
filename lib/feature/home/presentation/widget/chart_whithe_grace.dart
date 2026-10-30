@@ -1,23 +1,18 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io' show Platform;
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get_it/get_it.dart';
-import 'package:go_router/go_router.dart';
-import 'package:grace_church/core/constante/constantes.dart';
-import 'package:grace_church/core/extention/app_extention.dart';
 import 'package:grace_church/core/service_systeme/error/failure.dart';
-import 'package:grace_church/core/voice/voice_listening.dart';
 import 'package:grace_church/feature/home/data/service/remote/groq_remote_data_soucre.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:grace_church/feature/home/domaine/usecase/shara_navigation_usecase.dart';
 import 'package:grace_church/feature/home/overview.dart';
-import 'package:grace_church/feature/home/presentation/bloc/shara/shara_navigate_bloc.dart';
 import 'package:grace_church/feature/home/presentation/page/home_screen.dart';
-import 'package:grace_church/feature/setting/setting_screen.dart';
 import 'package:grace_church/feature/taches/presentation/pages/tasks_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
@@ -1096,10 +1091,52 @@ class SharaNavigationBloc
   DateTime _lastVoiceAt = DateTime.now();
   bool _heardSpeech = false;
 
+  /// Empêche d'empiler plusieurs [SharaStopListening] (un par événement
+  /// d'amplitude) et de rappeler `stop()` sur un enregistreur déjà arrêté.
+  bool _stopRequested = false;
+
   Future<void> _initTts() async {
-    await _tts.setLanguage('fr-FR');
-    await _tts.setSpeechRate(0.5);
-    await _tts.awaitSpeakCompletion(true);
+    try {
+      await _tts.setLanguage('fr-FR');
+      await _tts.setSpeechRate(0.5);
+      await _tts.setPitch(1.0);
+      await _tts.setVolume(1.0);
+      await _tts.awaitSpeakCompletion(true);
+      _tts.setErrorHandler((message) => log('Shara TTS erreur : $message'));
+      final frAvailable = await _tts.isLanguageAvailable('fr-FR');
+      log('Shara TTS : fr-FR disponible = $frAvailable');
+      await _configureTtsAudio();
+    } catch (e, st) {
+      log('Shara : initialisation TTS impossible : $e', stackTrace: st);
+    }
+  }
+
+  /// Configure la sortie audio avant chaque phrase.
+  ///
+  /// Sur iOS, `record` remet la session en mode enregistrement : sans cette
+  /// reconfiguration, la voix de Shara sort par l'écouteur (très faible) au
+  /// lieu du haut-parleur. Sur Android, on force le canal « navigation »
+  /// (media) pour que la voix reste audible même en mode silencieux.
+  Future<void> _configureTtsAudio() async {
+    try {
+      if (Platform.isIOS) {
+        await _tts.setIosAudioCategory(
+          IosTextToSpeechAudioCategory.playAndRecord,
+          [
+            IosTextToSpeechAudioCategoryOptions.defaultToSpeaker,
+            IosTextToSpeechAudioCategoryOptions.allowBluetooth,
+            IosTextToSpeechAudioCategoryOptions.allowBluetoothA2DP,
+            IosTextToSpeechAudioCategoryOptions.mixWithOthers,
+          ],
+          IosTextToSpeechAudioMode.defaultMode,
+        );
+        await _tts.setSharedInstance(true);
+      } else if (Platform.isAndroid) {
+        await _tts.setAudioAttributesForNavigation();
+      }
+    } catch (e, st) {
+      log('Shara : configuration audio impossible : $e', stackTrace: st);
+    }
   }
 
   Future<void> _onStart(
@@ -1113,24 +1150,38 @@ class SharaNavigationBloc
       return;
     }
 
-    if (!await _recorder.hasPermission()) {
-      emit(SharaNavigationError('Autorise le micro pour parler à Shara.'));
+    try {
+      if (!await _recorder.hasPermission()) {
+        emit(SharaNavigationError('Autorise le micro pour parler à Shara.'));
+        return;
+      }
+
+      // Sécurité : si un enregistrement est resté actif (état désynchronisé),
+      // on l'arrête avant d'en démarrer un nouveau.
+      if (await _recorder.isRecording()) {
+        await _recorder.stop();
+      }
+
+      final dir = await getTemporaryDirectory();
+      final path =
+          '${dir.path}/shara_${DateTime.now().millisecondsSinceEpoch}.m4a';
+
+      await _recorder.start(
+        const RecordConfig(encoder: AudioEncoder.aacLc),
+        path: path,
+      );
+    } catch (e, st) {
+      log('Shara : démarrage du micro impossible : $e', stackTrace: st);
+      emit(SharaNavigationError('Impossible de démarrer le micro.'));
       return;
     }
 
-    final dir = await getTemporaryDirectory();
-    final path =
-        '${dir.path}/shara_${DateTime.now().millisecondsSinceEpoch}.m4a';
-
-    await _recorder.start(
-      const RecordConfig(encoder: AudioEncoder.aacLc),
-      path: path,
-    );
-
+    _stopRequested = false;
     _startedAt = DateTime.now();
     _lastVoiceAt = _startedAt!;
     _heardSpeech = false;
 
+    await _ampSub?.cancel();
     _ampSub = _recorder
         .onAmplitudeChanged(const Duration(milliseconds: 80))
         .listen((a) => add(SharaAmplitudeChanged(a.current)));
@@ -1142,7 +1193,7 @@ class SharaNavigationBloc
     SharaAmplitudeChanged event,
     Emitter<SharaNavigationState> emit,
   ) {
-    if (state is! SharaNavigationListening) return;
+    if (state is! SharaNavigationListening || _stopRequested) return;
 
     // dB (-160..0) -> 0..1
     final level = ((event.db + 50) / 50).clamp(0.0, 1.0);
@@ -1157,8 +1208,14 @@ class SharaNavigationBloc
 
     final silent =
         _heardSpeech && now.difference(_lastVoiceAt) > _silenceDuration;
-    final tooLong = now.difference(_startedAt!) > _maxDuration;
-    if (silent || tooLong) add(SharaStopListening());
+    final tooLong =
+        _startedAt != null && now.difference(_startedAt!) > _maxDuration;
+    if (silent || tooLong) {
+      // Évite qu'un Stop soit ajouté à chaque événement d'amplitude en attendant
+      // que l'événement précédent soit traité par le bloc.
+      _stopRequested = true;
+      add(SharaStopListening());
+    }
   }
 
   Future<void> _onStop(
@@ -1166,32 +1223,63 @@ class SharaNavigationBloc
     Emitter<SharaNavigationState> emit,
   ) async {
     if (state is! SharaNavigationListening) return;
-    emit(SharaNavigationLoading());
+
+    _stopRequested = true;
 
     await _ampSub?.cancel();
-    final path = await _recorder.stop();
-    final seconds = DateTime.now().difference(_startedAt!).inSeconds;
+    _ampSub = null;
 
-    // Rien entendu : on ne gaspille pas un appel API.
-    if (path == null || !_heardSpeech) {
+    String? path;
+    try {
+      // `stop()` ne doit être appelé que si l'enregistreur tourne réellement.
+      if (await _recorder.isRecording()) {
+        path = await _recorder.stop();
+      }
+    } catch (e, st) {
+      log('Shara : arrêt du micro impossible : $e', stackTrace: st);
+    }
+
+    final heard = _heardSpeech;
+    final startedAt = _startedAt;
+    _startedAt = null;
+
+    // Rien entendu : on ne passe PAS par Loading (pas de spinner inutile)
+    // et on ne gaspille pas un appel API.
+    if (path == null || !heard) {
+      _stopRequested = false;
       emit(SharaNavigationIdle());
       return;
     }
 
-    final result = await _interact({
-      'audioPath': path,
-      'history': List<Map<String, String>>.from(_history),
-      'recordTime': seconds,
-    });
+    emit(SharaNavigationLoading());
+
+    final seconds = startedAt == null
+        ? 0
+        : DateTime.now().difference(startedAt).inSeconds;
 
     SharaResponse? response;
     Failure? failure;
-    result.fold(
-      (l) => failure = l,
-      (r) => response = SharaResponse(action: r.action, message: r.message),
-    );
+    try {
+      final result = await _interact({
+        'audioPath': path,
+        'history': List<Map<String, String>>.from(_history),
+        'recordTime': seconds,
+      });
+      result.fold(
+        (l) => failure = l,
+        (r) => response = SharaResponse(
+          action: r.action,
+          message: r.message,
+          transcript: r.transcript,
+        ),
+      );
+    } catch (e, st) {
+      log('Shara : appel API impossible : $e', stackTrace: st);
+      failure = const Failure('Une erreur est survenue, réessaie.');
+    }
 
     if (failure != null || response == null) {
+      _stopRequested = false;
       emit(SharaNavigationError(failure?.message ?? 'Erreur inconnue'));
       return;
     }
@@ -1204,8 +1292,21 @@ class SharaNavigationBloc
     if (_history.length > 12) _history.removeRange(0, _history.length - 12);
 
     emit(SharaNavigationSuccess(r)); // la vue navigue / crée la tâche
-    await _tts.speak(r.message); // attend la fin de la lecture
-    emit(SharaNavigationIdle());
+    try {
+      await _configureTtsAudio();
+
+      // Attend la fin de la lecture, mais sans bloquer indéfiniment le bloc
+      // si le moteur TTS ne renvoie jamais sa fin.
+      final spoken = await _tts
+          .speak(r.message)
+          .timeout(const Duration(seconds: 20), onTimeout: () {});
+      log('Shara TTS speak -> $spoken');
+    } catch (e, st) {
+      log('Shara : lecture TTS impossible : $e', stackTrace: st);
+    } finally {
+      _stopRequested = false;
+      emit(SharaNavigationIdle());
+    }
 
     // Mode conversation : si Shara a posé une question, on réécoute.
     if (autoListenAfterReply && r.action.type == 'none') {

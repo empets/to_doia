@@ -8,6 +8,10 @@
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>To Doia</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>To Doia utilise le microphone pour créer vos rappels à la voix.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>To Doia transcrit vos demandes vocales pour créer et gérer vos tâches.</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

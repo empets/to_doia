@@ -16,6 +16,12 @@ void main() async {
       statusBarIconBrightness: Brightness.dark,
     ),
   );
+
+  // ⚠️ SÉCURITÉ : toutes les clés viennent de --dart-define-from-file=env.json.
+  // Aucune valeur secrète n'est écrite en dur dans le code. Vérification
+  // explicite pour échouer avec un message clair si la configuration manque.
+  GlobalParams.validateFirebaseConfiguration();
+
   await Firebase.initializeApp(
     options: FirebaseOptions(
       apiKey: GlobalParams.apiKey,

@@ -1,7 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-   <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <!-- Réseau : indispensable pour Firebase et Groq, y compris en release. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Enregistrement vocal. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <!-- Notifications de rappel (Android 13+). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
-        android:label="to doia"
+        android:label="To Doia"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

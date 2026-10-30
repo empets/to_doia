@@ -43,3 +43,14 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# ---------------------------------------------------------------------------
+# Secrets / configuration locale
+# ---------------------------------------------------------------------------
+# env.json contient les clés d'API (Groq, Firebase, Supabase).
+# Il ne doit JAMAIS être commité. Le modèle sans valeurs est env.example.json.
+env.json
+
+# Keystores de signature Android (ne jamais versionner).
+*.keystore
+*.jks

@@ -35,9 +35,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  late bool isListening = false;
-
-  late bool isLoad = false;
+  // L'état du micro vient de [SharaNavigationBloc] (voir le FAB plus bas).
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -285,26 +283,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     ),
     floatingActionButton:
-        BlocConsumer<SharaNavigationBloc, SharaNavigationState>(
-          listener: (context, state) {
-            if (state is SharaNavigationLoading) {
-              setState(() => isLoad = true);
-            } else if (state is SharaNavigationSuccess) {
-              setState(() => isLoad = false);
-            } else if (state is SharaNavigationError) {
-              setState(() => isLoad = false);
-            }
-            // TODO: implement listener
-          },
+        BlocBuilder<SharaNavigationBloc, SharaNavigationState>(
           builder: (context, state) {
+            final isListening = state is SharaNavigationListening;
+            final isLoading = state is SharaNavigationLoading;
+
             return SharaMicButton(
               isListening: isListening,
-              isLoading: isLoad, // ou state is LoadingState
+              isLoading: isLoading,
               onPressed: () {
-                setState(() => isListening = !isListening);
-                context.read<SharaNavigationBloc>().add(
-                  isListening ? SharaStopListening() : SharaStartListening(),
-                );
+                final bloc = context.read<SharaNavigationBloc>();
+                if (isListening) {
+                  bloc.add(SharaStopListening());
+                } else if (!isLoading) {
+                  bloc.add(SharaStartListening());
+                }
               },
             );
           },

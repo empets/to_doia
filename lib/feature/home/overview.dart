@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:grace_church/core/alert/app_alerte.dart';
 import 'package:grace_church/core/injetction/injection_container.dart';
 import 'package:grace_church/core/models/task.dart';
 import 'package:grace_church/core/persmission/permission_screen.dart';
@@ -12,13 +13,6 @@ import 'package:grace_church/core/voice/voice_listening.dart';
 import 'package:grace_church/feature/assistant/shara_loading_button.dart';
 import 'package:grace_church/feature/home/domaine/usecase/create_task_from_voice.dart';
 import 'package:grace_church/feature/home/domaine/usecase/shara_navigation_usecase.dart';
-import 'package:grace_church/feature/home/presentation/bloc/shara/shara_navigate_bloc.dart'
-    hide
-        SharaNavigationBloc,
-        SharaNavigationState,
-        SharaNavigationLoading,
-        SharaNavigationSuccess,
-        SharaNavigationError;
 import 'package:grace_church/feature/home/presentation/bloc/voice_task.dart';
 import 'package:grace_church/feature/home/presentation/page/home_screen.dart';
 import 'package:grace_church/feature/home/presentation/widget/chart_whithe_grace.dart';
@@ -239,22 +233,32 @@ class _AppShellState extends State<AppShell> {
       AppScreen.settings,
     ].contains(_screen);
 
-    return Scaffold(
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 260),
-        transitionBuilder: (child, anim) => FadeTransition(
-          opacity: anim,
-          child: SlideTransition(
-            position: Tween(
-              begin: const Offset(0.03, 0),
-              end: Offset.zero,
-            ).animate(anim),
-            child: child,
+    return BlocListener<SharaNavigationBloc, SharaNavigationState>(
+      // Affiche une seule fois chaque échec de la requête Shara, au niveau
+      // racine, pour éviter les doublons si plusieurs écrans sont empilés.
+      listenWhen: (_, current) => current is SharaNavigationError,
+      listener: (context, state) {
+        if (state is SharaNavigationError) {
+          AppAlert.showError(context, state.message);
+        }
+      },
+      child: Scaffold(
+        body: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 260),
+          transitionBuilder: (child, anim) => FadeTransition(
+            opacity: anim,
+            child: SlideTransition(
+              position: Tween(
+                begin: const Offset(0.03, 0),
+                end: Offset.zero,
+              ).animate(anim),
+              child: child,
+            ),
           ),
+          child: KeyedSubtree(key: ValueKey(_screen), child: _buildScreen()),
         ),
-        child: KeyedSubtree(key: ValueKey(_screen), child: _buildScreen()),
+        bottomNavigationBar: showNav ? _buildNav() : null,
       ),
-      bottomNavigationBar: showNav ? _buildNav() : null,
     );
   }
 

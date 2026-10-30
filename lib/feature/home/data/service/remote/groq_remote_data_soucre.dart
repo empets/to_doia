@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:grace_church/core/constante/global_params.dart';
 import 'package:grace_church/core/service_systeme/error/failure.dart';
 import 'package:grace_church/feature/home/data/model/home_responses_models.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
@@ -25,12 +26,35 @@ class GroqRemoteDataSourceImpl implements GroqRemoteDataSource {
   final http.Client _client;
 
   static const _base = 'https://api.groq.com/openai/v1';
-  static const _key =
-      '[REDACTED]';
-  //String.fromEnvironment(GlobalParams.GROQ_API_KEY);
   static const _timeout = Duration(seconds: 30);
 
-  Map<String, String> get _auth => {'Authorization': 'Bearer $_key'};
+  /// Clé Groq injectée au build via `--dart-define-from-file=env.json`.
+  ///
+  /// ⚠️ SÉCURITÉ — Ne JAMAIS remettre la clé en dur ici.
+  /// La clé qui était auparavant écrite à cet endroit a été exposée dans
+  /// l'historique Git : elle doit être révoquée depuis la console Groq.
+  ///
+  /// ⚠️ LIMITE : avec `--dart-define`, la clé est compilée dans le binaire
+  /// et reste extractible. La correction définitive est de déplacer les
+  /// appels Groq derrière un proxy backend (Cloud Function) qui détient la
+  /// clé côté serveur. Voir le README, section « Configuration des secrets ».
+  static const _key = GlobalParams.groqApiKey;
+
+  /// Construit l'en-tête d'authentification.
+  ///
+  /// Si la clé est absente, on renvoie une [ServerException] explicite :
+  /// elle sera convertie en `Failure` par le repository et affichée à
+  /// l'utilisateur, au lieu de provoquer une erreur 401 incompréhensible.
+  Map<String, String> get _auth {
+    if (_key.isEmpty) {
+      throw const ServerException(
+        'Clé Groq manquante. Renseignez GROQ_API_KEY dans env.json '
+        '(fichier non versionné, voir env.example.json), puis relancez '
+        "l'application avec --dart-define-from-file=env.json.",
+      );
+    }
+    return {'Authorization': 'Bearer $_key'};
+  }
 
   @override
   Future<String> transcribe(String filePath) async {
