@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 /// Écran de lancement — sobre et fluide :
 /// - fondu enchaîné global
@@ -14,7 +17,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  static const _indigo = Color(0xFF6366F1);
+  static const _indigo = AppColors.primary;
 
   // Un seul controller : tout est décalé dans le temps avec des Interval
   late final AnimationController _ctrl = AnimationController(
@@ -23,13 +26,12 @@ class _SplashScreenState extends State<SplashScreen>
   );
 
   // Logo : zoom doux de 0.9 → 1.0 dans les 600 premières ms
-  late final Animation<double> _logoScale = Tween(begin: 0.9, end: 1.0)
-      .animate(
-        CurvedAnimation(
-          parent: _ctrl,
-          curve: const Interval(0, 0.3, curve: Curves.easeOutCubic),
-        ),
-      );
+  late final Animation<double> _logoScale = Tween(begin: 0.9, end: 1.0).animate(
+    CurvedAnimation(
+      parent: _ctrl,
+      curve: const Interval(0, 0.3, curve: Curves.easeOutCubic),
+    ),
+  );
 
   // Logo : opacité 0 → 1 sur les 500 premières ms
   late final Animation<double> _logoFade = Tween(begin: 0.0, end: 1.0).animate(
@@ -71,7 +73,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F1E),
+      backgroundColor: AppColors.dark1,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -82,14 +84,13 @@ class _SplashScreenState extends State<SplashScreen>
               child: ScaleTransition(
                 scale: _logoScale,
                 child: Container(
-                  width: 96,
-                  height: 96,
+                  padding: EdgeInsets.all(28.h),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(28),
+                    borderRadius: BorderRadius.circular(36.r),
                     gradient: const LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [Color(0xFF818CF8), Color(0xFF6366F1)],
+                      colors: [AppColors.primaryLight, AppColors.primary],
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -101,49 +102,49 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                   child: const Icon(
                     Icons.mic_rounded,
-                    color: Colors.white,
+                    color: AppColors.white,
                     size: 46,
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 32),
+            SizedBox(height: 32.h),
 
             // ---- Titre + sous-titre : fondu simple ----
             FadeTransition(
               opacity: _textFade,
               child: Column(
                 children: [
-                  const Text(
+                  Text(
                     'Smart Reminder',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
+                    style: GoogleFonts.roboto(
+                      color: AppColors.white,
+                      fontSize: 28.sp,
                       fontWeight: FontWeight.w700,
                       letterSpacing: -0.8,
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10.h),
                   Text(
                     'Votre assistant vocal pour\ntâches et rappels.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.45),
-                      fontSize: 14,
-                      height: 1.6,
+                    style: GoogleFonts.roboto(
+                      color: AppColors.white.withValues(alpha: 0.45),
+                      fontSize: 13.sp,
+                      // height: 1.6,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 64),
+            SizedBox(height: 64.h),
 
             // ---- Barre de progression fine et discrète ----
             FadeTransition(
               opacity: _textFade,
               child: SizedBox(
-                width: 140,
-                height: 3,
+                width: 140.w,
+                height: 3.h,
                 child: AnimatedBuilder(
                   animation: _progress,
                   builder: (context, _) {
@@ -155,9 +156,9 @@ class _SplashScreenState extends State<SplashScreen>
                           child: FractionallySizedBox(
                             widthFactor: _progress.value,
                             child: Container(
-                              height: 3,
+                              height: 3.h,
                               decoration: BoxDecoration(
-                                color: const Color(0xFF818CF8),
+                                color: AppColors.primaryLight,
                                 borderRadius: BorderRadius.circular(2),
                               ),
                             ),

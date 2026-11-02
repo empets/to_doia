@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 class EmptyTaskState extends StatelessWidget {
   final VoidCallback onTapMic;
@@ -19,35 +20,35 @@ class EmptyTaskState extends StatelessWidget {
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text('📋', style: TextStyle(fontSize: 52)),
-        const SizedBox(height: 14),
+        Text('📋', style: GoogleFonts.roboto(fontSize: 52.sp)),
+        SizedBox(height: 14.h),
         Text(
           'Aucune tâche trouvée suite à votre recherche',
           style: GoogleFonts.roboto(
-            color: Color(0xFF1A1A2E),
-            fontSize: 16,
+            color: AppColors.ink,
+            fontSize: 16.sp,
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: 20.h),
         if (isRefreshing) ...[
           GestureDetector(
             onTap: onRefresh,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
-                color: const Color(0xFF6366F1),
+                color: AppColors.primary,
                 borderRadius: BorderRadius.circular(20.r),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.refresh_rounded, color: Colors.white, size: 18),
-                  SizedBox(width: 8),
+                  Icon(Icons.refresh_rounded, color: AppColors.white, size: 18),
+                  SizedBox(width: 8.w),
                   Text(
                     'Rafraîchir',
-                    style: TextStyle(
-                      color: Colors.white,
+                    style: GoogleFonts.roboto(
+                      color: AppColors.white,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -55,7 +56,7 @@ class EmptyTaskState extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 14.h),
+          SizedBox(height: 1.4.h),
         ],
         GestureDetector(
           onTap: onTapMic,
@@ -63,22 +64,22 @@ class EmptyTaskState extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
               border: Border.all(
-                color: isRefreshing ? Color(0xFF6366F1) : Colors.transparent,
+                color: isRefreshing ? AppColors.primary : AppColors.transparent,
               ),
               color: isRefreshing
-                  ? Colors.transparent
-                  : const Color(0xFF6366F1),
+                  ? AppColors.transparent
+                  : AppColors.primary,
               borderRadius: BorderRadius.circular(32),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.mic_rounded, color: Colors.black, size: 18),
-                SizedBox(width: 8),
+                Icon(Icons.mic_rounded, color: AppColors.black, size: 18),
+                SizedBox(width: 8.w),
                 Text(
                   'Créer une nouvelle tâche',
                   style: GoogleFonts.roboto(
-                    color: Colors.black,
+                    color: AppColors.black,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -87,7 +88,7 @@ class EmptyTaskState extends StatelessWidget {
           ),
         ),
 
-        SizedBox(height: 14.h),
+        SizedBox(height: 1.4.h),
       ],
     ),
   );
@@ -118,7 +119,7 @@ class SectionHeader extends StatelessWidget {
                 child: Text(
                   "Aujourd'hui",
                   style: GoogleFonts.roboto(
-                    color: Color(0xFF1A1A2E),
+                    color: AppColors.ink,
                     fontSize: 17.sp,
                     fontWeight: FontWeight.w700,
                   ),
@@ -129,7 +130,7 @@ class SectionHeader extends StatelessWidget {
                 child: Text(
                   'Voir tout',
                   style: GoogleFonts.roboto(
-                    color: Color(0xFF6366F1),
+                    color: AppColors.primary,
                     fontSize: 13.sp,
                     fontWeight: FontWeight.w600,
                   ),
@@ -141,24 +142,24 @@ class SectionHeader extends StatelessWidget {
         if (!isHome) ...[
           Text(
             title,
-            style: const TextStyle(
-              color: Color(0xFF1A1A2E),
-              fontSize: 15,
+            style: GoogleFonts.roboto(
+              color: AppColors.ink,
+              fontSize: 15.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8.w),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
-              color: const Color(0xFF6366F1).withOpacity(0.12),
+              color: AppColors.primary.withOpacity(0.12),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
               '$count',
-              style: const TextStyle(
-                color: Color(0xFF6366F1),
-                fontSize: 11,
+              style: GoogleFonts.roboto(
+                color: AppColors.primary,
+                fontSize: 11.sp,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -185,17 +186,17 @@ class IconBtn extends StatelessWidget {
   Widget build(BuildContext context) => GestureDetector(
     onTap: onTap,
     child: Container(
-      width: 36,
-      height: 36,
+      width: 36.w,
+      height: 36.h,
       decoration: BoxDecoration(
         color: primary || active
-            ? const Color(0xFF6366F1)
-            : const Color(0xFF6366F1).withOpacity(0.1),
+            ? AppColors.primary
+            : AppColors.primary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(
         icon,
-        color: primary || active ? Colors.white : const Color(0xFF6366F1),
+        color: primary || active ? AppColors.white : AppColors.primary,
         size: 20,
       ),
     ),
@@ -212,8 +213,8 @@ class Label extends StatelessWidget {
     style:
         style ??
         GoogleFonts.roboto(
-          color: Color(0xFF6B7280),
-          fontSize: 11,
+          color: AppColors.greyText,
+          fontSize: 11.sp,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.6,
         ),
@@ -228,16 +229,16 @@ class FieldBox extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: EdgeInsets.symmetric(horizontal: 14, vertical: 13),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: AppColors.white,
       borderRadius: BorderRadius.circular(14),
     ),
     child: Row(
       children: [
-        Icon(icon, color: const Color(0xFF6366F1), size: 17),
-        const SizedBox(width: 8),
+        Icon(icon, color: AppColors.primary, size: 17),
+        SizedBox(width: 8.w),
         Text(
           text,
-          style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 13),
+          style: GoogleFonts.roboto(color: AppColors.ink, fontSize: 13.sp),
         ),
       ],
     ),

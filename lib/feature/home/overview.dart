@@ -10,7 +10,6 @@ import 'package:grace_church/core/persmission/permission_screen.dart';
 import 'package:grace_church/core/succes_screen/success_screen.dart';
 import 'package:grace_church/core/transcription/transcription_screen.dart';
 import 'package:grace_church/core/voice/voice_listening.dart';
-import 'package:grace_church/feature/assistant/shara_loading_button.dart';
 import 'package:grace_church/feature/home/domaine/usecase/create_task_from_voice.dart';
 import 'package:grace_church/feature/home/domaine/usecase/shara_navigation_usecase.dart';
 import 'package:grace_church/feature/home/presentation/bloc/voice_task.dart';
@@ -25,6 +24,7 @@ import 'package:grace_church/feature/taches/presentation/bloc/get_task/get_list_
 import 'package:grace_church/feature/taches/presentation/pages/manual_create_screen.dart';
 import 'package:grace_church/feature/taches/presentation/pages/tasks_screen.dart';
 import 'package:record/record.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 class SmartReminderApp extends StatelessWidget {
   const SmartReminderApp({super.key});
@@ -67,7 +67,7 @@ class SmartReminderApp extends StatelessWidget {
               textTheme: GoogleFonts.robotoTextTheme(
                 Theme.of(context).textTheme,
               ),
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+              colorScheme: ColorScheme.fromSeed(seedColor: AppColors.black),
             ),
             home: child, // 👈 IMPORTANT
           );
@@ -416,29 +416,29 @@ class _AppShellState extends State<AppShell> {
 
   // Enrobe un sous-écran de paramètres avec un bouton retour
   Widget _subScaffold(String title, Widget child) => Scaffold(
-    backgroundColor: const Color(0xFFF4F6FB),
+    backgroundColor: AppColors.background,
     appBar: AppBar(
-      backgroundColor: const Color(0xFFF4F6FB),
+      backgroundColor: AppColors.background,
       elevation: 0,
       leading: GestureDetector(
         onTap: () => _go(AppScreen.settings),
         child: Container(
           margin: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: const Color(0xFF6366F1).withOpacity(0.1),
+            color: AppColors.primary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: const Icon(
             Icons.chevron_left_rounded,
-            color: Color(0xFF6366F1),
+            color: AppColors.primary,
           ),
         ),
       ),
       title: Text(
         title,
-        style: const TextStyle(
-          color: Color(0xFF1A1A2E),
-          fontSize: 17,
+        style: GoogleFonts.roboto(
+          color: AppColors.ink,
+          fontSize: 17.sp,
           fontWeight: FontWeight.w700,
         ),
       ),
@@ -467,10 +467,10 @@ class _AppShellState extends State<AppShell> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: AppColors.black.withOpacity(0.06),
             blurRadius: 20,
             offset: const Offset(0, -4),
           ),
@@ -498,18 +498,18 @@ class _AppShellState extends State<AppShell> {
                       Icon(
                         active ? e.value.$1 : e.value.$2,
                         color: active
-                            ? const Color(0xFF6366F1)
-                            : const Color(0xFF6B7280),
+                            ? AppColors.primary
+                            : AppColors.greyText,
                         size: 24,
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4.h),
                       Text(
                         e.value.$3,
-                        style: TextStyle(
+                        style: GoogleFonts.roboto(
                           color: active
-                              ? const Color(0xFF6366F1)
-                              : const Color(0xFF6B7280),
-                          fontSize: 11,
+                              ? AppColors.primary
+                              : AppColors.greyText,
+                          fontSize: 11.sp,
                           fontWeight: active
                               ? FontWeight.w700
                               : FontWeight.w400,

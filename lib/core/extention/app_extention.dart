@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:grace_church/core/constante/constantes.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 Future<bool> isEmulator() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -95,11 +97,11 @@ extension OnlyDigits on String {
 
 Color getNewstatutcolor(String statusBscs) {
   if (statusBscs.isEmpty) {
-    return Colors.grey.withValues(alpha: .1);
+    return AppColors.grey.withValues(alpha: .1);
   } else if (statusBscs.isNotEmpty && statusBscs.toLowerCase() == 'actif') {
-    return const Color(0XFFD7ECD7);
+    return AppColors.successBg;
   }
-  return const Color(0XFFFCE2CC);
+  return AppColors.warningBg;
 }
 
 bool getNewStatusIconColor(String statusBscs) {
@@ -113,11 +115,11 @@ bool getNewStatusIconColor(String statusBscs) {
 
 Color getNewStatusTextColor(String statusBscs) {
   if (statusBscs.isEmpty) {
-    return Colors.grey;
+    return AppColors.grey;
   } else if (statusBscs.isNotEmpty && statusBscs.toLowerCase() == 'actif') {
-    return Colors.black;
+    return AppColors.black;
   }
-  return const Color(0xFF8C1D18);
+  return AppColors.errorDark;
 }
 
 extension CodeExtraction on String {
@@ -482,31 +484,31 @@ extension FrenchColorExtension on String {
 
     switch (value) {
       case 'rouge':
-        return Colors.red;
+        return AppColors.red;
       case 'vert':
-        return Colors.green;
+        return AppColors.green;
       case 'bleu':
-        return Colors.blue;
+        return AppColors.blue;
       case 'jaune':
-        return Colors.yellow;
+        return AppColors.yellow;
       case 'orange':
-        return Colors.orange;
+        return AppColors.orange;
       case 'noir':
-        return Colors.black;
+        return AppColors.black;
       case 'blanc':
-        return Colors.white;
+        return AppColors.white;
       case 'gris':
-        return Colors.grey;
+        return AppColors.grey;
       case 'rose':
-        return Colors.pink;
+        return AppColors.pink;
       case 'violet':
-        return Colors.purple;
+        return AppColors.purple;
       case 'marron':
       case 'brun':
-        return Colors.brown;
+        return AppColors.brown;
     }
 
-    return Colors.transparent;
+    return AppColors.transparent;
   }
 }
 

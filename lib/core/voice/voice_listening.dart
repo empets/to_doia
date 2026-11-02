@@ -18,6 +18,7 @@ import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/cre
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/event/create_tast_event.dart';
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/state/create_tast_state.dart';
 import 'package:grace_church/feature/home/presentation/bloc/voice_task.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 class VoiceListeningScreen extends StatefulWidget {
   const VoiceListeningScreen({super.key, required this.actionType});
@@ -30,8 +31,8 @@ class VoiceListeningScreen extends StatefulWidget {
 
 class _VoiceListeningScreenState extends State<VoiceListeningScreen>
     with TickerProviderStateMixin, WidgetsBindingObserver {
-  static const _primary = Color(0xFF6366F1);
-  static const _grey = Color(0xFF6B7280);
+  static const _primary = AppColors.primary;
+  static const _grey = AppColors.greyText;
 
   late final AnimationController _pulse;
   late final AnimationController _wave;
@@ -178,11 +179,11 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 56,
-        height: 56,
+        width: 56.w,
+        height: 56.h,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: _primary, width: 2),
+          border: Border.all(color: _primary, width: 2.w),
         ),
         child: Icon(icon, color: _primary, size: 28),
       ),
@@ -206,12 +207,12 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: Colors.white, size: 20),
-            const SizedBox(width: 6),
+            Icon(icon, color: AppColors.white, size: 20),
+            SizedBox(width: 6.w),
             Text(
               label,
               style: GoogleFonts.roboto(
-                color: Colors.white,
+                color: AppColors.white,
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w600,
               ),
@@ -334,7 +335,7 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
               final bool isError = state is VoiceError;
 
               return Scaffold(
-                backgroundColor: Colors.white,
+                backgroundColor: AppColors.white,
                 body: SafeArea(
                   child: Center(
                     child: SingleChildScrollView(
@@ -358,15 +359,15 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
                             ),
                           ),
 
-                          SizedBox(height: 44.h),
+                          SizedBox(height: 4.4.h),
 
                           // Microphone animé
                           AnimatedBuilder(
                             animation: _pulse,
                             builder: (_, _) {
                               return SizedBox(
-                                width: 200,
-                                height: 200,
+                                width: 200.w,
+                                height: 200.h,
                                 child: Stack(
                                   alignment: Alignment.center,
                                   children: [
@@ -390,16 +391,16 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
                                       ),
                                     ),
                                     Container(
-                                      width: 100,
-                                      height: 100,
+                                      width: 100.w,
+                                      height: 100.h,
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         gradient: const LinearGradient(
                                           begin: Alignment.topLeft,
                                           end: Alignment.bottomRight,
                                           colors: [
-                                            Color(0xFF818CF8),
-                                            Color(0xFF6366F1),
+                                            AppColors.primaryLight,
+                                            AppColors.primary,
                                           ],
                                         ),
                                         boxShadow: [
@@ -415,7 +416,7 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
                                         isPaused || isError
                                             ? Icons.mic_off_rounded
                                             : Icons.mic_rounded,
-                                        color: Colors.white,
+                                        color: AppColors.white,
                                         size: 37.h,
                                       ),
                                     ),
@@ -425,11 +426,11 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
                             },
                           ),
 
-                          SizedBox(height: 40.h),
+                          SizedBox(height: 4.0.h),
 
                           // Ondes audio (rebuild limité à cette zone)
                           SizedBox(
-                            height: 48.h,
+                            height: 4.8.h,
                             child: AnimatedBuilder(
                               animation: _wave,
                               builder: (_, _) => Row(
@@ -443,14 +444,14 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
                                         duration: const Duration(
                                           milliseconds: 80,
                                         ),
-                                        width: 5,
+                                        width: 5.w,
                                         height: isRecording ? entry.value : 8,
                                         margin: const EdgeInsets.symmetric(
                                           horizontal: 3,
                                         ),
                                         decoration: BoxDecoration(
                                           color: Color.lerp(
-                                            const Color(0xFF818CF8),
+                                            AppColors.primaryLight,
                                             _primary,
                                             entry.value / 30,
                                           ),
@@ -465,7 +466,7 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
                             ),
                           ),
 
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16.h),
 
                           // Chronomètre
                           if (isRecording || isPaused)
@@ -484,22 +485,22 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
                               ),
                             )
                           else
-                            SizedBox(height: 18.sp * 1.2),
+                            SizedBox(height: 18.h.sp * 1.2),
 
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24.h),
 
                           // Statut de l'enregistrement
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                width: 8,
-                                height: 8,
+                                width: 8.w,
+                                height: 8.h,
                                 decoration: BoxDecoration(
                                   color: isRecording
-                                      ? const Color(0xFFEF4444)
+                                      ? AppColors.error
                                       : isPaused
-                                      ? const Color(0xFFF59E0B)
+                                      ? AppColors.warning
                                       : _grey,
                                   shape: BoxShape.circle,
                                 ),
@@ -523,7 +524,7 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
                             ],
                           ),
 
-                          const SizedBox(height: 40),
+                          SizedBox(height: 40.h),
 
                           // Pause / Reprendre + Arrêter
                           if (isRecording || isPaused)
@@ -542,7 +543,7 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
                                         : cubit.resume();
                                   },
                                 ),
-                                const SizedBox(width: 20),
+                                SizedBox(width: 20.w),
                                 _pillButton(
                                   Icons.stop_rounded,
                                   'Arrêter',
@@ -563,7 +564,7 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
                                     children: [
                                       Slider(
                                         activeColor: _primary,
-                                        inactiveColor: const Color(0xFFE5E7EB),
+                                        inactiveColor: AppColors.border,
                                         max: max(
                                           1,
                                           (_duration > Duration.zero
@@ -619,7 +620,7 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
                                     ],
                                   ),
                                 ),
-                                const SizedBox(height: 16),
+                                SizedBox(height: 16.h),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -629,7 +630,7 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
                                           : Icons.play_arrow_rounded,
                                       () => _togglePlay(state.path),
                                     ),
-                                    const SizedBox(width: 20),
+                                    SizedBox(width: 20.w),
                                     _pillButton(
                                       Icons.send_rounded,
                                       'Envoyer',
@@ -637,7 +638,7 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 12),
+                                SizedBox(height: 12.h),
                                 TextButton.icon(
                                   onPressed: _restart,
                                   icon: const Icon(
@@ -666,16 +667,16 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
 
                           // Loader pendant l'envoi
                           if (isLoading)
-                            const SizedBox(
-                              width: 28,
-                              height: 28,
+                            SizedBox(
+                              width: 28.w,
+                              height: 28.h,
                               child: CircularProgressIndicator(
                                 strokeWidth: 3,
                                 color: _primary,
                               ),
                             ),
 
-                          const SizedBox(height: 14),
+                          SizedBox(height: 14.h),
 
                           // Annuler (supprime l'enregistrement)
                           if (!isLoading)

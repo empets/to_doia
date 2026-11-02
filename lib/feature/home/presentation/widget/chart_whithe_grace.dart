@@ -17,6 +17,9 @@ import 'package:grace_church/feature/taches/presentation/pages/tasks_screen.dart
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 // TODO: adapte ce chemin vers ton GroqRemoteDataSource
 
@@ -336,11 +339,11 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
   };
 
   Color get _color => switch (_state) {
-    VoiceState.off => Colors.grey,
-    VoiceState.idle => Colors.indigo,
-    VoiceState.recording => Colors.redAccent,
-    VoiceState.thinking => Colors.amber,
-    VoiceState.speaking => Colors.teal,
+    VoiceState.off => AppColors.grey,
+    VoiceState.idle => AppColors.indigo,
+    VoiceState.recording => AppColors.redAccent,
+    VoiceState.thinking => AppColors.amber,
+    VoiceState.speaking => AppColors.teal,
   };
 
   double get _size => switch (_state) {
@@ -377,7 +380,7 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
                 ? Center(
                     child: Text(
                       'Dis « Grace » pour commencer',
-                      style: TextStyle(color: cs.outline),
+                      style: GoogleFonts.roboto(color: cs.outline),
                     ),
                   )
                 : ListView.builder(
@@ -421,7 +424,7 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SizedBox(
-                    height: 120,
+                    height: 120.h,
                     child: Center(
                       child: GestureDetector(
                         onTap: _onOrbTap,
@@ -447,14 +450,14 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
                                 : _state == VoiceState.speaking
                                 ? Icons.graphic_eq
                                 : Icons.mic,
-                            color: Colors.white,
+                            color: AppColors.white,
                             size: 36,
                           ),
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8.h),
                   Text(_label, style: Theme.of(context).textTheme.bodyMedium),
                 ],
               ),
@@ -593,11 +596,11 @@ class _FluidWavePainter extends CustomPainter {
 
     final shader = const LinearGradient(
       colors: [
-        Color(0xFF526BFF),
-        Color(0xFF00D9FF),
-        Color(0xFF7965FF),
-        Color(0xFFED59F5),
-        Color(0xFF7965FF),
+        AppColors.accentBlue,
+        AppColors.cyanNeon,
+        AppColors.accent,
+        AppColors.magenta,
+        AppColors.accent,
       ],
     ).createShader(Offset.zero & size);
 
@@ -848,11 +851,11 @@ class _GraceVoiceViewState extends State<GraceVoiceView> {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFF10111B),
+        backgroundColor: AppColors.dark2,
         appBar: AppBar(
           title: const Text('Grace'),
-          backgroundColor: const Color(0xFF10111B),
-          foregroundColor: Colors.white,
+          backgroundColor: AppColors.dark2,
+          foregroundColor: AppColors.white,
         ),
         body: SafeArea(
           child: BlocBuilder<SharaNavigationBloc, SharaNavigationState>(
@@ -869,29 +872,29 @@ class _GraceVoiceViewState extends State<GraceVoiceView> {
                       isRecording: _isRecording,
                       isThinking: isThinking,
                       amplitude: _amplitude,
-                      height: 160,
+                      height: 160.h,
                     ),
 
-                    const SizedBox(height: 32),
+                    SizedBox(height: 32.h),
 
                     Text(
                       isThinking ? 'Grace réfléchit…' : _message,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.white, fontSize: 18),
+                      style: GoogleFonts.roboto(color: AppColors.white, fontSize: 18.sp),
                     ),
 
                     const Spacer(),
 
                     TextField(
                       controller: _controller,
-                      style: const TextStyle(color: Colors.white),
+                      style: GoogleFonts.roboto(color: AppColors.white),
                       textInputAction: TextInputAction.send,
                       onSubmitted: (_) => _sendMessage(),
                       decoration: InputDecoration(
                         hintText: 'Dis quelque chose à Grace…',
-                        hintStyle: const TextStyle(color: Colors.white54),
+                        hintStyle: GoogleFonts.roboto(color: Colors.white54),
                         filled: true,
-                        fillColor: const Color(0xFF202130),
+                        fillColor: AppColors.inkAlt2,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16),
                           borderSide: BorderSide.none,
@@ -900,13 +903,13 @@ class _GraceVoiceViewState extends State<GraceVoiceView> {
                           onPressed: isThinking ? null : _sendMessage,
                           icon: const Icon(
                             Icons.send_rounded,
-                            color: Color(0xFF7965FF),
+                            color: AppColors.accent,
                           ),
                         ),
                       ),
                     ),
 
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
                   ],
                 ),
               );
@@ -981,7 +984,7 @@ class _GraceVoiceViewState extends State<GraceVoiceView> {
 //     };
 
 //     return Scaffold(
-//       backgroundColor: const Color(0xFF10111B),
+//       backgroundColor: AppColors.dark2,
 //       appBar: AppBar(title: const Text('Shara')),
 //       body: SafeArea(
 //         child: Padding(
@@ -997,7 +1000,7 @@ class _GraceVoiceViewState extends State<GraceVoiceView> {
 //               const SizedBox(height: 32),
 //               Text(message,
 //                   textAlign: TextAlign.center,
-//                   style: const TextStyle(color: Colors.white, fontSize: 18)),
+//                   style: GoogleFonts.roboto(color: AppColors.white, fontSize: 18.sp)),
 //               const Spacer(),
 //               IconButton.filled(
 //                 iconSize: 36,

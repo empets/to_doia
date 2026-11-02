@@ -48,6 +48,30 @@ import '../../feature/taches/domaine/usecase/get_task_list_usecase.dart'
     as _i767;
 import '../../feature/taches/presentation/bloc/get_task/get_list_bloc.dart'
     as _i439;
+import '../alarme_notification/data/repository/alarme_repository_impl.dart'
+    as _i702;
+import '../alarme_notification/data/repository/notification_repository_impl.dart'
+    as _i569;
+import '../alarme_notification/data/repository/permission_notification_repository_impl.dart'
+    as _i933;
+import '../alarme_notification/data/service/local/alarme_persistance_service.dart'
+    as _i805;
+import '../alarme_notification/data/service/notification_local_service.dart'
+    as _i755;
+import '../alarme_notification/domaine/repositorie/alarme_repository.dart'
+    as _i966;
+import '../alarme_notification/domaine/repositorie/notification_repository.dart'
+    as _i184;
+import '../alarme_notification/domaine/repositorie/permission_notification_repository.dart'
+    as _i16;
+import '../alarme_notification/domaine/usecase/gerer_notifications_usecase.dart'
+    as _i567;
+import '../alarme_notification/domaine/usecase/gerer_permission_notification_usecase.dart'
+    as _i253;
+import '../alarme_notification/domaine/usecase/programmer_alarme_usecase.dart'
+    as _i711;
+import '../alarme_notification/service/alarme_notification_service.dart'
+    as _i565;
 import 'injection_container.dart' as _i809;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -58,6 +82,9 @@ extension GetItInjectableX on _i174.GetIt {
   }) async {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final injectableModule = _$InjectableModule();
+    gh.lazySingleton<_i755.NotificationLocalService>(
+      () => _i755.NotificationLocalService(),
+    );
     gh.lazySingleton<_i345.DatabaseReference>(() => injectableModule.userDb);
     gh.lazySingleton<_i519.Client>(() => injectableModule.httpClient);
     gh.lazySingleton<_i558.FlutterSecureStorage>(() => injectableModule.prefs);
@@ -65,11 +92,22 @@ extension GetItInjectableX on _i174.GetIt {
       () => injectableModule.locaDataShared(),
       preResolve: true,
     );
+    gh.lazySingleton<_i16.PermissionNotificationRepository>(
+      () => _i933.PermissionNotificationRepositoryImpl(),
+    );
     gh.lazySingleton<_i763.TaskRemoteRepository>(
       () => _i963.TaskRemoteRepositoryImpl(db: gh<_i345.DatabaseReference>()),
     );
     gh.lazySingleton<_i348.HomeRemoteRepository>(
       () => _i386.HomeRemoteRepositoryImpl(db: gh<_i345.DatabaseReference>()),
+    );
+    gh.lazySingleton<_i253.GererPermissionsNotificationUseCase>(
+      () => _i253.GererPermissionsNotificationUseCase(
+        gh<_i16.PermissionNotificationRepository>(),
+      ),
+    );
+    gh.lazySingleton<_i805.AlarmePersistanceService>(
+      () => _i805.AlarmePersistanceService(gh<_i460.SharedPreferences>()),
     );
     gh.lazySingleton<_i282.HomeRepository>(
       () => _i435.HomeRepositoryImpl(gh<_i348.HomeRemoteRepository>()),
@@ -83,14 +121,37 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i49.UpdateTaskUseCase>(
       () => _i49.UpdateTaskUseCase(gh<_i282.HomeRepository>()),
     );
+    gh.lazySingleton<_i184.NotificationRepository>(
+      () => _i569.NotificationRepositoryImpl(
+        gh<_i755.NotificationLocalService>(),
+      ),
+    );
     gh.lazySingleton<_i1062.TaskRepository>(
       () => _i321.TaskRepositoryImpl(gh<_i763.TaskRemoteRepository>()),
+    );
+    gh.lazySingleton<_i966.AlarmeRepository>(
+      () => _i702.AlarmeRepositoryImpl(
+        gh<_i755.NotificationLocalService>(),
+        gh<_i805.AlarmePersistanceService>(),
+      ),
+    );
+    gh.lazySingleton<_i567.GererNotificationsUseCase>(
+      () => _i567.GererNotificationsUseCase(gh<_i184.NotificationRepository>()),
+    );
+    gh.lazySingleton<_i711.ProgrammerAlarmeUseCase>(
+      () => _i711.ProgrammerAlarmeUseCase(gh<_i966.AlarmeRepository>()),
     );
     gh.lazySingleton<_i722.VoiceTaskRepository>(
       () => _i681.VoiceTaskRepositoryImpl(gh<_i78.GroqRemoteDataSource>()),
     );
     gh.lazySingleton<_i767.GetTaskListUseCase>(
       () => _i767.GetTaskListUseCase(gh<_i1062.TaskRepository>()),
+    );
+    gh.lazySingleton<_i565.AlarmeNotificationService>(
+      () => _i565.AlarmeNotificationService(
+        gh<_i755.NotificationLocalService>(),
+        gh<_i805.AlarmePersistanceService>(),
+      ),
     );
     gh.lazySingleton<_i324.CreateTaskFromVoiceUseCase>(
       () => _i324.CreateTaskFromVoiceUseCase(gh<_i722.VoiceTaskRepository>()),

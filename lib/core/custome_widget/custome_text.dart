@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 class CustomeText extends StatelessWidget {
   const CustomeText({
@@ -46,7 +47,7 @@ class _ExpandableTextState extends State<ExpandableText> {
           maxLines: expanded ? null : widget.maxLines,
           overflow: expanded ? TextOverflow.visible : TextOverflow.ellipsis,
           style: GoogleFonts.roboto(
-            color: Colors.black,
+            color: AppColors.black,
             fontSize: 14.sp,
           ),
         ),
@@ -60,7 +61,7 @@ class _ExpandableTextState extends State<ExpandableText> {
           child: Text(
             expanded ? "Réduire" : "Lire la suite",
             style:  GoogleFonts.roboto(
-              color: Colors.blue,
+              color: AppColors.blue,
               fontWeight: FontWeight.w700,
               fontSize: 13.sp,
             ),

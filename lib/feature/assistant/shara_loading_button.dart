@@ -1,7 +1,7 @@
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 class SharaMicButton extends StatefulWidget {
   final bool isListening;
@@ -52,34 +52,15 @@ class _SharaMicButtonState extends State<SharaMicButton>
     super.dispose();
   }
 
-  Widget _ripple(double delay) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (_, _) {
-        final t = (_controller.value + delay) % 1.0;
-        final size = 64.w + (70.w * t);
-        return Opacity(
-          opacity: _active ? (1 - t) * 0.35 : 0,
-          child: Container(
-            width: size,
-            height: size,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Color(0xFF6366F1),
-            ),
-          ),
-        );
-      },
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
     final buttonSize = 64.w;
 
-    return SizedBox(
-      width: 50.w,
-      height: 50.w,
+    return Container(
+      padding: EdgeInsets.all(2.r),
+
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -97,27 +78,25 @@ class _SharaMicButtonState extends State<SharaMicButton>
               height: buttonSize + 2.w,
               child: const CircularProgressIndicator(
                 strokeWidth: 3,
-                valueColor: AlwaysStoppedAnimation(Color(0xFF6366F1)),
+                valueColor: AlwaysStoppedAnimation(AppColors.primary),
               ),
             ),
 
           // Bouton (légère pulsation)
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.white,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.15),
+                  color: AppColors.black.withValues(alpha: 0.15),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
               ],
             ),
             child: IconButton.filled(
-              style: IconButton.styleFrom(
-                backgroundColor: const Color(0xFF6366F1),
-              ),
+              style: IconButton.styleFrom(backgroundColor: AppColors.primary),
               iconSize: 32.sp,
               onPressed: widget.isLoading ? null : widget.onPressed,
               icon: Icon(

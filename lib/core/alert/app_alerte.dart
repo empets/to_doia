@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 class AppAlert {
   static void showSuccess(
@@ -17,7 +18,7 @@ class AppAlert {
     _showAppSnackBar(
       context,
       message: message,
-      backgroundColor: Colors.green,
+      backgroundColor: AppColors.green,
       icon: Icons.check_circle,
       iconRight: iconRight,
       imageIcon: imageIcon,
@@ -40,7 +41,7 @@ class AppAlert {
     _showAppSnackBar(
       context,
       message: message,
-      backgroundColor: Colors.red,
+      backgroundColor: AppColors.red,
       icon: Icons.error,
       iconRight: iconRight,
       imageIcon: imageIcon,
@@ -62,7 +63,7 @@ class AppAlert {
     _showAppSnackBar(
       context,
       message: message,
-      backgroundColor: const Color(0xFF6366F1),
+      backgroundColor: AppColors.primary,
       icon: Icons.info,
       iconRight: iconRight,
       imageIcon: imageIcon,
@@ -81,7 +82,7 @@ class AppAlert {
     _showAppSnackBar(
       context,
       message: message,
-      backgroundColor: Colors.lime,
+      backgroundColor: AppColors.lime,
       icon: Icons.warning,
       iconRight: iconRight,
       imageIcon: imageIcon,
@@ -103,7 +104,7 @@ class AppAlert {
     required String message,
     IconData? icon,
     IconData? iconRight,
-    Color backgroundColor = Colors.blue,
+    Color backgroundColor = AppColors.blue,
     String? imageIcon,
     Duration duration = const Duration(seconds: 3),
     bool showOnTop = false,
@@ -124,12 +125,12 @@ class AppAlert {
           content: Row(
             children: [
               if (icon != null) ...[
-                Icon(icon, color: Colors.white),
-                SizedBox(width: 10.w),
+                Icon(icon, color: AppColors.white),
+                SizedBox(width: 1.0.w),
               ],
               if (imageIcon != null && imageIcon.isNotEmpty) ...[
                 SvgPicture.asset(imageIcon),
-                SizedBox(width: 10.w),
+                SizedBox(width: 1.0.w),
               ],
               Expanded(
                 child: Container(
@@ -140,7 +141,7 @@ class AppAlert {
                   child: Text(
                     message,
                     style: GoogleFonts.roboto(
-                      color: Colors.white,
+                      color: AppColors.white,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -152,10 +153,10 @@ class AppAlert {
                   child: Container(
                     padding: EdgeInsets.all(5.w),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
+                      color: AppColors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(5.r),
                     ),
-                    child: Icon(editButtonIcon, color: Colors.white),
+                    child: Icon(editButtonIcon, color: AppColors.white),
                   ),
                 ),
               ],
@@ -164,7 +165,7 @@ class AppAlert {
                   onPressed: () {
                     ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   },
-                  icon: Icon(iconRight, color: Colors.white),
+                  icon: Icon(iconRight, color: AppColors.white),
                 ),
               ],
             ],
@@ -179,11 +180,11 @@ class AppAlert {
   }) {
     showDialog(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.92),
+      barrierColor: AppColors.black.withValues(alpha: 0.92),
 
       builder: (_) {
         return Dialog(
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppColors.transparent,
           insetPadding: const EdgeInsets.all(1),
           child: child,
         );
@@ -214,7 +215,7 @@ class AppBottomSheet {
         pageBuilder: (_, _, _) => Align(
           alignment: Alignment.topCenter,
           child: Material(
-            color: Colors.transparent,
+            color: AppColors.transparent,
             child: contentBuilder(initialChildSize),
           ),
         ),
@@ -235,7 +236,7 @@ class AppBottomSheet {
 
     return showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(15.r),
@@ -357,9 +358,9 @@ class _DraggableBottomSheetContentState
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 15.h),
                   height: 4.h,
-                  width: 35.w,
+                  width: 3.5.w,
                   decoration: BoxDecoration(
-                    color: const Color(0XFF8D8D8D),
+                    color: AppColors.grey2,
                     borderRadius: BorderRadius.circular(999.r),
                   ),
                 ),

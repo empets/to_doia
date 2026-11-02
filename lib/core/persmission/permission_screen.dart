@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
+import 'package:grace_church/core/custome_widget/button.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// Écran des permissions — design immersif :
@@ -15,8 +19,8 @@ class PermissionsScreen extends StatefulWidget {
 
 class _PermissionsScreenState extends State<PermissionsScreen>
     with TickerProviderStateMixin {
-  static const Color _night = Color(0xFF0C0F1D);
-  static const Color _panel = Color(0xFF151A2E);
+  static const Color _night = AppColors.dark3;
+  static const Color _panel = AppColors.inkAlt1;
 
   int _step = 0; // 0 = micro, 1 = notifications
   bool _busy = false;
@@ -37,6 +41,8 @@ class _PermissionsScreenState extends State<PermissionsScreen>
   late final AnimationController _swap = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 520),
+    value:
+        1.0, // visible dès le départ, l'animation ne rejoue qu'au changement d'étape
   );
 
   // Entrée globale
@@ -48,7 +54,7 @@ class _PermissionsScreenState extends State<PermissionsScreen>
   final _steps = [
     {
       'icon': Icons.mic_rounded,
-      'color': Color(0xFF818CF8),
+      'color': AppColors.primaryLight,
       'title': 'Autoriser le\nmicrophone',
       'desc':
           'Le microphone est utilisé pour transformer votre voix en tâches. '
@@ -58,7 +64,7 @@ class _PermissionsScreenState extends State<PermissionsScreen>
     },
     {
       'icon': Icons.notifications_rounded,
-      'color': Color(0xFF34D399),
+      'color': AppColors.successLight,
       'title': 'Activer les\nnotifications',
       'desc':
           'Autorisez les notifications pour recevoir vos rappels au bon '
@@ -75,6 +81,8 @@ class _PermissionsScreenState extends State<PermissionsScreen>
   void initState() {
     super.initState();
     _intro.forward();
+    // Lance aussi la transition d'étape : sans ça, opacité 0 au 1er écran !
+    _swap.forward();
   }
 
   @override
@@ -141,27 +149,30 @@ class _PermissionsScreenState extends State<PermissionsScreen>
       builder: (context) => AlertDialog(
         backgroundColor: _panel,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text(
+        title: Text(
           'Autorisation bloquée',
-          style: TextStyle(color: Colors.white),
+          style: GoogleFonts.roboto(color: AppColors.white),
         ),
         content: Text(
           _step == 0
               ? 'Le microphone est bloqué. Ouvrez les réglages pour l\'autoriser.'
               : 'Les notifications sont bloquées. Ouvrez les réglages pour les autoriser.',
-          style: const TextStyle(color: Color(0xFF9CA3AF), height: 1.5),
+          style: GoogleFonts.roboto(
+            color: AppColors.greyTextLight,
+            height: 1.5,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text(
+            child: Text(
               'Plus tard',
-              style: TextStyle(color: Color(0xFF6B7280)),
+              style: GoogleFonts.roboto(color: AppColors.greyText),
             ),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFF6366F1),
+              backgroundColor: AppColors.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -210,12 +221,11 @@ class _PermissionsScreenState extends State<PermissionsScreen>
 
                 // Bloc icône + textes, centré verticalement
                 _buildSwappingContent(s, color),
-
                 const Spacer(),
 
                 // Actions en bas
                 _buildMainButton(s, color),
-                const SizedBox(height: 10),
+                SizedBox(height: 10.h),
                 _buildFooterActions(s, isLast),
               ],
             ),
@@ -236,14 +246,14 @@ class _PermissionsScreenState extends State<PermissionsScreen>
             return AnimatedContainer(
               duration: const Duration(milliseconds: 450),
               curve: Curves.easeOutCubic,
-              height: 5,
+              height: 5.h,
               margin: const EdgeInsets.only(right: 7),
               width: i == _step ? 34 : 14,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(3),
                 color: active
-                    ? (isLast ? Color(0xFF34D399) : Color(0xFF818CF8))
-                    : Colors.white.withValues(alpha: 0.12),
+                    ? (isLast ? AppColors.successLight : AppColors.primaryLight)
+                    : AppColors.white.withValues(alpha: 0.12),
               ),
             );
           }),
@@ -259,7 +269,6 @@ class _PermissionsScreenState extends State<PermissionsScreen>
       animation: _swap,
       builder: (context, child) {
         final t = Curves.easeOutCubic.transform(_swap.value);
-        // L'étape 0 entre depuis la gauche, l'étape 1 depuis la droite
         final dir = _step == 1 ? 1.0 : -1.0;
         final offset = Offset(dir * (1.0 - t) * 0.35, 0);
 
@@ -270,7 +279,6 @@ class _PermissionsScreenState extends State<PermissionsScreen>
       },
       child: Column(
         children: [
-          // Icône avec halo lumineux qui respire, directement derrière
           Stack(
             alignment: Alignment.center,
             children: [
@@ -282,8 +290,8 @@ class _PermissionsScreenState extends State<PermissionsScreen>
                   return Transform.scale(
                     scale: t,
                     child: Container(
-                      width: 330,
-                      height: 330,
+                      width: 330.w,
+                      height: 330.h,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
@@ -297,59 +305,62 @@ class _PermissionsScreenState extends State<PermissionsScreen>
                   );
                 },
               ),
-              Transform.scale(
-                scale: Curves.easeOutBack.transform(
-                  _intro.value < 0.6 ? _intro.value / 0.6 : 1.0,
-                ),
-                child: Container(
-                  width: 104,
-                  height: 104,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(32),
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [color, color.withValues(alpha: 0.55)],
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: color.withValues(alpha: 0.45),
-                        blurRadius: 45,
-                        spreadRadius: 6,
-                      ),
-                    ],
+
+              // ✅ Icône : son propre AnimatedBuilder, reconstruit à chaque frame
+              AnimatedBuilder(
+                animation: _swap,
+                builder: (context, _) => Transform.scale(
+                  scale: Curves.easeOutBack.transform(
+                    _swap.value.clamp(0.0, 1.0),
                   ),
-                  child: Icon(
-                    s['icon'] as IconData,
-                    color: Colors.white,
-                    size: 48,
+                  child: Container(
+                    padding: EdgeInsets.all(28.h),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(32.r),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [color, color.withValues(alpha: 0.55)],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: color.withValues(alpha: 0.45),
+                          blurRadius: 45,
+                          spreadRadius: 6,
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      s['icon'] as IconData,
+                      color: AppColors.white,
+                      size: 48,
+                    ),
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 30),
-
-          // Titre sur deux lignes
+          SizedBox(height: 30.h),
           Text(
             s['title'] as String,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 28,
+            style: GoogleFonts.roboto(
+              color: AppColors.white,
+              fontSize: 28.sp,
               fontWeight: FontWeight.w800,
               height: 1.15,
-              letterSpacing: -0.8,
+              letterSpacing: 0.8,
             ),
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           Text(
             s['desc'] as String,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.45),
-              fontSize: 14.5,
+            style: GoogleFonts.roboto(
+              color: AppColors.white.withValues(alpha: 0.45),
+              fontSize: 14.5.sp,
               height: 1.65,
+              letterSpacing: 0.5,
             ),
           ),
         ],
@@ -364,44 +375,14 @@ class _PermissionsScreenState extends State<PermissionsScreen>
       duration: const Duration(milliseconds: 250),
       opacity: _busy ? 0.65 : 1.0,
       child: SizedBox(
-        width: double.infinity,
-        height: 58,
-        child: ElevatedButton(
+        child: PrimaryButton(
+          label: s['btn'] as String,
           onPressed: _busy ? null : _requestPermission,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: color,
-            foregroundColor: const Color(0xFF0C0F1D),
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(29),
-            ),
-          ),
-          child: _busy
-              ? SizedBox(
-                  width: 22,
-                  height: 22,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.4,
-                    color: const Color(0xFF0C0F1D),
-                  ),
-                )
-              : Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        s['btn'] as String,
-                        style: const TextStyle(
-                          fontSize: 15.5,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.2,
-                        ),
-                      ),
-                      const Icon(Icons.arrow_forward_rounded, size: 22),
-                    ],
-                  ),
-                ),
+          colorText: AppColors.white,
+
+          borderRadius: 12.r,
+          isLoading: _busy,
+          backgroundColor: color,
         ),
       ),
     );
@@ -419,9 +400,9 @@ class _PermissionsScreenState extends State<PermissionsScreen>
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
             child: Text(
               s['skip'] as String,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.35),
-                fontSize: 13.5,
+              style: GoogleFonts.roboto(
+                color: AppColors.white.withValues(alpha: 0.35),
+                fontSize: 13.5.sp,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -437,14 +418,14 @@ class _PermissionsScreenState extends State<PermissionsScreen>
                 Icon(
                   Icons.settings_rounded,
                   size: 14,
-                  color: Colors.white.withValues(alpha: 0.3),
+                  color: AppColors.white.withValues(alpha: 0.3),
                 ),
-                const SizedBox(width: 5),
+                SizedBox(width: 5.w),
                 Text(
                   'Réglages système',
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.3),
-                    fontSize: 13,
+                  style: GoogleFonts.roboto(
+                    color: AppColors.white.withValues(alpha: 0.3),
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

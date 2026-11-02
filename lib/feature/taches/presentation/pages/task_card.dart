@@ -16,6 +16,7 @@ import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/cre
 import 'package:grace_church/feature/taches/presentation/bloc/get_task/event/task_event.dart';
 import 'package:grace_church/feature/taches/presentation/bloc/get_task/get_list_bloc.dart';
 import 'package:grace_church/feature/taches/presentation/pages/manual_create_screen.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 class TaskCard extends StatefulWidget {
   final TaskResponse task;
@@ -38,7 +39,7 @@ class TaskCard extends StatefulWidget {
 class _TaskCardState extends State<TaskCard> {
   bool _menuOpen = false;
 
-  static const _primary = Color(0xFF6366F1);
+  static const _primary = AppColors.primary;
 
   @override
   Widget build(BuildContext context) {
@@ -52,14 +53,14 @@ class _TaskCardState extends State<TaskCard> {
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(16),
                 border: false
                     ? null
                     : Border.all(color: _primary.withOpacity(0.08)),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: AppColors.black.withOpacity(0.04),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -106,22 +107,22 @@ class _TaskCardState extends State<TaskCard> {
                                   }),
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
-                              width: 22,
-                              height: 22,
+                              width: 22.w,
+                              height: 22.h,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: t.status.contains("TERMINER")
                                     ? _primary
-                                    : Colors.transparent,
+                                    : AppColors.transparent,
                                 border: Border.all(
                                   color: _primary.withOpacity(0.5),
-                                  width: 2,
+                                  width: 2.w,
                                 ),
                               ),
                               child: t.status.contains("TERMINER")
                                   ? const Icon(
                                       Icons.check_rounded,
-                                      color: Colors.white,
+                                      color: AppColors.white,
                                       size: 13,
                                     )
                                   : null,
@@ -130,7 +131,7 @@ class _TaskCardState extends State<TaskCard> {
                         },
                       ),
 
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12.w),
 
                       // Textes : prennent l'espace disponible et passent à la ligne
                       Expanded(
@@ -141,35 +142,35 @@ class _TaskCardState extends State<TaskCard> {
                               t.title,
                               softWrap: true,
                               style: GoogleFonts.roboto(
-                                color: const Color(0xFF6B7280),
+                                color: AppColors.greyText,
                                 fontSize: 11.sp,
                                 fontWeight: FontWeight.w600,
                                 decoration:
                                     t.status.contains(TypeTaskStatus.ANNULER)
                                     ? TextDecoration.lineThrough
                                     : TextDecoration.none,
-                                decorationColor: const Color(0xFF6B7280),
+                                decorationColor: AppColors.greyText,
                               ),
                             ),
                             Text(
                               t.content,
                               softWrap: true,
                               style: GoogleFonts.roboto(
-                                color: const Color(0xFF6B7280),
+                                color: AppColors.greyText,
                                 fontSize: 10.sp,
                                 fontWeight: FontWeight.w500,
                                 decoration:
                                     t.status.contains(TypeTaskStatus.ANNULER)
                                     ? TextDecoration.lineThrough
                                     : TextDecoration.none,
-                                decorationColor: const Color(0xFF6B7280),
+                                decorationColor: AppColors.greyText,
                               ),
                             ),
                           ],
                         ),
                       ),
 
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8.w),
 
                       // Menu "···"
                       GestureDetector(
@@ -178,7 +179,7 @@ class _TaskCardState extends State<TaskCard> {
                           padding: EdgeInsets.all(4),
                           child: Icon(
                             Icons.more_horiz_rounded,
-                            color: Color(0xFF6B7280),
+                            color: AppColors.greyText,
                             size: 18,
                           ),
                         ),
@@ -203,7 +204,7 @@ class _TaskCardState extends State<TaskCard> {
                                       TextSpan(
                                         text: formatDateString(t.date),
                                         style: GoogleFonts.roboto(
-                                          color: Colors.grey.shade600,
+                                          color: AppColors.grey.shade600,
                                           fontSize: 11.sp,
                                           fontWeight: FontWeight.w600,
                                           decoration:
@@ -216,7 +217,7 @@ class _TaskCardState extends State<TaskCard> {
                                       TextSpan(
                                         text: ' à ${t.time}',
                                         style: GoogleFonts.roboto(
-                                          color: Colors.grey.shade600,
+                                          color: AppColors.grey.shade600,
                                           fontSize: 12.sp,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -229,7 +230,7 @@ class _TaskCardState extends State<TaskCard> {
                               _Tag(
                                 icon: Icons.check_circle_rounded,
                                 text: 'Terminée',
-                                color: const Color(0xFF10B981),
+                                color: AppColors.success,
                               ),
                             if (widget.task.status.contains(
                               TypeTaskStatus.ENCOURS,
@@ -242,7 +243,7 @@ class _TaskCardState extends State<TaskCard> {
                                     )
                                     ? 'En cours'
                                     : '',
-                                color: const Color(0xFFF59E0B),
+                                color: AppColors.warning,
                               ),
                           ],
                         ),
@@ -262,9 +263,9 @@ class _TaskCardState extends State<TaskCard> {
                     Container(
                       margin: const EdgeInsets.only(top: 12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF4F6FB),
+                        color: AppColors.background,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFFE5E7EB)),
+                        border: Border.all(color: AppColors.border),
                       ),
                       child: Column(
                         children: [
@@ -279,7 +280,7 @@ class _TaskCardState extends State<TaskCard> {
                                 builder: (context, state) {
                                   return _MenuItem(
                                     icon: Icons.check_circle_outline_rounded,
-                                    color: const Color(0xFF10B981),
+                                    color: AppColors.success,
                                     label: 'Marquer comme terminée',
                                     onTap: () {
                                       final isExpired = isDateExpired(
@@ -317,9 +318,9 @@ class _TaskCardState extends State<TaskCard> {
                               //       // widget.onRestart();
                               //     },
                               //   ),
-                              const Divider(
-                                height: 1,
-                                color: Color(0xFFE5E7EB),
+                              Divider(
+                                height: 1.h,
+                                color: AppColors.border,
                               ),
                             ],
 
@@ -333,7 +334,7 @@ class _TaskCardState extends State<TaskCard> {
                               builder: (context, state) {
                                 return _MenuItem(
                                   icon: Icons.close,
-                                  color: Colors.grey,
+                                  color: AppColors.grey,
                                   label: 'Annuler',
                                   onTap: () {
                                     context.read<GetListBloc>().add(
@@ -358,7 +359,7 @@ class _TaskCardState extends State<TaskCard> {
                             //       // widget.onRestart();
                             //     },
                             //   ),
-                            const Divider(height: 1, color: Color(0xFFE5E7EB)),
+                            Divider(height: 1.h, color: AppColors.border),
                           ],
 
                           BlocBuilder<
@@ -368,7 +369,7 @@ class _TaskCardState extends State<TaskCard> {
                             builder: (context, state) {
                               return _MenuItem(
                                 icon: Icons.edit_outlined,
-                                color: const Color(0xFFF59E0B),
+                                color: AppColors.warning,
                                 label: 'Modifier',
                                 onTap: () async {
                                   //
@@ -401,7 +402,7 @@ class _TaskCardState extends State<TaskCard> {
                               );
                             },
                           ),
-                          const Divider(height: 1, color: Color(0xFFE5E7EB)),
+                          Divider(height: 1.h, color: AppColors.border),
                           BlocBuilder<
                             GetListBloc,
                             ApiState<List<TaskResponse>>
@@ -409,7 +410,7 @@ class _TaskCardState extends State<TaskCard> {
                             builder: (context, state) {
                               return _MenuItem(
                                 icon: Icons.delete_outline_rounded,
-                                color: const Color(0xFFEF4444),
+                                color: AppColors.error,
                                 label: 'Supprimer',
                                 onTap: () {
                                   context.read<GetListBloc>().add(
@@ -441,7 +442,7 @@ class _Tag extends StatelessWidget {
   const _Tag({
     required this.icon,
     required this.text,
-    this.color = const Color(0xFF6B7280),
+    this.color = AppColors.greyText,
   });
 
   @override
@@ -449,7 +450,7 @@ class _Tag extends StatelessWidget {
     mainAxisSize: MainAxisSize.min,
     children: [
       Icon(icon, size: 12.sp, color: color),
-      const SizedBox(width: 3),
+      SizedBox(width: 3.w),
       Text(
         text,
         style: GoogleFonts.roboto(color: color, fontSize: 10.sp),

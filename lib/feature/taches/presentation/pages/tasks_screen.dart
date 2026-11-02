@@ -22,6 +22,8 @@ import 'package:grace_church/feature/taches/presentation/bloc/get_task/get_list_
 import 'package:grace_church/feature/taches/presentation/pages/manual_create_screen.dart';
 import 'package:grace_church/feature/taches/presentation/pages/task_card.dart';
 import 'package:grace_church/feature/taches/presentation/pages/widget/empty_data.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
+import 'package:grace_church/feature/taches/presentation/pages/widget/task_shimmer.dart';
 
 class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key});
@@ -61,7 +63,7 @@ class _TasksScreenState extends State<TasksScreen> {
       widgets.addAll(
         list.map((t) => TaskCard(task: t, onToggle: () {}, onDelete: () {})),
       );
-      widgets.add(const SizedBox(height: 12));
+      widgets.add(SizedBox(height: 12.h));
     }
 
     return widgets.isEmpty ? [const SizedBox.shrink()] : widgets;
@@ -79,12 +81,15 @@ class _TasksScreenState extends State<TasksScreen> {
       builder: (context, stateTaskList) {
         if (stateTaskList is LoadState<List<TaskResponse>>) {
           return Scaffold(
-            backgroundColor: const Color(0xFFF4F6FB),
+            backgroundColor: AppColors.background,
             body: SafeArea(
               child: Column(
                 children: [
-                  const SizedBox(height: 12),
-                  TaskListShimmer(count: 8),
+                  SizedBox(height: 12.h),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TaskListShimmer(count: 8),
+                  ),
                 ],
               ),
             ),
@@ -93,14 +98,14 @@ class _TasksScreenState extends State<TasksScreen> {
 
         if (stateTaskList is SuccessState<List<TaskResponse>>) {
           return RefreshIndicator(
-            color: const Color(0xFF6366F1),
-            backgroundColor: Colors.white,
+            color: AppColors.primary,
+            backgroundColor: AppColors.white,
             onRefresh: () async {
               context.read<GetListBloc>().add(TaskSectionEvent.fetch(null));
             },
             child: Scaffold(
               appBar: SharaAppBar(),
-              backgroundColor: const Color(0xFFF4F6FB),
+              backgroundColor: AppColors.background,
               body: SafeArea(
                 top: false,
                 child: Column(
@@ -111,12 +116,12 @@ class _TasksScreenState extends State<TasksScreen> {
                       padding: const EdgeInsets.fromLTRB(20, 1, 20, 0),
                       child: Row(
                         children: [
-                          const Expanded(
+                          Expanded(
                             child: Text(
                               'Mes Tâches',
-                              style: TextStyle(
-                                color: Color(0xFF1A1A2E),
-                                fontSize: 24,
+                              style: GoogleFonts.roboto(
+                                color: AppColors.ink,
+                                fontSize: 24.sp,
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
@@ -141,9 +146,10 @@ class _TasksScreenState extends State<TasksScreen> {
                               });
                             },
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8.w),
                           IconBtn(
                             icon: Icons.add_rounded,
+
                             primary: true,
                             onTap: () {
                               Navigator.of(context).push(
@@ -174,17 +180,17 @@ class _TasksScreenState extends State<TasksScreen> {
                       duration: const Duration(milliseconds: 200),
                       child: _searchOpen
                           ? Padding(
-                              padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                              padding: EdgeInsets.fromLTRB(10.w, 12.h, 20.w, 0),
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 14,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: AppColors.white,
                                   borderRadius: BorderRadius.circular(14),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
+                                      color: AppColors.black.withOpacity(0.05),
                                       blurRadius: 8,
                                     ),
                                   ],
@@ -193,10 +199,10 @@ class _TasksScreenState extends State<TasksScreen> {
                                   children: [
                                     Icon(
                                       Icons.search_rounded,
-                                      color: Color(0xFF6366F1),
+                                      color: AppColors.primary,
                                       size: 18,
                                     ),
-                                    const SizedBox(width: 10),
+                                    SizedBox(width: 10.w),
                                     Expanded(
                                       child:
                                           BlocBuilder<
@@ -237,15 +243,15 @@ class _TasksScreenState extends State<TasksScreen> {
                                                   //     );
                                                   // setState(() => _search = v);
                                                 },
-                                                style: const TextStyle(
-                                                  color: Color(0xFF1A1A2E),
-                                                  fontSize: 14,
+                                                style: GoogleFonts.roboto(
+                                                  color: AppColors.ink,
+                                                  fontSize: 14.sp,
                                                 ),
-                                                decoration: const InputDecoration(
+                                                decoration: InputDecoration(
                                                   hintText:
                                                       'Rechercher une tâche...',
-                                                  hintStyle: TextStyle(
-                                                    color: Color(0xFF6B7280),
+                                                  hintStyle: GoogleFonts.roboto(
+                                                    color: AppColors.greyText,
                                                   ),
                                                   border: InputBorder.none,
                                                   contentPadding:
@@ -266,10 +272,10 @@ class _TasksScreenState extends State<TasksScreen> {
 
                     // ── Filtres ─────────────────────────────────────────────────────────
                     SizedBox(
-                      height: 52,
+                      height: 40.h,
                       child: ListView(
                         scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                        padding: const EdgeInsets.fromLTRB(20, 10, 0, 0),
                         children: _filters
                             .map(
                               (f) =>
@@ -331,13 +337,13 @@ class _TasksScreenState extends State<TasksScreen> {
                                             ),
                                             decoration: BoxDecoration(
                                               color: _filter == f
-                                                  ? const Color(0xFF6366F1)
-                                                  : Colors.white,
+                                                  ? AppColors.primary
+                                                  : AppColors.white,
                                               borderRadius:
                                                   BorderRadius.circular(20),
                                               boxShadow: [
                                                 BoxShadow(
-                                                  color: Colors.black
+                                                  color: AppColors.black
                                                       .withOpacity(0.04),
                                                   blurRadius: 6,
                                                 ),
@@ -347,9 +353,9 @@ class _TasksScreenState extends State<TasksScreen> {
                                               capitalizer(f).capitalizeWords,
                                               style: GoogleFonts.roboto(
                                                 color: _filter == f
-                                                    ? Colors.white
-                                                    : const Color(0xFF6B7280),
-                                                fontSize: 13,
+                                                    ? AppColors.white
+                                                    : AppColors.greyText,
+                                                fontSize: 13.sp,
                                                 fontWeight: FontWeight.w600,
                                               ),
                                             ),
@@ -363,7 +369,7 @@ class _TasksScreenState extends State<TasksScreen> {
                       ),
                     ),
 
-                    SizedBox(height: 15.h),
+                    SizedBox(height: 1.5.h),
 
                     // ── Liste ───────────────────────────────────────────────────────────
                     Expanded(

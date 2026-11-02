@@ -32,8 +32,40 @@ to_doia/
     │
     ├── core/                    # ★ COUCHE PARTAGÉE (utilisée par toutes les features) ★
     │   │
-    │   ├── alert/               # Alertes / notifications
+    │   ├── alert/               # Alertes / notifications (snackbars UI)
     │   │   └── app_alerte.dart
+    │   │
+    │   ├── alarme_notification/ # ★ MODULE CENTRALISÉ — Alarmes & Notifications ★
+    │   │   │                     # Réutilisable par toutes les features,
+    │   │   │                     # indépendant du métier. Compatible Android
+    │   │   │                     # et iOS (flutter_local_notifications,
+    │   │   │                     # timezone, permission_handler).
+    │   │   │
+    │   │   ├── domaine/         # Couche métier (pure, sans Flutter)
+    │   │   │   ├── entities/        # alarme_entite (AlarmeEntite, AppCanauxAlarme),
+    │   │   │   │                    # notification_programmee_entite
+    │   │   │   │                    # (NotificationProgrammeeEntite, AppCanauxNotification)
+    │   │   │   ├── repositorie/     # Contrats : alarme_repository (créer, programmer,
+    │   │   │   │                    # déclencher, modifier, supprimer), notification_repository
+    │   │   │   │                    # (locale, programmée, cycle de vie), permission_notification_repository
+    │   │   │   │                    # (vérifier / demander les autorisations, EtatPermission)
+    │   │   │   └── usecase/         # programmer_alarme_usecase (ProgrammerAlarmeUseCase),
+    │   │   │                        # gerer_notifications_usecase (GererNotificationsUseCase :
+    │   │   │                        # afficher / programmer / annuler / init / stop),
+    │   │   │                        # gerer_permission_notification_usecase
+    │   │   │
+    │   │   ├── data/            # Couche d'implémentation technique
+    │   │   │   ├── repository/      # alarme_repository_impl, notification_repository_impl,
+    │   │   │   │                    # permission_notification_repository_impl
+    │   │   │   └── service/         # local/notification_local_service (adaptateur
+    │   │   │                        # flutter_local_notifications + timezone)
+    │   │   │
+    │   │   └── service/         # Cycles de vie & actions
+    │   │       └── alarme_notification_service.dart
+    │   │                        # AlarmeNotificationService : initialisation au
+    │   │                        # démarrage de l'app, arrêt / nettoyage, et routage
+    │   │                        # des interactions utilisateur avec une
+    │   │                        # notification (clic → payload → navigation)
     │   │
     │   ├── confirmation/        # Écrans / dialogs de confirmation
     │   │   └── confimation_screen.dart
@@ -181,3 +213,78 @@ Service local (sqflite) ou remote (API / Groq IA)
 - **data** implémente les contrats du domaine.
 - Les dépendances sont assemblées par **`lib/core/injetction/injection_container.dart`**.
 - Les clés d'API (Groq) viennent de **`env.json`** injecté au build via `--dart-define-from-file`.
+
+---
+
+## 🔔 Module centralisé Alarmes & Notifications (`lib/core/alarme_notification/`)
+
+Infrastructure **réutilisable et indépendante du métier**, exposée à toutes les
+features via l'injection de dépendances (get_it / injectable). La logique des
+alarmes et notifications **ne doit jamais être codée en doublon** dans les
+features : celles-ci consomment uniquement les **usecases** (ou les contrats de
+repository si besoin fin).
+
+### Rôle de chaque sous-dossier
+
+| Sous-dossier | Responsabilité |
+|---|---|
+| `domaine/entities/` | Entités pures : `AlarmeEntite` (répétition hebdomadaire, canaux, payload), `NotificationProgrammeeEntite`. Aucune dépendance technique. |
+| `domaine/repositorie/` | Contrats : `AlarmeRepository` (créer / programmer / déclencher / modifier / supprimer / lister), `NotificationRepository` (locale, programmée, annulation, cycle de vie), `PermissionNotificationRepository` (vérifier / demander / réglages, `EtatPermission`). |
+| `domaine/usecase/` | Usecases injectables : `ProgrammerAlarmeUseCase`, `GererNotificationsUseCase`, `GererPermissionsNotificationUseCase`. Retour `Either<Failure, T>` (dartz). |
+| `data/repository/` | Implémentations des contrats (`*RepositoryImpl`), transformation en `Failure` des erreurs techniques. |
+| `data/service/local/` | `NotificationLocalService` : unique point de contact avec `flutter_local_notifications` + `timezone` (mode exact Android, canaux, payloads). |
+| `service/` | `AlarmeNotificationService` : initialisation de l'app, arrêt / nettoyage, et **routage des actions** (clic sur une notification → payload décodé → callback `onNotificationTapped` de la feature). |
+
+### Flux du module
+
+```
+Feature (BLoC)                        ← n'importe quelle feature
+   ↓ usecase injecté
+ProgrammerAlarmeUseCase / GererNotificationsUseCase (domaine)
+   ↓ contrat
+AlarmeRepository / NotificationRepository (contrat)
+   ↑ implémenté par
+AlarmeRepositoryImpl / NotificationRepositoryImpl (data)
+   ↓
+NotificationLocalService → flutter_local_notifications (Android + iOS)
+```
+
+Côté interactions : plugin → `AlarmeNotificationService._gererReponse` →
+`payload` décodé → `onNotificationTapped` (régistré par la feature qui
+navigue, via go_router).
+
+### Intégration
+
+1. Dans `main.dart`, après `configureDependencies()` :
+   `await getIt<AlarmeNotificationService>().initialiser();`
+2. Pour pouvoir déclencher des alarmes / notifications, s'assurer que
+   `EtatPermission.complet` est vrai (sinon utiliser
+   `GererPermissionsNotificationUseCase(demander: true)`).
+3. Permissions natives déjà présentes : Android `POST_NOTIFICATIONS`
+   (+ `SCHEDULE_EXACT_ALARM` pour les alarmes exactes, Android 12+) ;
+   iOS : autorisations alert/badge/sound demandées par le module.
+
+### Comportement "app fermée" / reboot
+
+- **App en arrière-plan ou fermée (process vivant mort)** : l'alarme est
+  enregistrée dans l'OS (`zonedSchedule` exact + `matchDateTimeComponents`
+  pour les occurrences hebdo) → elle sonne à l'heure prévue sans l'app.
+- **Tap sur la notification quand l'app était fermée (cold start)** :
+  `getNotificationAppLaunchDetails` est lu pendant [initialiser] ; le payload
+  est exposé via `AlarmeNotificationService.payloadDeLancement` et
+  `onNotificationTapped` est appelé → la feature peut naviguer dès le
+  premier frame.
+- **Redémarrage du téléphone** : les alarmes **ponctuelles** sont effacées
+  par Android au reboot ; elles sont donc **persistées** par
+  `AlarmePersistanceService` (shared_preferences) et **re-programmées
+  automatiquement** à chaque `initialiser()`. Les alarmes répétées sont
+  recréées par l'OS (`matchDateTimeComponents`).
+
+### Intégration avec le reboot natif (optionnel, avancé)
+
+Sur Android, la re-programmation n'a lieu qu'à la **première ouverture** de
+l'app après reboot. Pour rescheduler pendant que l'appareil redémarre (sans
+ouvrir l'app), il faudrait un récepteur natif `BOOT_COMPLETED` + plugin
+personnalisé — hors périmètre de ce module pour l'instant.
+
+

@@ -20,6 +20,7 @@ import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/cre
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/event/create_tast_event.dart';
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/state/create_tast_state.dart';
 import 'package:grace_church/feature/taches/presentation/pages/widget/empty_data.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 class ManualCreateScreen extends StatefulWidget {
   const ManualCreateScreen({
@@ -41,7 +42,7 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
   DateTime _date = DateTime.now().add(const Duration(days: 1));
   TimeOfDay _time = const TimeOfDay(hour: 9, minute: 0);
 
-  static const _primary = Color(0xFF6366F1);
+  static const _primary = AppColors.primary;
 
   Future<void> _pickDate() async {
     final d = await showDatePicker(
@@ -54,9 +55,9 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
               primary: _primary,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: Colors.black,
+              onPrimary: AppColors.white,
+              surface: AppColors.white,
+              onSurface: AppColors.black,
             ),
           ),
           child: child!,
@@ -85,9 +86,9 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
               primary: _primary,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: Colors.black,
+              onPrimary: AppColors.white,
+              surface: AppColors.white,
+              onSurface: AppColors.black,
             ),
           ),
           child: child!,
@@ -187,12 +188,12 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6FB),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
             // ── Header ───────────────────────────────────────────────────────────
-            SizedBox(height: 20.h),
+            SizedBox(height: 2.0.h),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: Row(
@@ -202,8 +203,8 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                       Navigator.pop(context);
                     },
                     child: Container(
-                      width: 36,
-                      height: 36,
+                      width: 36.w,
+                      height: 36.h,
                       decoration: BoxDecoration(
                         color: _primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
@@ -215,7 +216,7 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 14),
+                  SizedBox(width: 14.w),
                   Text(
                     widget.actionType.contains(
                           TypeCreateTaskOrUpdate.CREATE_TASK,
@@ -223,7 +224,7 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                         ? 'Nouvelle tâche'
                         : 'Modifier la tâche',
                     style: GoogleFonts.roboto(
-                      color: Color(0xFF1A1A2E),
+                      color: AppColors.ink,
                       fontSize: 15.h,
                       fontWeight: FontWeight.w700,
                     ),
@@ -263,7 +264,7 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                             color: _primary,
                             size: 20,
                           ),
-                          SizedBox(width: 12.w),
+                          SizedBox(width: 1.2.w),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -276,7 +277,7 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                const SizedBox(height: 2),
+                                SizedBox(height: 2.h),
                                 Text(
                                   'Plus rapide avec le microphone.',
                                   style: GoogleFonts.roboto(
@@ -291,11 +292,11 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20.h),
 
                   // Titre
                   Label('TITRE DE LA TÂCHE *'),
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6.h),
 
                   BlocBuilder<FormTastBloc, CreateTastState>(
                     builder: (context, state) {
@@ -310,7 +311,7 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                             : 'Se chant est obligatoire',
                         msgError: 'Se chant est obligatoire',
                         lable: '',
-                        fillColor: Colors.white,
+                        fillColor: AppColors.white,
                         borderRaduis: 10.r,
                         minLines: 1,
                         maxLines: 6,
@@ -322,7 +323,7 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                       );
                     },
                   ),
-                  SizedBox(height: 14.h),
+                  SizedBox(height: 1.4.h),
 
                   // Date + Heure
                   Row(
@@ -334,7 +335,7 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(children: [Label('Date et heure *')]),
-                                const SizedBox(height: 6),
+                                SizedBox(height: 6.h),
                                 GestureDetector(
                                   onTap: _pickDate,
                                   child: _controllerDate.text.isNotEmpty
@@ -358,8 +359,8 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                                   Label(
                                     'Se chant est obligatoire',
                                     style: GoogleFonts.roboto(
-                                      color: Colors.red,
-                                      fontSize: 11,
+                                      color: AppColors.red,
+                                      fontSize: 11.sp,
                                       fontWeight: FontWeight.w700,
                                       letterSpacing: 0.6,
                                     ),
@@ -369,14 +370,14 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                           },
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12.w),
                     ],
                   ),
-                  const SizedBox(height: 14),
+                  SizedBox(height: 14.h),
 
                   // Répétition
                   Label('DESCRIPTION'),
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6.h),
                   BlocBuilder<FormTastBloc, CreateTastState>(
                     builder: (context, state) {
                       return ProductionFormCustomer(
@@ -399,12 +400,12 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                             : 'Se chant est obligatoire',
                         msgError: 'Se chant est obligatoire',
                         lable: '',
-                        fillColor: Colors.white,
+                        fillColor: AppColors.white,
                       );
                     },
                   ),
 
-                  SizedBox(height: 15.h),
+                  SizedBox(height: 1.5.h),
                   CustomCheckbox(
                     value: recurring,
                     title: 'Tâche récurrente',
@@ -417,7 +418,7 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                     },
                   ),
 
-                  SizedBox(height: 25.h),
+                  SizedBox(height: 2.5.h),
 
                   // Bouton créer
                   SizedBox(
@@ -433,7 +434,7 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                               : "Modifier la tâche",
                           isLoading: state.status.isInProgress,
                           fontSize: 14.sp,
-                          colorText: Colors.white,
+                          colorText: AppColors.white,
                           backgroundColor: state.status.isInProgress
                               ? _primary.withValues(alpha: 0.4)
                               : _primary,
@@ -508,7 +509,7 @@ class CustomCheckbox extends StatelessWidget {
     this.subtitle,
   });
 
-  static const Color orange = Color(0xFFFF7900);
+  static const Color orange = AppColors.orange;
 
   @override
   Widget build(BuildContext context) {
@@ -519,10 +520,10 @@ class CustomCheckbox extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: value ? _primary.withValues(alpha: 0.07) : Colors.white,
+          color: value ? _primary.withValues(alpha: 0.07) : AppColors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: value ? _primary : Colors.grey.shade300,
+            color: value ? _primary : AppColors.grey.shade300,
             width: value ? 1.5 : 1,
           ),
         ),
@@ -530,44 +531,44 @@ class CustomCheckbox extends StatelessWidget {
           children: [
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              width: 24,
-              height: 24,
+              width: 24.w,
+              height: 24.h,
               decoration: BoxDecoration(
-                color: value ? _primary : Colors.transparent,
+                color: value ? _primary : AppColors.transparent,
                 borderRadius: BorderRadius.circular(7),
                 border: Border.all(
-                  color: value ? _primary : Colors.grey.shade400,
-                  width: 1.5,
+                  color: value ? _primary : AppColors.grey.shade400,
+                  width: 1.5.w,
                 ),
               ),
               child: value
                   ? const Icon(
                       Icons.check_rounded,
-                      color: Colors.white,
+                      color: AppColors.white,
                       size: 18,
                     )
                   : null,
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      fontSize: 15,
+                    style: GoogleFonts.roboto(
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF222222),
+                      color: AppColors.inkAlt3,
                     ),
                   ),
                   if (subtitle != null) ...[
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4.h),
                     Text(
                       subtitle!,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade600,
+                      style: GoogleFonts.roboto(
+                        fontSize: 12.sp,
+                        color: AppColors.grey.shade600,
                       ),
                     ),
                   ],
@@ -581,10 +582,10 @@ class CustomCheckbox extends StatelessWidget {
   }
 }
 
-const _primary = Color(0xFF6366F1);
-const _bg = Color(0xFFF4F6FB);
-const _ink = Color(0xFF111827);
-const _muted = Color(0xFF6B7280);
+const _primary = AppColors.primary;
+const _bg = AppColors.background;
+const _ink = AppColors.inkDark;
+const _muted = AppColors.greyText;
 
 enum RepeatFrequency { daily, weekly, monthly }
 
@@ -783,11 +784,11 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
               primary: _primary, // en-tête, jour sélectionné
-              onPrimary: Colors.white, // texte sur l'en-tête / jour sélectionné
-              surface: Colors.white, // fond du calendrier
+              onPrimary: AppColors.white, // texte sur l'en-tête / jour sélectionné
+              surface: AppColors.white, // fond du calendrier
               onSurface: _ink, // texte des jours
             ),
-            dialogTheme: const DialogThemeData(backgroundColor: Colors.white),
+            dialogTheme: const DialogThemeData(backgroundColor: AppColors.white),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: _primary,
@@ -823,7 +824,7 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Répéter la tâche', style: _t(20, FontWeight.w700)),
-                      const SizedBox(height: 2),
+                      SizedBox(height: 2.h),
                       Text(
                         'Choisissez un rythme.',
                         style: _t(13, FontWeight.w400, _muted),
@@ -879,11 +880,11 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
                         ? _customBlock()
                         : const SizedBox(width: double.infinity),
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6.h),
                   _endDateTile(),
-                  const SizedBox(height: 14),
+                  SizedBox(height: 14.h),
                   _preview(),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16.h),
                 ],
               ),
             ),
@@ -894,7 +895,7 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
             padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
             child: SizedBox(
               width: double.infinity,
-              height: 54,
+              height: 54.h,
               child: FilledButton(
                 onPressed: () => Navigator.pop(context, _rule),
                 style: FilledButton.styleFrom(
@@ -905,7 +906,7 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
                 ),
                 child: Text(
                   'Valider',
-                  style: _t(15, FontWeight.w600, Colors.white),
+                  style: _t(15, FontWeight.w600, AppColors.white),
                 ),
               ),
             ),
@@ -927,25 +928,25 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: sel ? _primary.withValues(alpha: 0.08) : Colors.white,
+          color: sel ? _primary.withValues(alpha: 0.08) : AppColors.white,
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: sel ? _primary : Colors.transparent,
-            width: 1.5,
+            color: sel ? _primary : AppColors.transparent,
+            width: 1.5.w,
           ),
         ),
         child: Row(
           children: [
             Container(
-              width: 38,
-              height: 38,
+              width: 38.w,
+              height: 38.h,
               decoration: BoxDecoration(
                 color: sel ? _primary : _primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12.r),
               ),
-              child: Icon(icon, size: 20, color: sel ? Colors.white : _primary),
+              child: Icon(icon, size: 20, color: sel ? AppColors.white : _primary),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12.w),
             Expanded(
               child: Text(
                 title,
@@ -954,21 +955,21 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
             ),
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              width: 22,
-              height: 22,
+              width: 22.w,
+              height: 22.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: sel ? _primary : Colors.transparent,
+                color: sel ? _primary : AppColors.transparent,
                 border: Border.all(
-                  color: sel ? _primary : Colors.grey.shade300,
-                  width: 1.5,
+                  color: sel ? _primary : AppColors.grey.shade300,
+                  width: 1.5.w,
                 ),
               ),
               child: sel
                   ? const Icon(
                       Icons.check_rounded,
                       size: 14,
-                      color: Colors.white,
+                      color: AppColors.white,
                     )
                   : null,
             ),
@@ -988,7 +989,7 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
       margin: const EdgeInsets.only(bottom: 4),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(18.r),
       ),
       child: Column(
@@ -1018,12 +1019,12 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
                       padding: const EdgeInsets.symmetric(vertical: 9),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: sel ? Colors.white : _bg,
+                        color: sel ? AppColors.white : _bg,
                         borderRadius: BorderRadius.circular(11.r),
                         boxShadow: sel
                             ? [
                                 // BoxShadow(
-                                //   color: Colors.black.withValues(alpha: 0.06),
+                                //   color: AppColors.black.withValues(alpha: 0.06),
                                 //   blurRadius: 6,
                                 //   offset: const Offset(0, 2),
                                 // ),
@@ -1040,7 +1041,7 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
               }).toList(),
             ),
           ),
-          const SizedBox(height: 18),
+          SizedBox(height: 18.h),
 
           // Intervalle
           Row(
@@ -1058,7 +1059,7 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
                     : null,
               ),
               SizedBox(
-                width: 42,
+                width: 42.w,
                 child: Text(
                   '${_rule.interval}',
                   textAlign: TextAlign.center,
@@ -1076,9 +1077,9 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
                     : null,
                 filled: true,
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: 10.w),
               SizedBox(
-                width: 64,
+                width: 64.w,
                 child: Text(unit, style: _t(14, FontWeight.w500, _muted)),
               ),
             ],
@@ -1086,7 +1087,7 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
 
           // Jours de la semaine
           if (_rule.frequency == RepeatFrequency.weekly) ...[
-            const SizedBox(height: 18),
+            SizedBox(height: 18.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(7, (i) {
@@ -1100,8 +1101,8 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    width: 38,
-                    height: 38,
+                    width: 38.w,
+                    height: 38.h,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -1112,14 +1113,14 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
                       style: _t(
                         13,
                         FontWeight.w600,
-                        sel ? Colors.white : _muted,
+                        sel ? AppColors.white : _muted,
                       ),
                     ),
                   ),
                 );
               }),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10.h),
             Text(
               _rule.weekdays.isEmpty
                   ? 'Aucun jour choisi : répété le même jour chaque semaine.'
@@ -1137,8 +1138,8 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 36,
-        height: 36,
+        width: 36.w,
+        height: 36.h,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: filled && enabled ? _primary : _bg,
@@ -1147,8 +1148,8 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
           icon,
           size: 20,
           color: filled && enabled
-              ? Colors.white
-              : (enabled ? _ink : Colors.grey.shade400),
+              ? AppColors.white
+              : (enabled ? _ink : AppColors.grey.shade400),
         ),
       ),
     );
@@ -1162,14 +1163,14 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(16.r),
         ),
         child: Row(
           children: [
             Container(
-              width: 38,
-              height: 38,
+              width: 38.w,
+              height: 38.h,
               decoration: BoxDecoration(
                 color: _primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12.r),
@@ -1180,7 +1181,7 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
                 color: _primary,
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1216,7 +1217,7 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+          colors: [AppColors.primary, AppColors.purple],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -1230,31 +1231,31 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
               const Icon(
                 Icons.autorenew_rounded,
                 size: 18,
-                color: Colors.white,
+                color: AppColors.white,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8.w),
               Expanded(
                 child: Text(
                   _rule.label,
-                  style: _t(14, FontWeight.w600, Colors.white),
+                  style: _t(14, FontWeight.w600, AppColors.white),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           Text(
             'Prochaines dates',
             style: _t(
               11.5,
               FontWeight.w500,
-              Colors.white.withValues(alpha: 0.75),
+              AppColors.white.withValues(alpha: 0.75),
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           if (dates.isEmpty)
             Text(
               'Aucune date à venir',
-              style: _t(13, FontWeight.w500, Colors.white),
+              style: _t(13, FontWeight.w500, AppColors.white),
             )
           else
             Wrap(
@@ -1268,12 +1269,12 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: AppColors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20.r),
                       ),
                       child: Text(
                         RecurrenceRule.formatDate(d),
-                        style: _t(12, FontWeight.w600, Colors.white),
+                        style: _t(12, FontWeight.w600, AppColors.white),
                       ),
                     ),
                   )
@@ -1302,7 +1303,7 @@ class RecurrenceBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           const Icon(Icons.repeat_rounded, size: 14, color: _primary),
-          const SizedBox(width: 4),
+          SizedBox(width: 4.w),
           Text(
             rule.label,
             style: GoogleFonts.roboto(

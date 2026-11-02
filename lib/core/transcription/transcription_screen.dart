@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 class TranscriptionScreen extends StatelessWidget {
   // final String transcript;
@@ -19,7 +20,7 @@ class TranscriptionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: Colors.white,
+    backgroundColor: AppColors.white,
     body: SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28),
@@ -28,46 +29,46 @@ class TranscriptionScreen extends StatelessWidget {
           children: [
             // Icône
             Container(
-              width: 64.w,
-              height: 64.h,
+              width: 6.4.w,
+              height: 6.4.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFF6366F1).withValues(alpha: 0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
               ),
               child: const Icon(
                 Icons.mic_rounded,
-                color: Color(0xFF6366F1),
+                color: AppColors.primary,
                 size: 30,
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
 
             Text(
               'Transcription',
               style: GoogleFonts.roboto(
-                color: Color(0xFF6B7280),
-                fontSize: 14,
+                color: AppColors.greyText,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
 
             // Texte reconnu
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(22),
               decoration: BoxDecoration(
-                color: const Color(0xFF6366F1).withValues(alpha: 0.07),
+                color: AppColors.primary.withValues(alpha: 0.07),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: const Color(0xFF6366F1).withValues(alpha: 0.2),
+                  color: AppColors.primary.withValues(alpha: 0.2),
                 ),
               ),
               child: Text(
                 '"Demain à 10h, rappelle-moi d\'appeler Jean."',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.roboto(
-                  color: Color(0xFF1A1A2E),
+                  color: AppColors.ink,
                   fontSize: 18.sp,
                   fontWeight: FontWeight.w600,
                   fontStyle: FontStyle.italic,
@@ -75,7 +76,7 @@ class TranscriptionScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 10.h),
+            SizedBox(height: 1.0.h),
 
             // Indicateur de qualité
             Row(
@@ -83,21 +84,21 @@ class TranscriptionScreen extends StatelessWidget {
               children: [
                 Icon(
                   Icons.check_circle_rounded,
-                  color: Color(0xFF10B981),
+                  color: AppColors.success,
                   size: 15.h,
                 ),
-                const SizedBox(width: 6),
+                SizedBox(width: 6.w),
                 Text(
                   'Reconnaissance réussie',
                   style: GoogleFonts.roboto(
-                    color: Color(0xFF10B981),
-                    fontSize: 13,
+                    color: AppColors.success,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 36),
+            SizedBox(height: 36.h),
 
             // Bouton principal
             SizedBox(
@@ -115,8 +116,8 @@ class TranscriptionScreen extends StatelessWidget {
                 },
                 //onConfirm,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF6366F1),
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: AppColors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -132,7 +133,7 @@ class TranscriptionScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10.h),
 
             SizedBox(
               width: double.infinity,
@@ -141,8 +142,8 @@ class TranscriptionScreen extends StatelessWidget {
                   Navigator.pop(context);
                 },
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFF6366F1),
-                  side: const BorderSide(color: Color(0xFF6366F1)),
+                  foregroundColor: AppColors.primary,
+                  side: const BorderSide(color: AppColors.primary),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -157,7 +158,7 @@ class TranscriptionScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10.h),
 
             TextButton(
               onPressed: () {
@@ -166,7 +167,7 @@ class TranscriptionScreen extends StatelessWidget {
               child: Text(
                 'Annuler',
                 style: GoogleFonts.roboto(
-                  color: Color(0xFF6B7280),
+                  color: AppColors.greyText,
                   fontSize: 14.sp,
                 ),
               ),

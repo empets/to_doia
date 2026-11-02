@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:grace_church/core/alarme_notification/presentation/pages/simulation_alarme_page.dart';
 import 'package:grace_church/core/constante/constantes.dart';
 import 'package:grace_church/core/models/task.dart';
 import 'package:grace_church/core/service_systeme/model/api/api_state.dart';
@@ -17,7 +18,9 @@ import 'package:grace_church/feature/taches/presentation/bloc/get_task/event/tas
 import 'package:grace_church/feature/taches/presentation/bloc/get_task/get_list_bloc.dart';
 import 'package:grace_church/feature/taches/presentation/pages/task_card.dart';
 import 'package:grace_church/feature/taches/presentation/pages/tasks_screen.dart';
+import 'package:grace_church/feature/taches/presentation/pages/widget/task_shimmer.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<Task> tasks;
@@ -75,12 +78,12 @@ class _HomeScreenState extends State<HomeScreen>
                       alignment: Alignment.centerRight,
                       padding: const EdgeInsets.only(right: 20),
                       decoration: BoxDecoration(
-                        color: Colors.red,
+                        color: AppColors.red,
                         borderRadius: BorderRadius.circular(16.r),
                       ),
                       child: const Icon(
                         Icons.delete_rounded,
-                        color: Colors.white,
+                        color: AppColors.white,
                       ),
                     ),
                     onDismissed: (_) {
@@ -103,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
                 )
           : const <Widget>[]),
-      const SizedBox(height: 12),
+      SizedBox(height: 12.h),
     ];
   }
 
@@ -120,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen>
   //       tts: FlutterTts(),
   //     ),
   //     child: Scaffold(
-  //       backgroundColor: const Color(0xFFF4F6FB),
+  //       backgroundColor: AppColors.background,
   //       body: Column(
   //         // padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
   //         children: [
@@ -208,9 +211,9 @@ class _HomeScreenState extends State<HomeScreen>
   //                     Text(
   //                       message,
   //                       textAlign: TextAlign.center,
-  //                       style: const TextStyle(
-  //                         color: Colors.white,
-  //                         fontSize: 18,
+  //                       style: GoogleFonts.roboto(
+  //                         color: AppColors.white,
+  //                         fontSize: 18.sp,
   //                       ),
   //                     ),
   //                     const Spacer(),
@@ -243,14 +246,14 @@ class _HomeScreenState extends State<HomeScreen>
   //                   children: [
   //                     // const Text(
   //                     //   'Bonjour 👋',
-  //                     //   style: TextStyle(color: Color(0xFF6B7280), fontSize: 14),
+  //                     //   style: GoogleFonts.roboto(color: AppColors.greyText, fontSize: 14.sp),
   //                     // ),
   //                     const SizedBox(height: 2),
   //                     const Text(
   //                       'Que dois-je faire\npour vous ?',
-  //                       style: TextStyle(
-  //                         color: Color(0xFF1A1A2E),
-  //                         fontSize: 24,
+  //                       style: GoogleFonts.roboto(
+  //                         color: AppColors.ink,
+  //                         fontSize: 24.sp,
   //                         fontWeight: FontWeight.w800,
   //                         height: 1.2,
   //                       ),
@@ -289,22 +292,22 @@ class _HomeScreenState extends State<HomeScreen>
   //                         vertical: 8,
   //                       ),
   //                       decoration: BoxDecoration(
-  //                         color: const Color(0xFF6366F1).withOpacity(0.1),
+  //                         color: AppColors.primary.withOpacity(0.1),
   //                         borderRadius: BorderRadius.circular(14),
   //                       ),
   //                       child: Row(
   //                         children: [
   //                           const Icon(
   //                             Icons.task_alt_rounded,
-  //                             color: Color(0xFF6366F1),
+  //                             color: AppColors.primary,
   //                             size: 16,
   //                           ),
   //                           const SizedBox(width: 6),
   //                           Text(
   //                             '$active tâches',
-  //                             style: const TextStyle(
-  //                               color: Color(0xFF6366F1),
-  //                               fontSize: 12,
+  //                             style: GoogleFonts.roboto(
+  //                               color: AppColors.primary,
+  //                               fontSize: 12.sp,
   //                               fontWeight: FontWeight.w700,
   //                             ),
   //                           ),
@@ -335,7 +338,7 @@ class _HomeScreenState extends State<HomeScreen>
   //                           )
   //                           .length,
   //                       emoji: '📅',
-  //                       color: const Color(0xFF6366F1),
+  //                       color: AppColors.primary,
   //                     ),
   //                     const SizedBox(width: 10),
   //                     StatCard(
@@ -346,7 +349,7 @@ class _HomeScreenState extends State<HomeScreen>
   //                           )
   //                           .length,
   //                       emoji: '⏳',
-  //                       color: const Color(0xFF10B981),
+  //                       color: AppColors.success,
   //                     ),
   //                     const SizedBox(width: 10),
   //                     StatCard(
@@ -357,7 +360,7 @@ class _HomeScreenState extends State<HomeScreen>
   //                           )
   //                           .length,
   //                       emoji: '✓',
-  //                       color: const Color(0xFFF59E0B),
+  //                       color: AppColors.warning,
   //                     ),
   //                   ],
   //                 );
@@ -415,13 +418,13 @@ class _HomeScreenState extends State<HomeScreen>
   //                                 begin: Alignment.topLeft,
   //                                 end: Alignment.bottomRight,
   //                                 colors: [
-  //                                   Color(0xFF818CF8),
-  //                                   Color(0xFF6366F1),
+  //                                   AppColors.primaryLight,
+  //                                   AppColors.primary,
   //                                 ],
   //                               ),
   //                               boxShadow: [
   //                                 BoxShadow(
-  //                                   color: const Color(0xFF6366F1).withValues(
+  //                                   color: AppColors.primary.withValues(
   //                                     alpha: 0.45 + _pulse.value * 0.1,
   //                                   ),
   //                                   blurRadius: 32 + _pulse.value * 8,
@@ -430,7 +433,7 @@ class _HomeScreenState extends State<HomeScreen>
   //                             ),
   //                             child: Icon(
   //                               Icons.mic_rounded,
-  //                               color: Colors.white,
+  //                               color: AppColors.white,
   //                               size: 44.h,
   //                             ),
   //                           ),
@@ -443,7 +446,7 @@ class _HomeScreenState extends State<HomeScreen>
   //                 Text(
   //                   'Appuyez pour parler',
   //                   style: GoogleFonts.roboto(
-  //                     color: Color(0xFF6B7280),
+  //                     color: AppColors.greyText,
   //                     fontSize: 14.sp,
   //                   ),
   //                 ),
@@ -451,7 +454,7 @@ class _HomeScreenState extends State<HomeScreen>
   //                 Text(
   //                   'Créez une tâche avec votre voix',
   //                   style: GoogleFonts.roboto(
-  //                     color: Color(0xFF6B7280),
+  //                     color: AppColors.greyText,
   //                     fontSize: 12.sp,
   //                     fontWeight: FontWeight.w400,
   //                   ),
@@ -469,7 +472,7 @@ class _HomeScreenState extends State<HomeScreen>
   //                   child: Text(
   //                     "List des tâches",
   //                     style: GoogleFonts.roboto(
-  //                       color: Color(0xFF1A1A2E),
+  //                       color: AppColors.ink,
   //                       fontSize: 17.sp,
   //                       fontWeight: FontWeight.w700,
   //                     ),
@@ -480,7 +483,7 @@ class _HomeScreenState extends State<HomeScreen>
   //                   child: Text(
   //                     'Voir tout',
   //                     style: GoogleFonts.roboto(
-  //                       color: Color(0xFF6366F1),
+  //                       color: AppColors.primary,
   //                       fontSize: 13.sp,
   //                       fontWeight: FontWeight.w600,
   //                     ),
@@ -551,7 +554,7 @@ class _HomeScreenState extends State<HomeScreen>
 
     return Scaffold(
       appBar: SharaAppBar(),
-      backgroundColor: const Color(0xFFF4F6FB),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -568,7 +571,7 @@ class _HomeScreenState extends State<HomeScreen>
                     child: Text(
                       'Que dois-je faire\npour vous ?',
                       style: GoogleFonts.roboto(
-                        color: const Color(0xFF1A1A2E),
+                        color: AppColors.ink,
                         fontSize: 24.sp,
                         fontWeight: FontWeight.w800,
                         height: 1.2,
@@ -590,7 +593,10 @@ class _HomeScreenState extends State<HomeScreen>
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => TasksScreen()),
+                            MaterialPageRoute(
+                              builder: (_) => SimulationAlarmePage(),
+                              //TasksScreen()
+                            ),
                           );
                         },
                         child: Container(
@@ -609,14 +615,14 @@ class _HomeScreenState extends State<HomeScreen>
                             children: [
                               Icon(
                                 Icons.task_alt_rounded,
-                                color: const Color(0xFF6366F1),
+                                color: AppColors.primary,
                                 size: 16.sp,
                               ),
                               SizedBox(width: 6.w),
                               Text(
                                 '$active tâches',
                                 style: GoogleFonts.roboto(
-                                  color: const Color(0xFF6366F1),
+                                  color: AppColors.primary,
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -654,10 +660,10 @@ class _HomeScreenState extends State<HomeScreen>
                                 )
                                 .length,
                             emoji: '📅',
-                            color: const Color(0xFF6366F1),
+                            color: AppColors.primary,
                           ),
                         ),
-                        SizedBox(width: 10.w),
+                        SizedBox(width: 5.w),
                         Expanded(
                           child: StatCard(
                             label: 'À venir',
@@ -668,10 +674,10 @@ class _HomeScreenState extends State<HomeScreen>
                                 )
                                 .length,
                             emoji: '⏳',
-                            color: const Color(0xFF10B981),
+                            color: AppColors.success,
                           ),
                         ),
-                        SizedBox(width: 10.w),
+                        SizedBox(width: 5.w),
                         Expanded(
                           child: StatCard(
                             label: 'Terminées',
@@ -683,7 +689,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 )
                                 .length,
                             emoji: '✓',
-                            color: const Color(0xFFF59E0B),
+                            color: AppColors.warning,
                           ),
                         ),
                       ],
@@ -747,8 +753,8 @@ class _HomeScreenState extends State<HomeScreen>
               //                         begin: Alignment.topLeft,
               //                         end: Alignment.bottomRight,
               //                         colors: [
-              //                           Color(0xFF818CF8),
-              //                           Color(0xFF6366F1),
+              //                           AppColors.primaryLight,
+              //                           AppColors.primary,
               //                         ],
               //                       ),
               //                       boxShadow: [
@@ -762,7 +768,7 @@ class _HomeScreenState extends State<HomeScreen>
               //                     ),
               //                     child: Icon(
               //                       Icons.mic_rounded,
-              //                       color: Colors.white,
+              //                       color: AppColors.white,
               //                       size: 44.sp,
               //                     ),
               //                   ),
@@ -776,7 +782,7 @@ class _HomeScreenState extends State<HomeScreen>
               //       Text(
               //         'Appuyez pour parler',
               //         style: GoogleFonts.roboto(
-              //           color: const Color(0xFF6B7280),
+              //           color: AppColors.greyText,
               //           fontSize: 14.sp,
               //         ),
               //       ),
@@ -785,25 +791,25 @@ class _HomeScreenState extends State<HomeScreen>
               //         'Créez une tâche avec votre voix',
               //         textAlign: TextAlign.center,
               //         style: GoogleFonts.roboto(
-              //           color: const Color(0xFF6B7280),
+              //           color: AppColors.greyText,
               //           fontSize: 12.sp,
               //         ),
               //       ),
               //     ],
               //   ),
               // ),
-              SizedBox(height: 32.h),
+              SizedBox(height: 3.2.h),
 
               // ── Tâches du jour ──────────────────────────────────
               if (today.isNotEmpty) ...[
-                SizedBox(height: 28.h),
+                SizedBox(height: 2.8.h),
                 Row(
                   children: [
                     Expanded(
                       child: Text(
                         'Liste des tâches',
                         style: GoogleFonts.roboto(
-                          color: const Color(0xFF1A1A2E),
+                          color: AppColors.ink,
                           fontSize: 17.sp,
                           fontWeight: FontWeight.w700,
                         ),
@@ -814,7 +820,7 @@ class _HomeScreenState extends State<HomeScreen>
                       child: Text(
                         'Voir tout',
                         style: GoogleFonts.roboto(
-                          color: const Color(0xFF6366F1),
+                          color: AppColors.primary,
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w600,
                         ),
@@ -887,191 +893,6 @@ class _HomeScreenState extends State<HomeScreen>
             },
           ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-    );
-  }
-}
-
-class StatCardShimmer extends StatelessWidget {
-  const StatCardShimmer({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Shimmer.fromColors(
-        baseColor: const Color(0xFFE5E7EB).withValues(alpha: 0.6),
-        highlightColor: const Color(0xFFF9FAFB).withValues(alpha: 0.8),
-        child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 28,
-                height: 28,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                width: 36,
-                height: 18,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                width: 60,
-                height: 10,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class StatsRowShimmer extends StatelessWidget {
-  const StatsRowShimmer({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Row(
-      children: [
-        StatCardShimmer(),
-        SizedBox(width: 10),
-        StatCardShimmer(),
-        SizedBox(width: 10),
-        StatCardShimmer(),
-      ],
-    );
-  }
-}
-
-class ShimmerBox extends StatefulWidget {
-  final double? width;
-  final double height;
-  final double radius;
-
-  const ShimmerBox({
-    super.key,
-    this.width,
-    required this.height,
-    this.radius = 8,
-  });
-
-  @override
-  State<ShimmerBox> createState() => _ShimmerBoxState();
-}
-
-class _ShimmerBoxState extends State<ShimmerBox>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, _) {
-        final dx = -1.0 + 3.0 * _controller.value;
-        return Container(
-          width: widget.width,
-          height: widget.height,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(widget.radius),
-            gradient: LinearGradient(
-              begin: Alignment(dx - 1, 0),
-              end: Alignment(dx + 1, 0),
-              colors: const [
-                Color(0xFFE5E7EB),
-                Color(0xFFF3F4F6),
-                Color(0xFFE5E7EB),
-              ],
-              stops: const [0.1, 0.5, 0.9],
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class TaskCardShimmer extends StatelessWidget {
-  const TaskCardShimmer({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(14.w),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: const Color(0xFFF0F0F5)),
-      ),
-      child: Row(
-        children: [
-          ShimmerBox(width: 24.w, height: 24.w, radius: 12.r),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ShimmerBox(width: 160.w, height: 14.h),
-                SizedBox(height: 8.h),
-                ShimmerBox(width: 100.w, height: 11.h),
-              ],
-            ),
-          ),
-          SizedBox(width: 12.w),
-          ShimmerBox(width: 20.w, height: 20.w, radius: 6.r),
-        ],
-      ),
-    );
-  }
-}
-
-class TaskListShimmer extends StatelessWidget {
-  final int count;
-  const TaskListShimmer({super.key, this.count = 2});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: List.generate(
-        count,
-        (_) => Padding(
-          padding: EdgeInsets.only(bottom: 8.h),
-          child: const TaskCardShimmer(),
-        ),
-      ),
     );
   }
 }

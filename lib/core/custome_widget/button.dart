@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
@@ -12,7 +13,7 @@ class PrimaryButton extends StatelessWidget {
     this.backgroundColor,
     this.colorText,
     this.borderSideColor,
-    this.iconColor = Colors.white,
+    this.iconColor = AppColors.white,
     this.fontSize,
     this.iconLeading = false,
     this.leadingIcon,
@@ -39,22 +40,22 @@ class PrimaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          overlayColor: Colors.transparent,
-          backgroundColor: backgroundColor ?? Colors.blue,
-          foregroundColor: Colors.blue,
+          overlayColor: AppColors.transparent,
+          backgroundColor: backgroundColor ?? AppColors.blue,
+          foregroundColor: AppColors.blue,
           shape: RoundedRectangleBorder(
-            side: BorderSide(color: borderSideColor ?? Colors.transparent),
+            side: BorderSide(color: borderSideColor ?? AppColors.transparent),
             borderRadius: BorderRadius.circular(borderRadius ?? 6.r),
           ),
           elevation: 0,
         ),
         child: isLoading
             ? SizedBox(
-                width: 24,
-                height: 24,
+                width: 24.w,
+                height: 24.h,
                 child: CircularProgressIndicator(
-                  color: Color(0xFF6366F1),
-                  backgroundColor: Colors.white,
+                  color: AppColors.primary,
+                  backgroundColor: AppColors.white,
                 ),
               )
             : Row(
@@ -105,7 +106,7 @@ class ShareButton extends StatelessWidget {
     this.backgroundColor,
     this.colorText,
     this.borderSideColor,
-    this.iconColor = Colors.white,
+    this.iconColor = AppColors.white,
     this.fontSize,
     this.iconLeading = false,
     this.leadingIcon,
@@ -137,18 +138,18 @@ class ShareButton extends StatelessWidget {
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
-          backgroundColor: backgroundColor ?? Colors.blue,
-          foregroundColor: Colors.blue,
+          backgroundColor: backgroundColor ?? AppColors.blue,
+          foregroundColor: AppColors.blue,
           elevation: 0,
           shape: RoundedRectangleBorder(
-            side: BorderSide(color: borderSideColor ?? Colors.transparent),
+            side: BorderSide(color: borderSideColor ?? AppColors.transparent),
             borderRadius: BorderRadius.circular(borderRadius ?? 6),
           ),
         ),
         child: isLoading
-            ? const SizedBox(
-                width: 24,
-                height: 24,
+            ? SizedBox(
+                width: 24.w,
+                height: 24.h,
                 child: CircularProgressIndicator(),
               )
             : Row(
@@ -162,8 +163,8 @@ class ShareButton extends StatelessWidget {
                   Flexible(
                     child: Text(
                       label,
-                      style: TextStyle(
-                        color: colorText ?? Colors.white,
+                      style: GoogleFonts.roboto(
+                        color: colorText ?? AppColors.white,
                         fontSize: fontSize ?? 16,
                         fontWeight: FontWeight.w600,
                         // letterSpacing: 0.5,

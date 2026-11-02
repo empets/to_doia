@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:grace_church/feature/home/presentation/page/home_screen.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 class SuccessScreen extends StatefulWidget {
   const SuccessScreen({super.key, this.task});
@@ -39,7 +40,7 @@ class _SuccessScreenState extends State<SuccessScreen>
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: Colors.white,
+    backgroundColor: AppColors.white,
     body: SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28),
@@ -50,26 +51,26 @@ class _SuccessScreenState extends State<SuccessScreen>
             ScaleTransition(
               scale: _scale,
               child: Container(
-                width: 100,
-                height: 100,
+                width: 100.w,
+                height: 100.h,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(0xFF10B981).withValues(alpha: 0.12),
+                  color: AppColors.success.withValues(alpha: 0.12),
                 ),
                 child: const Icon(
                   Icons.check_rounded,
-                  color: Color(0xFF10B981),
+                  color: AppColors.success,
                   size: 48,
                   weight: 900,
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
 
             Text(
               'Rappel programmé',
               style: GoogleFonts.roboto(
-                color: Color(0xFF10B981),
+                color: AppColors.success,
                 fontSize: 17.sp,
                 fontWeight: FontWeight.w800,
               ),
@@ -77,12 +78,12 @@ class _SuccessScreenState extends State<SuccessScreen>
             Text(
               'Votre tâche a été créée avec succès',
               style: GoogleFonts.roboto(
-                color: Colors.grey.shade600,
+                color: AppColors.grey.shade600,
                 fontSize: 12.sp,
                 fontWeight: FontWeight.w400,
               ),
             ),
-            const SizedBox(height: 14),
+            SizedBox(height: 14.h),
 
             // Boutons
             Row(
@@ -103,10 +104,10 @@ class _SuccessScreenState extends State<SuccessScreen>
                       );
                     },
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF6366F1),
-                      side: const BorderSide(
-                        color: Color(0xFF6366F1),
-                        width: 2,
+                      foregroundColor: AppColors.primary,
+                      side: BorderSide(
+                        color: AppColors.primary,
+                        width: 2.w,
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 15),
                       shape: RoundedRectangleBorder(
@@ -122,15 +123,15 @@ class _SuccessScreenState extends State<SuccessScreen>
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
                       //widget.onGoTasks
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6366F1),
-                      foregroundColor: Colors.white,
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.white,
                       padding:  EdgeInsets.symmetric(vertical: 15.h),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),

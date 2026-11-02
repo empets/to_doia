@@ -15,6 +15,7 @@ import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/cre
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/event/create_tast_event.dart';
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/state/create_tast_state.dart';
 import 'package:grace_church/feature/taches/presentation/pages/manual_create_screen.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 class ConfirmationScreen extends StatelessWidget {
   const ConfirmationScreen({
@@ -30,7 +31,7 @@ class ConfirmationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     log('Recording time ${task.recordtime}');
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -38,45 +39,45 @@ class ConfirmationScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // En-tête
-              SizedBox(height: 17.h),
+              SizedBox(height: 1.7.h),
               Row(
                 children: [
                   Container(
-                    width: 36,
-                    height: 36,
+                    width: 36.w,
+                    height: 36.h,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF6366F1).withValues(alpha: 0.1),
+                      color: AppColors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Icon(
                       Icons.edit_notifications_outlined,
-                      color: Color(0xFF6366F1),
+                      color: AppColors.primary,
                       size: 18,
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  SizedBox(width: 10.w),
                   Text(
                     'Nouveau rappel',
                     style: GoogleFonts.roboto(
-                      color: Color(0xFF6B7280),
+                      color: AppColors.greyText,
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24.h),
 
               // Carte de la tâche
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(22),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.white,
                   borderRadius: BorderRadius.circular(22),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
+                      color: AppColors.black.withOpacity(0.08),
                       blurRadius: 24,
                       offset: const Offset(0, 4),
                     ),
@@ -88,7 +89,7 @@ class ConfirmationScreen extends StatelessWidget {
                     Text(
                       task.title,
                       style: GoogleFonts.roboto(
-                        color: Color(0xFF1A1A2E),
+                        color: AppColors.ink,
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w800,
                       ),
@@ -98,18 +99,18 @@ class ConfirmationScreen extends StatelessWidget {
                     Text(
                       task.content,
                       style: GoogleFonts.roboto(
-                        color: Colors.grey.shade600,
+                        color: AppColors.grey.shade600,
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    SizedBox(height: 19.h),
+                    SizedBox(height: 1.9.h),
                     Row(
                       children: [
                         Icon(
                           Icons.event_note,
                           size: 16.h,
-                          color: Colors.grey.shade400,
+                          color: AppColors.grey.shade400,
                           fontWeight: FontWeight.w600,
                         ),
                         SizedBox(width: 8.w),
@@ -120,7 +121,7 @@ class ConfirmationScreen extends StatelessWidget {
                                 TextSpan(
                                   text: formatDateString(task.date),
                                   style: GoogleFonts.roboto(
-                                    color: Colors.grey.shade600,
+                                    color: AppColors.grey.shade600,
                                     fontSize: 12.sp,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -129,7 +130,7 @@ class ConfirmationScreen extends StatelessWidget {
                                 TextSpan(
                                   text: ' à ${task.time}',
                                   style: GoogleFonts.roboto(
-                                    color: Colors.grey.shade600,
+                                    color: AppColors.grey.shade600,
                                     fontSize: 12.sp,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -144,7 +145,7 @@ class ConfirmationScreen extends StatelessWidget {
                         Icon(
                           Icons.timelapse,
                           size: 16.h,
-                          color: Colors.grey.shade400,
+                          color: AppColors.grey.shade400,
                           fontWeight: FontWeight.w600,
                         ),
 
@@ -152,7 +153,7 @@ class ConfirmationScreen extends StatelessWidget {
                         Text(
                           'A venir',
                           style: GoogleFonts.roboto(
-                            color: Colors.grey.shade600,
+                            color: AppColors.grey.shade600,
                             fontSize: 12.sp,
                             fontWeight: FontWeight.w600,
                           ),
@@ -182,10 +183,10 @@ class ConfirmationScreen extends StatelessWidget {
                         );
                       },
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xFF6366F1),
-                        side: const BorderSide(
-                          color: Color(0xFF6366F1),
-                          width: 2,
+                        foregroundColor: AppColors.primary,
+                        side: BorderSide(
+                          color: AppColors.primary,
+                          width: 2.w,
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 15),
                         shape: RoundedRectangleBorder(
@@ -195,13 +196,13 @@ class ConfirmationScreen extends StatelessWidget {
                       child: Text(
                         'Modifier',
                         style: GoogleFonts.roboto(
-                          fontSize: 15,
+                          fontSize: 15.sp,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12.w),
                   Expanded(
                     child: BlocConsumer<FormTastBloc, CreateTastState>(
                       listener: (context, state) {
@@ -221,8 +222,8 @@ class ConfirmationScreen extends StatelessWidget {
                         return PrimaryButton(
                           label: "Confirmer",
                           fontSize: 14.sp,
-                          colorText: Colors.white,
-                          backgroundColor: const Color(0xFF6366F1),
+                          colorText: AppColors.white,
+                          backgroundColor: AppColors.primary,
                           borderRadius: 16,
                           isLoading: state.status.isInProgress,
                           onPressed: () {
@@ -260,7 +261,7 @@ class ConfirmationScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 10.h),
+              SizedBox(height: 1.0.h),
 
               SizedBox(
                 width: double.infinity,
@@ -272,8 +273,8 @@ class ConfirmationScreen extends StatelessWidget {
                   child: Text(
                     'Annuler',
                     style: GoogleFonts.roboto(
-                      color: Color(0xFFEF4444),
-                      fontSize: 14,
+                      color: AppColors.error,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

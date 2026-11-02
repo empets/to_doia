@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 Route fadeRoute(Widget page) {
   return PageRouteBuilder(
@@ -36,7 +37,7 @@ Future<dynamic> showBottomSheetScrollable(
       pageBuilder: (_, __, ___) => Align(
         alignment: Alignment.topCenter,
         child: Material(
-          color: Colors.transparent,
+          color: AppColors.transparent,
           child: contentBuilder(initialChildSize),
         ),
       ),
@@ -54,7 +55,7 @@ Future<dynamic> showBottomSheetScrollable(
 
   return showModalBottomSheet(
     context: context,
-    backgroundColor: Colors.white,
+    backgroundColor: AppColors.white,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(15.r),
@@ -175,9 +176,9 @@ class _DraggableBottomSheetContentState
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 15.h),
                   height: 4.h,
-                  width: 35.w,
+                  width: 3.5.w,
                   decoration: BoxDecoration(
-                    color: const Color(0XFF8D8D8D),
+                    color: AppColors.grey2,
                     borderRadius: BorderRadius.circular(999.r),
                   ),
                 ),
@@ -215,7 +216,7 @@ class _DraggableBottomSheetContentState
     required Widget content,
   }) {
     return showModalBottomSheet(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(15),
@@ -232,7 +233,7 @@ class _DraggableBottomSheetContentState
           builder: (context, scrollController) {
             return Container(
               decoration: const BoxDecoration(
-                color: Colors.white,
+                color: AppColors.white,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(15),
                   topRight: Radius.circular(15),
@@ -242,7 +243,7 @@ class _DraggableBottomSheetContentState
                 bottom: media.viewInsets.bottom,
               ),
               child: SizedBox(
-                height: 1.sh,
+                height: 1.h.sh,
                 child: Scrollbar(
                   child: SingleChildScrollView(
                     child: Column(
@@ -262,7 +263,7 @@ class _DraggableBottomSheetContentState
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     CircleAvatar(
-                                        backgroundColor: Colors.grey
+                                        backgroundColor: AppColors.grey
                                             .withValues(alpha: .5),
                                       child: IconButton(
                                         onPressed: () {
@@ -270,7 +271,7 @@ class _DraggableBottomSheetContentState
                                         },
                                         icon:  Icon(
                                           Icons.close,
-                                          color: Colors.black,
+                                          color: AppColors.black,
                                         ),
                                       ),
                                     ),
@@ -283,7 +284,7 @@ class _DraggableBottomSheetContentState
                           Padding(
                             padding: const EdgeInsets.all(8),
                             child: Divider(
-                              color: Colors.grey.withValues(alpha: .5),
+                              color: AppColors.grey.withValues(alpha: .5),
                               height: .3,
                             ),
                           ),

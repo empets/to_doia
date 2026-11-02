@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grace_church/core/models/task.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 class TaskPreviewTile extends StatelessWidget {
   final Task task;
@@ -11,23 +12,23 @@ class TaskPreviewTile extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: AppColors.white,
       borderRadius: BorderRadius.circular(14),
       boxShadow: [
-        BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8),
+        BoxShadow(color: AppColors.black.withOpacity(0.04), blurRadius: 8),
       ],
     ),
     child: Row(
       children: [
         Container(
-          width: 20.h,
-          height: 20.w,
+          width: 2.0.w,
+          height: 2.0.h,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: const Color(0xFF6366F1), width: 2),
+            border: Border.all(color: AppColors.primary, width: 2.w),
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12.w),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,7 +36,7 @@ class TaskPreviewTile extends StatelessWidget {
               Text(
                 task.title,
                 style: GoogleFonts.roboto(
-                  color: Color(0xFF1A1A2E),
+                  color: AppColors.ink,
                   fontSize: 13.5.sp,
                   fontWeight: FontWeight.w600,
                 ),
@@ -43,7 +44,7 @@ class TaskPreviewTile extends StatelessWidget {
               Text(
                 '${task.dateLabel} · ${task.timeLabel}',
                 style: GoogleFonts.roboto(
-                  color: Color(0xFF6B7280),
+                  color: AppColors.greyText,
                   fontSize: 12.sp,
                 ),
               ),
@@ -51,7 +52,7 @@ class TaskPreviewTile extends StatelessWidget {
           ),
         ),
         if (task.recurrence != 'Aucune')
-          Icon(Icons.repeat_rounded, color: Color(0xFF6366F1), size: 15.h),
+          Icon(Icons.repeat_rounded, color: AppColors.primary, size: 15.h),
       ],
     ),
   );

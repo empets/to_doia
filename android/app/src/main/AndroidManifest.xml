@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <!-- Notifications de rappel (Android 13+). -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Alarmes exactes : déclenchement heure précise (Android 12+).
+         Requis par le module core/alarme_notification. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <application
         android:label="To Doia"
         android:name="${applicationName}"

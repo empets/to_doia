@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grace_church/core/confirmation/confimation_screen.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 
 class AIAnalyzingScreen extends StatefulWidget {
@@ -60,7 +62,7 @@ class _AIAnalyzingScreenState extends State<AIAnalyzingScreen>
     ];
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -76,27 +78,27 @@ class _AIAnalyzingScreenState extends State<AIAnalyzingScreen>
                     child: child,
                   ),
                   child: SizedBox(
-                    width: 64,
-                    height: 64,
+                    width: 64.w,
+                    height: 64.h,
                     child: CustomPaint(painter: _SpinnerPainter()),
                   ),
                 ),
-                const SizedBox(height: 28),
+                SizedBox(height: 28.h),
 
                  Text(
                   'Je prépare votre rappel...',
                   style: GoogleFonts.roboto(
-                    color: Color(0xFF1A1A2E),
-                    fontSize: 18,
+                    color: AppColors.ink,
+                    fontSize: 18.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8.h),
                  Text(
                   "L'IA analyse votre demande",
-                  style: GoogleFonts.roboto(color: Color(0xFF6B7280), fontSize: 14),
+                  style: GoogleFonts.roboto(color: AppColors.greyText, fontSize: 14.sp),
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: 32.h),
 
                 // Étapes
                 ...steps.asMap().entries.map((e) {
@@ -107,23 +109,23 @@ class _AIAnalyzingScreenState extends State<AIAnalyzingScreen>
                       children: [
                         AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
-                          width: 8,
-                          height: 8,
+                          width: 8.w,
+                          height: 8.h,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: done
-                                ? const Color(0xFF10B981)
-                                : const Color(0xFF6366F1).withOpacity(0.3),
+                                ? AppColors.success
+                                : AppColors.primary.withOpacity(0.3),
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: 12.w),
                         Text(
                           done ? '${e.value} ✓' : '${e.value}...',
                           style: GoogleFonts.roboto(
                             color: done
-                                ? const Color(0xFF10B981)
-                                : const Color(0xFF6B7280),
-                            fontSize: 14,
+                                ? AppColors.success
+                                : AppColors.greyText,
+                            fontSize: 14.sp,
                             fontWeight: done
                                 ? FontWeight.w600
                                 : FontWeight.w400,
@@ -146,13 +148,13 @@ class _SpinnerPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFF6366F1)
+      ..color = AppColors.primary
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4
       ..strokeCap = StrokeCap.round;
 
     final bgPaint = Paint()
-      ..color = const Color(0xFF6366F1).withOpacity(0.15)
+      ..color = AppColors.primary.withOpacity(0.15)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4;
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 class ProductionFormCustomer extends StatelessWidget {
   const ProductionFormCustomer({
@@ -66,7 +67,7 @@ class ProductionFormCustomer extends StatelessWidget {
             style:
                 inputStyle ??
                 GoogleFonts.roboto(
-                  color: Colors.grey.shade700,
+                  color: AppColors.grey.shade700,
                   fontSize: inputLabelSize ?? 14.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -83,7 +84,7 @@ class ProductionFormCustomer extends StatelessWidget {
               letSpace ?? [FilteringTextInputFormatter.deny(RegExp(r'\s'))],
           keyboardType: textInputType,
           textInputAction: TextInputAction.newline,
-          style: GoogleFonts.roboto(color: Colors.grey.shade700),
+          style: GoogleFonts.roboto(color: AppColors.grey.shade700),
           decoration: InputDecoration(
             prefixIcon: prefixIcon,
             suffixIcon: sufixIcon,
@@ -93,7 +94,7 @@ class ProductionFormCustomer extends StatelessWidget {
                     style:
                         hintStyle ??
                         GoogleFonts.roboto(
-                          color: Colors.black,
+                          color: AppColors.black,
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 0.5.sp,
@@ -105,7 +106,7 @@ class ProductionFormCustomer extends StatelessWidget {
               style:
                   hintStyle ??
                   GoogleFonts.roboto(
-                    color: const Color(0xFF888888),
+                    color: AppColors.grey1,
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w400,
                   ),
@@ -116,15 +117,15 @@ class ProductionFormCustomer extends StatelessWidget {
             //'hintText: textLabel,'
             errorText: errorText,
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey.withValues(alpha: .5)),
+              borderSide: BorderSide(color: AppColors.grey.withValues(alpha: .5)),
               borderRadius: BorderRadius.circular(borderRaduis ?? 10.r),
             ),
             errorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.red.withValues(alpha: 0.7)),
+              borderSide: BorderSide(color: AppColors.red.withValues(alpha: 0.7)),
               borderRadius: BorderRadius.circular(borderRaduis ?? 10.r),
             ),
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey.withValues(alpha: .5)),
+              borderSide: BorderSide(color: AppColors.grey.withValues(alpha: .5)),
               gapPadding: 2,
               borderRadius: BorderRadius.circular(borderRaduis ?? 10.r),
             ),
@@ -133,15 +134,15 @@ class ProductionFormCustomer extends StatelessWidget {
               borderRadius: BorderRadius.circular(borderRaduis ?? 10.r),
             ),
             errorStyle: GoogleFonts.roboto(
-              color: Colors.red.withValues(alpha: 0.9),
+              color: AppColors.red.withValues(alpha: 0.9),
               fontWeight: FontWeight.bold,
             ),
             hintStyle: GoogleFonts.roboto(
-              color: const Color(0xFF888888),
+              color: AppColors.grey1,
               fontSize: 14.sp,
               fontWeight: FontWeight.w400,
             ),
-            fillColor: fillColor ?? Colors.grey.shade50,
+            fillColor: fillColor ?? AppColors.grey.shade50,
           ),
           onChanged: onChanged,
         ),

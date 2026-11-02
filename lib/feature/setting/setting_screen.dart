@@ -5,6 +5,9 @@ import 'package:grace_church/feature/assistant/app_bar_ia.dart';
 import 'package:grace_church/feature/assistant/shara_loading_button.dart'
     show SharaMicButton;
 import 'package:grace_church/feature/home/presentation/widget/chart_whithe_grace.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 class SettingsScreen extends StatefulWidget {
   final void Function(String) onRoute;
@@ -40,18 +43,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: SharaAppBar(),
-    backgroundColor: const Color(0xFFF4F6FB),
+    backgroundColor: AppColors.background,
     body: SafeArea(
       child: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 8, bottom: 8),
-            child: const Text(
+            child: Text(
               'Paramètres',
-              style: TextStyle(
-                color: Color(0xFF1A1A2E),
-                fontSize: 24,
+              style: GoogleFonts.roboto(
+                color: AppColors.ink,
+                fontSize: 24.sp,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -63,39 +66,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFF818CF8), Color(0xFF6366F1)],
+                colors: [AppColors.primaryLight, AppColors.primary],
               ),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               children: [
                 Container(
-                  width: 52,
-                  height: 52,
+                  width: 52.w,
+                  height: 52.h,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: AppColors.white.withOpacity(0.2),
                     shape: BoxShape.circle,
                   ),
-                  child: const Center(
-                    child: Text('👤', style: TextStyle(fontSize: 26)),
+                  child: Center(
+                    child: Text('👤', style: GoogleFonts.roboto(fontSize: 26.sp)),
                   ),
                 ),
-                const SizedBox(width: 14),
-                const Column(
+                SizedBox(width: 14.w),
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Utilisateur',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
+                      style: GoogleFonts.roboto(
+                        color: AppColors.white,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(height: 2),
+                    SizedBox(height: 2.h),
                     Text(
                       'Version 1.0.0',
-                      style: TextStyle(color: Colors.white70, fontSize: 12),
+                      style: GoogleFonts.roboto(color: Colors.white70, fontSize: 12.sp),
                     ),
                   ],
                 ),
@@ -108,27 +111,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               _STile(
                 icon: Icons.palette_rounded,
-                bg: const Color(0xFF6366F1),
+                bg: AppColors.primary,
                 label: 'Apparence',
                 sub: 'Clair',
                 onTap: () => widget.onRoute('appearance'),
               ),
               _STile(
                 icon: Icons.language_rounded,
-                bg: const Color(0xFF10B981),
+                bg: AppColors.success,
                 label: 'Langue',
                 sub: 'Français',
                 onTap: () => widget.onRoute('language'),
               ),
               _STile(
                 icon: Icons.access_time_rounded,
-                bg: const Color(0xFFF59E0B),
+                bg: AppColors.warning,
                 label: "Format de l'heure",
                 sub: '24 heures',
               ),
               _STile(
                 icon: Icons.calendar_month_rounded,
-                bg: const Color(0xFFEC4899),
+                bg: AppColors.pink,
                 label: 'Premier jour de la semaine',
                 sub: 'Lundi',
                 last: true,
@@ -141,7 +144,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               _STile(
                 icon: Icons.notifications_rounded,
-                bg: const Color(0xFFEF4444),
+                bg: AppColors.error,
                 label: 'Notifications',
                 onTap: () => widget.onRoute('notifications'),
                 trailing: _Switch(
@@ -151,7 +154,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               _STile(
                 icon: Icons.volume_up_rounded,
-                bg: const Color(0xFF8B5CF6),
+                bg: AppColors.purple,
                 label: 'Son',
                 trailing: _Switch(
                   value: widget.soundOn,
@@ -160,7 +163,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               _STile(
                 icon: Icons.vibration_rounded,
-                bg: const Color(0xFF06B6D4),
+                bg: AppColors.cyan,
                 label: 'Vibration',
                 last: true,
                 trailing: _Switch(
@@ -176,14 +179,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               _STile(
                 icon: Icons.mic_rounded,
-                bg: const Color(0xFF6366F1),
+                bg: AppColors.primary,
                 label: 'Voix et IA',
                 sub: 'Français',
                 onTap: () => widget.onRoute('voice'),
               ),
               _STile(
                 icon: Icons.check_circle_rounded,
-                bg: const Color(0xFF10B981),
+                bg: AppColors.success,
                 label: 'Confirmer avant création',
                 last: true,
                 trailing: _Switch(
@@ -199,19 +202,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               _STile(
                 icon: Icons.sort_rounded,
-                bg: const Color(0xFFF59E0B),
+                bg: AppColors.warning,
                 label: 'Trier par',
                 sub: 'Date',
               ),
               _STile(
                 icon: Icons.visibility_rounded,
-                bg: const Color(0xFF6366F1),
+                bg: AppColors.primary,
                 label: 'Afficher les terminées',
                 trailing: _Switch(value: true, onChanged: (_) {}),
               ),
               _STile(
                 icon: Icons.delete_outline_rounded,
-                bg: const Color(0xFFEF4444),
+                bg: AppColors.error,
                 label: 'Confirmer avant suppression',
                 last: true,
                 trailing: _Switch(value: true, onChanged: (_) {}),
@@ -224,23 +227,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               _STile(
                 icon: Icons.history_rounded,
-                bg: const Color(0xFF8B5CF6),
+                bg: AppColors.purple,
                 label: 'Historique',
               ),
               _STile(
                 icon: Icons.upload_rounded,
-                bg: const Color(0xFF10B981),
+                bg: AppColors.success,
                 label: 'Exporter les tâches',
               ),
               _STile(
                 icon: Icons.download_rounded,
-                bg: const Color(0xFF06B6D4),
+                bg: AppColors.cyan,
                 label: 'Importer les tâches',
                 onTap: () => widget.onRoute('data'),
               ),
               _STile(
                 icon: Icons.delete_forever_rounded,
-                bg: const Color(0xFFEF4444),
+                bg: AppColors.error,
                 label: 'Supprimer toutes les données',
                 last: true,
                 onTap: () => widget.onRoute('data'),
@@ -253,32 +256,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               _STile(
                 icon: Icons.info_outline_rounded,
-                bg: const Color(0xFF6366F1),
+                bg: AppColors.primary,
                 label: 'À propos',
                 sub: 'Version 1.0.0',
                 onTap: () => widget.onRoute('about'),
               ),
               _STile(
                 icon: Icons.help_outline_rounded,
-                bg: const Color(0xFF10B981),
+                bg: AppColors.success,
                 label: 'Aide',
                 onTap: () => widget.onRoute('help'),
               ),
               _STile(
                 icon: Icons.feedback_outlined,
-                bg: const Color(0xFFF59E0B),
+                bg: AppColors.warning,
                 label: 'Envoyer un retour',
               ),
               _STile(
                 icon: Icons.privacy_tip_outlined,
-                bg: const Color(0xFF8B5CF6),
+                bg: AppColors.purple,
                 label: 'Politique de confidentialité',
                 last: true,
               ),
             ],
           ),
 
-          const SizedBox(height: 32),
+          SizedBox(height: 32.h),
         ],
       ),
     ),
@@ -319,9 +322,9 @@ class _SGroup extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(2, 20, 2, 8),
         child: Text(
           title.toUpperCase(),
-          style: const TextStyle(
-            color: Color(0xFF6B7280),
-            fontSize: 11,
+          style: GoogleFonts.roboto(
+            color: AppColors.greyText,
+            fontSize: 11.sp,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.8,
           ),
@@ -329,10 +332,10 @@ class _SGroup extends StatelessWidget {
       ),
       Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8),
+            BoxShadow(color: AppColors.black.withOpacity(0.04), blurRadius: 8),
           ],
         ),
         child: Column(children: children),
@@ -368,38 +371,38 @@ class _STile extends StatelessWidget {
       decoration: BoxDecoration(
         border: last
             ? null
-            : const Border(bottom: BorderSide(color: Color(0x1A6B7280))),
+            : const Border(bottom: BorderSide(color: AppColors.greyOverlay)),
       ),
       child: Row(
         children: [
           Container(
-            width: 36,
-            height: 36,
+            width: 36.w,
+            height: 36.h,
             decoration: BoxDecoration(
               color: bg,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: Colors.white, size: 18),
+            child: Icon(icon, color: AppColors.white, size: 18),
           ),
-          const SizedBox(width: 14),
+          SizedBox(width: 14.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
-                    color: Color(0xFF1A1A2E),
-                    fontSize: 15,
+                  style: GoogleFonts.roboto(
+                    color: AppColors.ink,
+                    fontSize: 15.sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 if (sub != null)
                   Text(
                     sub!,
-                    style: const TextStyle(
-                      color: Color(0xFF6B7280),
-                      fontSize: 12,
+                    style: GoogleFonts.roboto(
+                      color: AppColors.greyText,
+                      fontSize: 12.sp,
                     ),
                   ),
               ],
@@ -409,7 +412,7 @@ class _STile extends StatelessWidget {
               (onTap != null
                   ? const Icon(
                       Icons.chevron_right_rounded,
-                      color: Color(0xFF6B7280),
+                      color: AppColors.greyText,
                       size: 20,
                     )
                   : const SizedBox()),
@@ -427,7 +430,7 @@ class _Switch extends StatelessWidget {
   Widget build(BuildContext context) => Switch(
     value: value,
     onChanged: onChanged,
-    activeThumbColor: const Color(0xFF6366F1),
+    activeThumbColor: AppColors.primary,
     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
   );
 }

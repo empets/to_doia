@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:grace_church/feature/home/presentation/page/home_screen.dart';
 import 'package:grace_church/feature/home/presentation/widget/chart_whithe_grace.dart';
 import 'package:grace_church/feature/taches/presentation/pages/tasks_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 
 class SharaAI extends StatelessWidget {
   const SharaAI({super.key});
@@ -53,7 +55,7 @@ class SharaAI extends StatelessWidget {
           width: double.infinity,
           padding: EdgeInsets.all(20.w),
           decoration: BoxDecoration(
-            // color: const Color(0xFF1A1A2E),
+            // color: AppColors.ink,
             borderRadius: BorderRadius.circular(24.r),
           ),
           child: Column(
@@ -64,12 +66,12 @@ class SharaAI extends StatelessWidget {
                 isThinking: isThinking,
                 amplitude: amplitude,
               ),
-              SizedBox(height: 10.h),
+              SizedBox(height: 1.0.h),
               // Text(
               //   message,
               //   textAlign: TextAlign.center,
               //   style: GoogleFonts.roboto(
-              //     color: Colors.white,
+              //     color: AppColors.white,
               //     fontSize: 16.sp,
               //   ),
               // ),
