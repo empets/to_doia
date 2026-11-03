@@ -134,7 +134,10 @@
 
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:grace_church/core/alarme_notification/domaine/task_reminder_manager.dart';
+import 'package:grace_church/core/constante/constantes.dart';
 import 'package:grace_church/core/extention/app_extention.dart';
+import 'package:grace_church/core/injetction/injection_container.dart';
 import 'package:grace_church/core/service_systeme/model/api/api_state.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:grace_church/feature/taches/domaine/entities/request/task_request.dart';
@@ -249,12 +252,44 @@ import 'package:injectable/injectable.dart';
 
 @lazySingleton
 class GetListBloc extends Bloc<TaskSectionEvent, ApiState<List<TaskResponse>>> {
-  GetListBloc({required this.getTaskListUseCase})
-      : super(ApiState<List<TaskResponse>>.initial()) {
+  GetListBloc({required this.getTaskListUseCase, TaskReminderManager? taskReminder})
+      : _taskReminder = taskReminder,
+        super(ApiState<List<TaskResponse>>.initial()) {
     on<TaskSectionEvent>(_getList);
   }
 
   final GetTaskListUseCase getTaskListUseCase;
+
+  /// Coordination alarme/notification (résolue via l'injection si absente).
+  final TaskReminderManager? _taskReminder;
+  TaskReminderManager get _reminder =>
+      _taskReminder ?? getIt<TaskReminderManager>();
+
+  /// Statuts qui doivent annuler tout rappel futur.
+  static bool _doitAnnulerRappel(String status) {
+    final s = status.toUpperCase();
+    return s.contains(TypeTaskStatus.TERMINER) ||
+        s.contains(TypeTaskStatus.ANNULER) ||
+        s.contains(TypeTaskStatus.SUPPRIMER);
+  }
+
+  Future<void> _syncRappel(TaskResponse task, {String? status}) async {
+    final statut = status ?? task.status;
+    if (_doitAnnulerRappel(statut)) {
+      await _reminder.annuler(task.taskId);
+      return;
+    }
+    // Tâche active (AVENIR / ENCOURS) → (re)programmation.
+    await _reminder.programmer(
+      task.taskId,
+      TaskReminderInfos(
+        title: task.title,
+        date: task.date,
+        time: task.time,
+        recurring: task.recurring,
+      ),
+    );
+  }
 
   /// Source de vérité : jamais filtrée.
   List<TaskResponse> _allTasks = [];
@@ -321,11 +356,15 @@ class GetListBloc extends Bloc<TaskSectionEvent, ApiState<List<TaskResponse>>> {
         if (task == null) return;
         _allTasks = _replaceTask(task);
         emit(ApiState<List<TaskResponse>>.success(_applyFilter()));
+        // Modification (date/heure comprises) → reprogrammation.
+        await _syncRappel(task);
 
       case ChangeTaskStatusSectionEvent(:final task, :final status):
         if (task == null) return;
         _allTasks = _replaceTask(task, status: status);
         emit(ApiState<List<TaskResponse>>.success(_applyFilter()));
+        // Terminée / annulée / supprimée → annulation ; sinon reprogrammation.
+        await _syncRappel(task, status: status);
 
       case SearchTaskSectionEvent(:final search, :final status):
         _search = search ?? '';

@@ -7,6 +7,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:grace_church/core/alert/app_alerte.dart';
 import 'package:grace_church/core/constante/constantes.dart';
 import 'package:grace_church/core/extention/app_extention.dart';
+import 'package:grace_church/core/navigation/shara_route.dart';
+import 'package:grace_church/core/navigation/shara_router.dart';
+import 'package:grace_church/core/navigation/app_flow_controller.dart';
 import 'package:grace_church/core/injetction/injection_container.dart';
 import 'package:grace_church/core/service_systeme/model/api/api_state.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
@@ -373,23 +376,17 @@ class _TaskCardState extends State<TaskCard> {
                                 label: 'Modifier',
                                 onTap: () async {
                                   //
-                                  final result = await Navigator.of(context)
+                                  // Modale avec retour de résultat — passe
+                                  // par le routeur (go_router.push).
+                                  final result = await SharaRouter.i
                                       .push<TaskResponse>(
-                                        MaterialPageRoute(
-                                          builder: (context) => BlocProvider(
-                                            create: (context) => FormTastBloc(
-                                              createTaskUseCase:
-                                                  getIt<CreateTaskUseCase>(),
-                                              updateTaskUseCase:
-                                                  getIt<UpdateTaskUseCase>(),
-                                            ),
-                                            child: ManualCreateScreen(
-                                              task: widget.task,
-                                              actionType: TypeCreateTaskOrUpdate
+                                        SharaRoute.manualCreate,
+                                        extra: ManualCreateArgs(
+                                          task: widget.task,
+                                          actionType:
+                                              TypeCreateTaskOrUpdate
                                                   .UPDATE_TASK,
-                                              isPope: true,
-                                            ),
-                                          ),
+                                          isPope: true,
                                         ),
                                       );
                                   if (result != null) {

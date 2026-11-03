@@ -49,7 +49,7 @@ class StatCardShimmer extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: AppColors.white.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: AppColors.backgroundAlt3),
       ),
@@ -94,7 +94,7 @@ class TaskCardShimmer extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
-        color: AppColors.white.withValues(alpha: 0.2),
+        color: AppColors.white.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: AppColors.backgroundAlt3),
       ),

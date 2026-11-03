@@ -8,17 +8,30 @@ import 'package:grace_church/core/alert/app_alerte.dart';
 import 'package:grace_church/core/constante/constantes.dart';
 import 'package:grace_church/core/custome_widget/button.dart';
 import 'package:grace_church/core/custome_widget/form_filed.dart';
-import 'package:grace_church/core/custome_widget/navigate.dart';
 import 'package:grace_church/core/extention/app_extention.dart';
 import 'package:grace_church/core/injetction/injection_container.dart';
+import 'package:grace_church/core/navigation/app_flow_controller.dart';
+import 'package:grace_church/core/navigation/shara_route.dart';
+import 'package:grace_church/core/navigation/shara_router.dart';
+import 'package:grace_church/core/navigation/shara_nav.dart';
 import 'package:grace_church/core/succes_screen/success_screen.dart';
 import 'package:grace_church/core/voice/voice_listening.dart';
+import 'package:grace_church/feature/assistant/app_bar_ia.dart';
+import 'package:grace_church/feature/assistant/shara_loading_button.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:grace_church/feature/home/domaine/usecase/create_task_usecase.dart';
 import 'package:grace_church/feature/home/domaine/usecase/update_task_from_usercase.dart';
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/create_or_update_task_bloc.dart';
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/event/create_tast_event.dart';
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/state/create_tast_state.dart';
+import 'package:grace_church/feature/home/presentation/widget/chart_whithe_grace.dart'
+    show
+        SharaNavigationBloc,
+        SharaNavigationState,
+        SharaNavigationListening,
+        SharaNavigationLoading,
+        SharaStopListening,
+        SharaStartListening;
 import 'package:grace_church/feature/taches/presentation/pages/widget/empty_data.dart';
 import 'package:grace_church/core/constante/app_colors.dart';
 
@@ -28,10 +41,20 @@ class ManualCreateScreen extends StatefulWidget {
     this.task,
     this.actionType = TypeCreateTaskOrUpdate.CREATE_TASK,
     this.isPope = false,
+    this.onViewTasks,
+    this.onNavigate,
+    this.onCreateTask,
   });
   final TaskResponse? task;
   final String actionType;
   final bool isPope;
+  final VoidCallback? onViewTasks;
+
+  /// Navigation Shara déléguée à l'AppShell.
+  final void Function(String destination)? onNavigate;
+
+  /// création de tâche déléguée à l'AppShell.
+  final void Function(TaskResponse task)? onCreateTask;
 
   @override
   State<ManualCreateScreen> createState() => _ManualCreateScreenState();
@@ -184,36 +207,63 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
 
   //  permet de voir si la tâche est recussive
   late bool recurring = false;
+  late bool isSeletToUseVoix = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+      appBar: isSeletToUseVoix
+          ? SharaAppBar(
+              onViewTasks: widget.onViewTasks,
+              onNavigate: widget.onNavigate,
+              onCreateTask: widget.onCreateTask,
+            )
+          : null,
       body: SafeArea(
         child: Column(
           children: [
             // ── Header ───────────────────────────────────────────────────────────
-            SizedBox(height: 2.0.h),
+            SizedBox(height: 17.h),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: Row(
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.pop(context);
+                      if (!isSeletToUseVoix) {
+                        // Fermeture : modale → pop du routeur ; écran de
+                        // shell (via SharaNav) → retour aux tâches.
+                        if (widget.isPope && Navigator.of(context).canPop()) {
+                          Navigator.of(context).pop();
+                        } else {
+                          SharaNav.navigate('tasks');
+                        }
+                      }
+                      if (isSeletToUseVoix) {
+                        setState(() {
+                          isSeletToUseVoix = false;
+                        });
+                      }
                     },
                     child: Container(
-                      width: 36.w,
-                      height: 36.h,
+                      padding: EdgeInsets.all(7.h),
                       decoration: BoxDecoration(
-                        color: _primary.withOpacity(0.1),
+                        color: _primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(
-                        Icons.close_rounded,
-                        color: _primary,
-                        size: 20,
-                      ),
+                      child: switch (isSeletToUseVoix) {
+                        true => const Icon(
+                          Icons.edit,
+                          color: _primary,
+                          size: 20,
+                        ),
+                        false => const Icon(
+                          Icons.close_rounded,
+                          color: _primary,
+                          size: 20,
+                        ),
+                      },
                     ),
                   ),
                   SizedBox(width: 14.w),
@@ -237,72 +287,81 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
               child: ListView(
                 padding: const EdgeInsets.all(20),
                 children: [
-                  // Conseil vocal
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        fadeRoute(
-                          VoiceListeningScreen(
-                            actionType: widget.actionType.trim().isNotEmpty
-                                ? widget.actionType
-                                : '',
-                          ),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: _primary.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: _primary.withOpacity(0.2)),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.mic_rounded,
-                            color: _primary,
-                            size: 20,
-                          ),
-                          SizedBox(width: 1.2.w),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Conseil : utilisez votre voix !',
-                                  style: GoogleFonts.roboto(
-                                    color: _primary,
-                                    fontSize: 13.sp,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                SizedBox(height: 2.h),
-                                Text(
-                                  'Plus rapide avec le microphone.',
-                                  style: GoogleFonts.roboto(
-                                    color: _primary.withOpacity(0.7),
-                                    fontSize: 12.sp,
-                                  ),
-                                ),
-                              ],
+                  if (widget.actionType.contains(
+                    TypeCreateTaskOrUpdate.CREATE_TASK,
+                  )) ...[
+                    if (!isSeletToUseVoix) ...[
+                      // Conseil vocal
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isSeletToUseVoix = true;
+                          });
+                          // Écoute vocale via le routeur (le type d'action est
+                          // porté par le contrôleur).
+                          // AppFlowController.instance.voiceActionType =
+                          //     widget.actionType.trim().isNotEmpty
+                          //     ? widget.actionType
+                          //     : TypeCreateTaskOrUpdate.CREATE_TASK;
+                          // SharaRouter.i.push(SharaRoute.listening);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: _primary.withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: _primary.withOpacity(0.2),
                             ),
                           ),
-                        ],
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.mic_rounded,
+                                color: _primary,
+                                size: 20,
+                              ),
+                              SizedBox(width: 15.w),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Conseil : utilisez votre voix !',
+                                      style: GoogleFonts.roboto(
+                                        color: _primary,
+                                        fontSize: 13.sp,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    SizedBox(height: 2.h),
+                                    Text(
+                                      'Plus rapide avec le microphone.',
+                                      style: GoogleFonts.roboto(
+                                        color: _primary.withOpacity(0.7),
+                                        fontSize: 12.sp,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  SizedBox(height: 20.h),
+                      SizedBox(height: 20.h),
+                    ],
+                  ],
 
                   // Titre
-                  Label('TITRE DE LA TÂCHE *'),
+                  Label('Titre de la tâche*'),
                   SizedBox(height: 6.h),
 
                   BlocBuilder<FormTastBloc, CreateTastState>(
                     builder: (context, state) {
                       return ProductionFormCustomer(
                         controller: _controllerTitle,
-                        readOnly: state.status.isInProgress,
+                        readOnly: isSeletToUseVoix || state.status.isInProgress,
                         letSpace: [],
                         textLabel: '',
                         inputLabel: '',
@@ -334,20 +393,31 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                SizedBox(height: 14.h),
                                 Row(children: [Label('Date et heure *')]),
                                 SizedBox(height: 6.h),
-                                GestureDetector(
-                                  onTap: _pickDate,
-                                  child: _controllerDate.text.isNotEmpty
-                                      ? FieldBox(
-                                          icon: Icons.calendar_today_rounded,
-                                          text:
-                                              '${_controllerDate.text} à ${_controllerTime.text}',
-                                        )
-                                      : FieldBox(
-                                          icon: Icons.calendar_today_rounded,
-                                          text: '',
-                                        ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.r),
+                                    border: Border.all(
+                                      color: AppColors.grey.withValues(
+                                        alpha: 0.4,
+                                      ),
+                                    ),
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: isSeletToUseVoix ? null : _pickDate,
+                                    child: _controllerDate.text.isNotEmpty
+                                        ? FieldBox(
+                                            icon: Icons.calendar_today_rounded,
+                                            text:
+                                                '${_controllerDate.text} à ${_controllerTime.text}',
+                                          )
+                                        : FieldBox(
+                                            icon: Icons.calendar_today_rounded,
+                                            text: '',
+                                          ),
+                                  ),
                                 ),
                                 SizedBox(height: 4.h),
                                 if ((state.time.isPure || state.time.isValid) &&
@@ -376,13 +446,13 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                   SizedBox(height: 14.h),
 
                   // Répétition
-                  Label('DESCRIPTION'),
+                  Label('Description'),
                   SizedBox(height: 6.h),
                   BlocBuilder<FormTastBloc, CreateTastState>(
                     builder: (context, state) {
                       return ProductionFormCustomer(
                         controller: _controllerContent,
-                        readOnly: state.status.isInProgress,
+                        readOnly: isSeletToUseVoix || state.status.isInProgress,
                         letSpace: [],
                         maxLines: 6,
                         minLines: 3,
@@ -405,20 +475,22 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                     },
                   ),
 
-                  SizedBox(height: 1.5.h),
+                  SizedBox(height: 20.h),
                   CustomCheckbox(
                     value: recurring,
                     title: 'Tâche récurrente',
                     subtitle: 'Répéter cette tâche automatiquement',
-                    onChanged: (value) {
-                      setState(() {
-                        recurring = value;
-                      });
-                      showRecurrenceSheet(context);
-                    },
+                    onChanged: isSeletToUseVoix
+                        ? (value) {}
+                        : (value) {
+                            setState(() {
+                              recurring = value;
+                            });
+                            showRecurrenceSheet(context);
+                          },
                   ),
 
-                  SizedBox(height: 2.5.h),
+                  SizedBox(height: 50.h),
 
                   // Bouton créer
                   SizedBox(
@@ -454,12 +526,9 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
                           if (widget.actionType.contains(
                             TypeCreateTaskOrUpdate.CREATE_TASK,
                           )) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SuccessScreen(),
-                              ),
-                            );
+                            // Tâche enregistrée : succès via le routeur
+                            // (rafraîchit la liste + écran de succès).
+                            SharaNav.taskConfirmed();
                           }
                           if (widget.actionType.contains(
                             TypeCreateTaskOrUpdate.UPDATE_TASK,
@@ -490,10 +559,31 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
           ],
         ),
       ),
+      floatingActionButton: !isSeletToUseVoix
+          ? SizedBox.shrink()
+          : BlocBuilder<SharaNavigationBloc, SharaNavigationState>(
+              builder: (context, state) {
+                final isListening = state is SharaNavigationListening;
+                final isLoading = state is SharaNavigationLoading;
+
+                return SharaMicButton(
+                  isListening: isListening,
+                  isLoading: isLoading,
+                  onPressed: () {
+                    final bloc = context.read<SharaNavigationBloc>();
+                    if (isListening) {
+                      bloc.add(SharaStopListening());
+                    } else if (!isLoading) {
+                      bloc.add(SharaStartListening());
+                    }
+                  },
+                );
+              },
+            ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
-
 
 class CustomCheckbox extends StatelessWidget {
   final bool value;
@@ -531,11 +621,11 @@ class CustomCheckbox extends StatelessWidget {
           children: [
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              width: 24.w,
-              height: 24.h,
+              width: 18.w,
+              height: 18.h,
               decoration: BoxDecoration(
                 color: value ? _primary : AppColors.transparent,
-                borderRadius: BorderRadius.circular(7),
+                borderRadius: BorderRadius.circular(2),
                 border: Border.all(
                   color: value ? _primary : AppColors.grey.shade400,
                   width: 1.5.w,
@@ -545,11 +635,11 @@ class CustomCheckbox extends StatelessWidget {
                   ? const Icon(
                       Icons.check_rounded,
                       color: AppColors.white,
-                      size: 18,
+                      size: 16,
                     )
                   : null,
             ),
-            SizedBox(width: 12.w),
+            SizedBox(width: 15.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -557,7 +647,7 @@ class CustomCheckbox extends StatelessWidget {
                   Text(
                     title,
                     style: GoogleFonts.roboto(
-                      fontSize: 15.sp,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
                       color: AppColors.inkAlt3,
                     ),
@@ -567,7 +657,7 @@ class CustomCheckbox extends StatelessWidget {
                     Text(
                       subtitle!,
                       style: GoogleFonts.roboto(
-                        fontSize: 12.sp,
+                        fontSize: 11.sp,
                         color: AppColors.grey.shade600,
                       ),
                     ),
@@ -784,11 +874,14 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
               primary: _primary, // en-tête, jour sélectionné
-              onPrimary: AppColors.white, // texte sur l'en-tête / jour sélectionné
+              onPrimary:
+                  AppColors.white, // texte sur l'en-tête / jour sélectionné
               surface: AppColors.white, // fond du calendrier
               onSurface: _ink, // texte des jours
             ),
-            dialogTheme: const DialogThemeData(backgroundColor: AppColors.white),
+            dialogTheme: const DialogThemeData(
+              backgroundColor: AppColors.white,
+            ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: _primary,
@@ -944,7 +1037,11 @@ class _RecurrenceSheetState extends State<RecurrenceSheet> {
                 color: sel ? _primary : _primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12.r),
               ),
-              child: Icon(icon, size: 20, color: sel ? AppColors.white : _primary),
+              child: Icon(
+                icon,
+                size: 20,
+                color: sel ? AppColors.white : _primary,
+              ),
             ),
             SizedBox(width: 12.w),
             Expanded(

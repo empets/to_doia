@@ -6,27 +6,28 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grace_church/core/constante/constantes.dart';
 import 'package:grace_church/core/extention/app_extention.dart';
-import 'package:grace_church/core/injetction/injection_container.dart';
+import 'package:grace_church/core/navigation/shara_nav.dart';
 import 'package:grace_church/core/service_systeme/model/api/api_state.dart';
-import 'package:grace_church/core/voice/voice_listening.dart';
 import 'package:grace_church/feature/assistant/app_bar_ia.dart';
 import 'package:grace_church/feature/assistant/shara_loading_button.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
-import 'package:grace_church/feature/home/domaine/usecase/create_task_usecase.dart';
-import 'package:grace_church/feature/home/domaine/usecase/update_task_from_usercase.dart';
-import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/create_or_update_task_bloc.dart';
-import 'package:grace_church/feature/home/presentation/page/home_screen.dart';
 import 'package:grace_church/feature/home/presentation/widget/chart_whithe_grace.dart';
 import 'package:grace_church/feature/taches/presentation/bloc/get_task/event/task_event.dart';
 import 'package:grace_church/feature/taches/presentation/bloc/get_task/get_list_bloc.dart';
-import 'package:grace_church/feature/taches/presentation/pages/manual_create_screen.dart';
 import 'package:grace_church/feature/taches/presentation/pages/task_card.dart';
 import 'package:grace_church/feature/taches/presentation/pages/widget/empty_data.dart';
 import 'package:grace_church/core/constante/app_colors.dart';
 import 'package:grace_church/feature/taches/presentation/pages/widget/task_shimmer.dart';
 
 class TasksScreen extends StatefulWidget {
-  const TasksScreen({super.key});
+  const TasksScreen({super.key, this.onViewTasks, this.onNavigate, this.onCreateTask});
+  final VoidCallback? onViewTasks;
+
+  /// Navigation Shara déléguée à l'AppShell.
+  final void Function(String destination)? onNavigate;
+
+  /// création de tâche déléguée à l'AppShell.
+  final void Function(TaskResponse task)? onCreateTask;
   @override
   State<TasksScreen> createState() => _TasksScreenState();
 }
@@ -104,7 +105,11 @@ class _TasksScreenState extends State<TasksScreen> {
               context.read<GetListBloc>().add(TaskSectionEvent.fetch(null));
             },
             child: Scaffold(
-              appBar: SharaAppBar(),
+              appBar: SharaAppBar(
+                onViewTasks: widget.onViewTasks,
+                onNavigate: widget.onNavigate,
+                onCreateTask: widget.onCreateTask,
+              ),
               backgroundColor: AppColors.background,
               body: SafeArea(
                 top: false,
@@ -152,23 +157,9 @@ class _TasksScreenState extends State<TasksScreen> {
 
                             primary: true,
                             onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => BlocProvider(
-                                    create: (context) => FormTastBloc(
-                                      createTaskUseCase:
-                                          getIt<CreateTaskUseCase>(),
-                                      updateTaskUseCase:
-                                          getIt<UpdateTaskUseCase>(),
-                                    ),
-                                    child: ManualCreateScreen(
-                                      actionType:
-                                          TypeCreateTaskOrUpdate.CREATE_TASK,
-                                      isPope: true,
-                                    ),
-                                  ),
-                                ),
-                              );
+                              // Flux création via le routeur Shara.
+                              // (le /manual-create fournit le FormTastBloc)
+                              SharaNav.navigate('create_task');
                             },
                           ),
                         ],
@@ -395,16 +386,9 @@ class _TasksScreenState extends State<TasksScreen> {
                                       });
                                     },
                                     onTapMic: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              VoiceListeningScreen(
-                                                actionType:
-                                                    TypeCreateTaskOrUpdate
-                                                        .UPDATE_TASK,
-                                              ),
-                                        ),
+                                      // Écoute vocale (mode modification)
+                                      SharaNav.startVoice(
+                                        TypeCreateTaskOrUpdate.UPDATE_TASK,
                                       );
                                     },
                                   ),

@@ -6,9 +6,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:formz/formz.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grace_church/core/alert/app_alerte.dart';
-import 'package:grace_church/core/constante/constantes.dart';
 import 'package:grace_church/core/custome_widget/button.dart';
 import 'package:grace_church/core/extention/app_extention.dart';
+import 'package:grace_church/core/navigation/shara_nav.dart';
 import 'package:grace_church/core/succes_screen/success_screen.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/create_or_update_task_bloc.dart';
@@ -22,10 +22,18 @@ class ConfirmationScreen extends StatelessWidget {
     super.key,
     required this.task,
     required this.actionType,
+    this.onSuccess,
+    this.onModify,
+    this.onCancel,
   });
 
   final TaskResponse task;
   final String actionType;
+
+  /// Si fournis : navigation pilotée par l'AppShell au lieu de Navigator.
+  final VoidCallback? onSuccess;
+  final VoidCallback? onModify;
+  final VoidCallback? onCancel;
 
   @override
   Widget build(BuildContext context) {
@@ -171,16 +179,13 @@ class ConfirmationScreen extends StatelessWidget {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () {
-                        //onModify
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ManualCreateScreen(
-                              task: task,
-                              actionType: TypeCreateTaskOrUpdate.CREATE_TASK,
-                            ),
-                          ),
-                        );
+                        if (onModify != null) {
+                          onModify!();
+                        } else {
+                          // Défaut (standalone) : modification via le
+                          // routeur avec la tâche pré-remplie.
+                          SharaNav.modifyTask(task);
+                        }
                       },
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.primary,
@@ -207,12 +212,12 @@ class ConfirmationScreen extends StatelessWidget {
                     child: BlocConsumer<FormTastBloc, CreateTastState>(
                       listener: (context, state) {
                         if (state.status.isSuccess) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SuccessScreen(),
-                            ),
-                          );
+                          if (onSuccess != null) {
+                            onSuccess!();
+                          } else {
+                            // Défaut (standalone) : succès via le routeur.
+                            SharaNav.taskConfirmed();
+                          }
                         }
                         if (state.status.isFailure) {
                           AppAlert.showError(context, state.errorMessage);
@@ -267,8 +272,12 @@ class ConfirmationScreen extends StatelessWidget {
                 width: double.infinity,
                 child: TextButton(
                   onPressed: () {
-                    //onCancel
-                    Navigator.pop(context);
+                    if (onCancel != null) {
+                      onCancel!();
+                    } else {
+                      // Défaut (standalone) : retour accueil via le routeur.
+                      SharaNav.navigate('home');
+                    }
                   },
                   child: Text(
                     'Annuler',

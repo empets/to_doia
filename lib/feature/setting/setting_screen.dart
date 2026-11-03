@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grace_church/feature/assistant/app_bar_ia.dart';
 import 'package:grace_church/feature/assistant/shara_loading_button.dart'
     show SharaMicButton;
+import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:grace_church/feature/home/presentation/widget/chart_whithe_grace.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,6 +12,12 @@ import 'package:grace_church/core/constante/app_colors.dart';
 
 class SettingsScreen extends StatefulWidget {
   final void Function(String) onRoute;
+
+  /// Navigation Shara déléguée à l'AppShell.
+  final void Function(String destination)? onNavigate;
+
+  /// création de tâche déléguée à l'AppShell.
+  final void Function(TaskResponse task)? onCreateTask;
   final bool notifOn;
   final void Function(bool) onToggleNotif;
   final bool soundOn;
@@ -23,6 +30,8 @@ class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
     super.key,
     required this.onRoute,
+    this.onNavigate,
+    this.onCreateTask,
     required this.notifOn,
     required this.onToggleNotif,
     required this.soundOn,
@@ -42,23 +51,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: SharaAppBar(),
+    appBar: SharaAppBar(
+      onViewTasks: () {},
+      onNavigate: widget.onNavigate,
+      onCreateTask: widget.onCreateTask,
+    ),
     backgroundColor: AppColors.background,
     body: SafeArea(
       child: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 8, bottom: 8),
-            child: Text(
-              'Paramètres',
-              style: GoogleFonts.roboto(
-                color: AppColors.ink,
-                fontSize: 24.sp,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.only(top: 8, bottom: 8),
+          //   child: Text(
+          //     'Paramètres',
+          //     style: GoogleFonts.roboto(
+          //       color: AppColors.ink,
+          //       fontSize: 24.sp,
+          //       fontWeight: FontWeight.w800,
+          //     ),
+          //   ),
+          // ),
 
           // Bannière profil
           Container(
@@ -80,7 +93,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     shape: BoxShape.circle,
                   ),
                   child: Center(
-                    child: Text('👤', style: GoogleFonts.roboto(fontSize: 26.sp)),
+                    child: Text(
+                      '👤',
+                      style: GoogleFonts.roboto(fontSize: 26.sp),
+                    ),
                   ),
                 ),
                 SizedBox(width: 14.w),
@@ -98,7 +114,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     SizedBox(height: 2.h),
                     Text(
                       'Version 1.0.0',
-                      style: GoogleFonts.roboto(color: Colors.white70, fontSize: 12.sp),
+                      style: GoogleFonts.roboto(
+                        color: Colors.white70,
+                        fontSize: 12.sp,
+                      ),
                     ),
                   ],
                 ),
@@ -106,151 +125,146 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
 
-          _SGroup(
-            title: 'Général',
-            children: [
-              _STile(
-                icon: Icons.palette_rounded,
-                bg: AppColors.primary,
-                label: 'Apparence',
-                sub: 'Clair',
-                onTap: () => widget.onRoute('appearance'),
-              ),
-              _STile(
-                icon: Icons.language_rounded,
-                bg: AppColors.success,
-                label: 'Langue',
-                sub: 'Français',
-                onTap: () => widget.onRoute('language'),
-              ),
-              _STile(
-                icon: Icons.access_time_rounded,
-                bg: AppColors.warning,
-                label: "Format de l'heure",
-                sub: '24 heures',
-              ),
-              _STile(
-                icon: Icons.calendar_month_rounded,
-                bg: AppColors.pink,
-                label: 'Premier jour de la semaine',
-                sub: 'Lundi',
-                last: true,
-              ),
-            ],
-          ),
-
-          _SGroup(
-            title: 'Notifications',
-            children: [
-              _STile(
-                icon: Icons.notifications_rounded,
-                bg: AppColors.error,
-                label: 'Notifications',
-                onTap: () => widget.onRoute('notifications'),
-                trailing: _Switch(
-                  value: widget.notifOn,
-                  onChanged: widget.onToggleNotif,
-                ),
-              ),
-              _STile(
-                icon: Icons.volume_up_rounded,
-                bg: AppColors.purple,
-                label: 'Son',
-                trailing: _Switch(
-                  value: widget.soundOn,
-                  onChanged: widget.onToggleSound,
-                ),
-              ),
-              _STile(
-                icon: Icons.vibration_rounded,
-                bg: AppColors.cyan,
-                label: 'Vibration',
-                last: true,
-                trailing: _Switch(
-                  value: widget.vibOn,
-                  onChanged: widget.onToggleVib,
-                ),
-              ),
-            ],
-          ),
-
-          _SGroup(
-            title: 'Voix et IA',
-            children: [
-              _STile(
-                icon: Icons.mic_rounded,
-                bg: AppColors.primary,
-                label: 'Voix et IA',
-                sub: 'Français',
-                onTap: () => widget.onRoute('voice'),
-              ),
-              _STile(
-                icon: Icons.check_circle_rounded,
-                bg: AppColors.success,
-                label: 'Confirmer avant création',
-                last: true,
-                trailing: _Switch(
-                  value: widget.confirmCreate,
-                  onChanged: widget.onToggleConfirmCreate,
-                ),
-              ),
-            ],
-          ),
-
-          _SGroup(
-            title: 'Tâches',
-            children: [
-              _STile(
-                icon: Icons.sort_rounded,
-                bg: AppColors.warning,
-                label: 'Trier par',
-                sub: 'Date',
-              ),
-              _STile(
-                icon: Icons.visibility_rounded,
-                bg: AppColors.primary,
-                label: 'Afficher les terminées',
-                trailing: _Switch(value: true, onChanged: (_) {}),
-              ),
-              _STile(
-                icon: Icons.delete_outline_rounded,
-                bg: AppColors.error,
-                label: 'Confirmer avant suppression',
-                last: true,
-                trailing: _Switch(value: true, onChanged: (_) {}),
-              ),
-            ],
-          ),
-
-          _SGroup(
-            title: 'Données',
-            children: [
-              _STile(
-                icon: Icons.history_rounded,
-                bg: AppColors.purple,
-                label: 'Historique',
-              ),
-              _STile(
-                icon: Icons.upload_rounded,
-                bg: AppColors.success,
-                label: 'Exporter les tâches',
-              ),
-              _STile(
-                icon: Icons.download_rounded,
-                bg: AppColors.cyan,
-                label: 'Importer les tâches',
-                onTap: () => widget.onRoute('data'),
-              ),
-              _STile(
-                icon: Icons.delete_forever_rounded,
-                bg: AppColors.error,
-                label: 'Supprimer toutes les données',
-                last: true,
-                onTap: () => widget.onRoute('data'),
-              ),
-            ],
-          ),
-
+          // _SGroup(
+          //   title: 'Général',
+          //   children: [
+          //     _STile(
+          //       icon: Icons.palette_rounded,
+          //       bg: AppColors.primary,
+          //       label: 'Apparence',
+          //       sub: 'Clair',
+          //       onTap: () => widget.onRoute('appearance'),
+          //     ),
+          //     _STile(
+          //       icon: Icons.language_rounded,
+          //       bg: AppColors.success,
+          //       label: 'Langue',
+          //       sub: 'Français',
+          //       onTap: () => widget.onRoute('language'),
+          //     ),
+          //     _STile(
+          //       icon: Icons.access_time_rounded,
+          //       bg: AppColors.warning,
+          //       label: "Format de l'heure",
+          //       sub: '24 heures',
+          //     ),
+          //     _STile(
+          //       icon: Icons.calendar_month_rounded,
+          //       bg: AppColors.pink,
+          //       label: 'Premier jour de la semaine',
+          //       sub: 'Lundi',
+          //       last: true,
+          //     ),
+          //   ],
+          // ),
+          // _SGroup(
+          //   title: 'Notifications',
+          //   children: [
+          //     _STile(
+          //       icon: Icons.notifications_rounded,
+          //       bg: AppColors.error,
+          //       label: 'Notifications',
+          //       onTap: () => widget.onRoute('notifications'),
+          //       trailing: _Switch(
+          //         value: widget.notifOn,
+          //         onChanged: widget.onToggleNotif,
+          //       ),
+          //     ),
+          //     _STile(
+          //       icon: Icons.volume_up_rounded,
+          //       bg: AppColors.purple,
+          //       label: 'Son',
+          //       trailing: _Switch(
+          //         value: widget.soundOn,
+          //         onChanged: widget.onToggleSound,
+          //       ),
+          //     ),
+          //     _STile(
+          //       icon: Icons.vibration_rounded,
+          //       bg: AppColors.cyan,
+          //       label: 'Vibration',
+          //       last: true,
+          //       trailing: _Switch(
+          //         value: widget.vibOn,
+          //         onChanged: widget.onToggleVib,
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          // _SGroup(
+          //   title: 'Voix et IA',
+          //   children: [
+          //     _STile(
+          //       icon: Icons.mic_rounded,
+          //       bg: AppColors.primary,
+          //       label: 'Voix et IA',
+          //       sub: 'Français',
+          //       onTap: () => widget.onRoute('voice'),
+          //     ),
+          //     _STile(
+          //       icon: Icons.check_circle_rounded,
+          //       bg: AppColors.success,
+          //       label: 'Confirmer avant création',
+          //       last: true,
+          //       trailing: _Switch(
+          //         value: widget.confirmCreate,
+          //         onChanged: widget.onToggleConfirmCreate,
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          // _SGroup(
+          //   title: 'Tâches',
+          //   children: [
+          //     _STile(
+          //       icon: Icons.sort_rounded,
+          //       bg: AppColors.warning,
+          //       label: 'Trier par',
+          //       sub: 'Date',
+          //     ),
+          //     _STile(
+          //       icon: Icons.visibility_rounded,
+          //       bg: AppColors.primary,
+          //       label: 'Afficher les terminées',
+          //       trailing: _Switch(value: true, onChanged: (_) {}),
+          //     ),
+          //     _STile(
+          //       icon: Icons.delete_outline_rounded,
+          //       bg: AppColors.error,
+          //       label: 'Confirmer avant suppression',
+          //       last: true,
+          //       trailing: _Switch(value: true, onChanged: (_) {}),
+          //     ),
+          //   ],
+          // ),
+          // _SGroup(
+          //   title: 'Données',
+          //   children: [
+          //     _STile(
+          //       icon: Icons.history_rounded,
+          //       bg: AppColors.purple,
+          //       label: 'Historique',
+          //     ),
+          //     _STile(
+          //       icon: Icons.upload_rounded,
+          //       bg: AppColors.success,
+          //       label: 'Exporter les tâches',
+          //     ),
+          //     _STile(
+          //       icon: Icons.download_rounded,
+          //       bg: AppColors.cyan,
+          //       label: 'Importer les tâches',
+          //       onTap: () => widget.onRoute('data'),
+          //     ),
+          //     _STile(
+          //       icon: Icons.delete_forever_rounded,
+          //       bg: AppColors.error,
+          //       label: 'Supprimer toutes les données',
+          //       last: true,
+          //       onTap: () => widget.onRoute('data'),
+          //     ),
+          //   ],
+          // ),
           _SGroup(
             title: 'Application',
             children: [
@@ -376,8 +390,7 @@ class _STile extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 36.w,
-            height: 36.h,
+            padding: EdgeInsets.all(10.r),
             decoration: BoxDecoration(
               color: bg,
               borderRadius: BorderRadius.circular(10),
@@ -393,7 +406,7 @@ class _STile extends StatelessWidget {
                   label,
                   style: GoogleFonts.roboto(
                     color: AppColors.ink,
-                    fontSize: 15.sp,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

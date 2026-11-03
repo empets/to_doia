@@ -2,8 +2,10 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:formz/formz.dart';
+import 'package:grace_church/core/alarme_notification/domaine/task_reminder_manager.dart';
 import 'package:grace_church/core/constante/constantes.dart';
 import 'package:grace_church/core/extention/app_extention.dart';
+import 'package:grace_church/core/injetction/injection_container.dart';
 import 'package:grace_church/core/service_systeme/model/formz_model/text_formz.dart';
 import 'package:grace_church/feature/home/domaine/entities/request/home_request.dart';
 import 'package:grace_church/feature/home/domaine/usecase/create_task_usecase.dart';
@@ -16,12 +18,38 @@ class FormTastBloc extends Bloc<CreateTaskEvent, CreateTastState> {
   FormTastBloc({
     required this.createTaskUseCase,
     required this.updateTaskUseCase,
-  }) : super(CreateTastState.initial()) {
+    TaskReminderManager? taskReminder,
+  }) : _taskReminder = taskReminder,
+       super(CreateTastState.initial()) {
     on<CreateTaskEvent>(createTast);
   }
 
   final CreateTaskUseCase createTaskUseCase;
   final UpdateTaskUseCase updateTaskUseCase;
+
+  /// Coordination alarme/notification (résolue via l'injection si absente).
+  final TaskReminderManager? _taskReminder;
+  TaskReminderManager get _reminder =>
+      _taskReminder ?? getIt<TaskReminderManager>();
+
+  /// Programme le rappel après un enregistrement RÉUSSI.
+  /// Jamais appelé si l'API a échoué (voir les branches `failure`).
+  Future<void> _programmerRappel({required String taskId}) async {
+    // Une tâche terminée/annulée ne doit pas sonner.
+    if (state.eventStatus.value.contains(TypeTaskStatus.TERMINER) ||
+        state.eventStatus.value.contains(TypeTaskStatus.ANNULER)) {
+      return;
+    }
+    await _reminder.programmer(
+      taskId,
+      TaskReminderInfos(
+        title: state.title.value,
+        date: state.date.value,
+        time: state.time.value,
+        recurring: state.recurring,
+      ),
+    );
+  }
 
   bool _validate({
     TextFormz? title,
@@ -143,20 +171,23 @@ class FormTastBloc extends Bloc<CreateTaskEvent, CreateTastState> {
               ),
             );
 
-            emit(
-              response.fold(
-                (failure) {
-                  log(
-                    "SubmitCreateTaskEvent failure: ${failure.message.getOrEmpty()}",
-                  );
-                  return state.copyWith(
-                    errorMessage: failure.message.getOrEmpty(),
+            // ⚠️ L'alarme n'est programmée QUE si l'API a réussi.
+            await response.fold(
+              (failure) async {
+                log(
+                  "SubmitCreateTaskEvent failure: ${failure.message}",
+                );
+                emit(
+                  state.copyWith(
+                    errorMessage: failure.message,
                     status: FormzSubmissionStatus.failure,
-                  );
-                },
-                (success) =>
-                    state.copyWith(status: FormzSubmissionStatus.success),
-              ),
+                  ),
+                );
+              },
+              (success) async {
+                await _programmerRappel(taskId: success ?? '');
+                emit(state.copyWith(status: FormzSubmissionStatus.success));
+              },
             );
           }
 
@@ -176,17 +207,21 @@ class FormTastBloc extends Bloc<CreateTaskEvent, CreateTastState> {
               ),
             );
 
-            emit(
-              response.fold(
-                (failure) {
-                  return state.copyWith(
-                    errorMessage: failure.message.getOrEmpty(),
+            // Modification réussie → re-programmation (annule + recrée
+            // l'occurrence avec le même id de tâche).
+            await response.fold(
+              (failure) async {
+                emit(
+                  state.copyWith(
+                    errorMessage: failure.message,
                     status: FormzSubmissionStatus.failure,
-                  );
-                },
-                (success) =>
-                    state.copyWith(status: FormzSubmissionStatus.success),
-              ),
+                  ),
+                );
+              },
+              (success) async {
+                await _programmerRappel(taskId: state.taskId.value);
+                emit(state.copyWith(status: FormzSubmissionStatus.success));
+              },
             );
           }
         }

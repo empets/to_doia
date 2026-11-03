@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grace_church/core/constante/app_colors.dart';
+import 'package:grace_church/core/navigation/shara_nav.dart';
 
 class TranscriptionScreen extends StatelessWidget {
   // final String transcript;
@@ -139,7 +140,7 @@ class TranscriptionScreen extends StatelessWidget {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  SharaNav.navigate('home');
                 },
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primary,

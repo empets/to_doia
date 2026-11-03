@@ -11,28 +11,35 @@ import 'package:grace_church/core/service_systeme/model/api/api_state.dart';
 import 'package:grace_church/feature/assistant/app_bar_ia.dart';
 import 'package:grace_church/feature/assistant/shara_loading_button.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
-import 'package:grace_church/feature/home/presentation/widget/chart_whithe_grace.dart'
-    hide BlocConsumer;
+import 'package:grace_church/feature/home/presentation/widget/chart_whithe_grace.dart';
 import 'package:grace_church/feature/home/presentation/widget/statcard.dart';
 import 'package:grace_church/feature/taches/presentation/bloc/get_task/event/task_event.dart';
 import 'package:grace_church/feature/taches/presentation/bloc/get_task/get_list_bloc.dart';
 import 'package:grace_church/feature/taches/presentation/pages/task_card.dart';
-import 'package:grace_church/feature/taches/presentation/pages/tasks_screen.dart';
 import 'package:grace_church/feature/taches/presentation/pages/widget/task_shimmer.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:grace_church/core/constante/app_colors.dart';
+import 'package:grace_church/core/navigation/shara_nav.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<Task> tasks;
   final VoidCallback onMicTap;
   final VoidCallback onViewTasks;
   final VoidCallback onNotif;
+
+  /// Navigation Shara déléguée à l'AppShell (null = hérité du comportement
+  /// rétro-compatible basé sur [onViewTasks]).
+  final void Function(String destination)? onNavigate;
+
+  /// création de tâche déléguée à l'AppShell (analyse IA → confirmation).
+  final void Function(TaskResponse task)? onCreateTask;
   const HomeScreen({
     super.key,
     required this.tasks,
     required this.onMicTap,
     required this.onViewTasks,
     required this.onNotif,
+    this.onNavigate,
+    this.onCreateTask,
   });
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -546,6 +553,8 @@ class _HomeScreenState extends State<HomeScreen>
   // local, sinon l'UI et le bloc se désynchronisent (et le premier tap envoie
   // un Stop au lieu d'un Start).
 
+  late bool isInforLoading = false;
+
   @override
   Widget build(BuildContext context) {
     final today = widget.tasks
@@ -553,7 +562,13 @@ class _HomeScreenState extends State<HomeScreen>
         .toList();
 
     return Scaffold(
-      appBar: SharaAppBar(),
+      appBar: isInforLoading
+          ? null
+          : SharaAppBar(
+              onViewTasks: widget.onViewTasks,
+              onNavigate: widget.onNavigate,
+              onCreateTask: widget.onCreateTask,
+            ),
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -563,81 +578,6 @@ class _HomeScreenState extends State<HomeScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              // ── En-tête ─────────────────────────────────────────
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Que dois-je faire\npour vous ?',
-                      style: GoogleFonts.roboto(
-                        color: AppColors.ink,
-                        fontSize: 24.sp,
-                        fontWeight: FontWeight.w800,
-                        height: 1.2,
-                      ),
-                    ),
-                  ),
-                  BlocBuilder<GetListBloc, ApiState<List<TaskResponse>>>(
-                    builder: (context, state) {
-                      final active = state is SuccessState<List<TaskResponse>>
-                          ? state.data
-                                .where(
-                                  (t) =>
-                                      t.status.contains(TypeTaskStatus.ENCOURS),
-                                )
-                                .length
-                          : 0;
-
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => SimulationAlarmePage(),
-                              //TasksScreen()
-                            ),
-                          );
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12.w,
-                            vertical: 8.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(
-                              0xFF6366F1,
-                            ).withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(14.r),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.task_alt_rounded,
-                                color: AppColors.primary,
-                                size: 16.sp,
-                              ),
-                              SizedBox(width: 6.w),
-                              Text(
-                                '$active tâches',
-                                style: GoogleFonts.roboto(
-                                  color: AppColors.primary,
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 20.h),
-
               // ── Statistiques ────────────────────────────────────
               BlocBuilder<GetListBloc, ApiState<List<TaskResponse>>>(
                 builder: (context, state) {
@@ -648,49 +588,129 @@ class _HomeScreenState extends State<HomeScreen>
                   if (state is SuccessState<List<TaskResponse>>) {
                     final tasks = state.data;
 
-                    return Row(
+                    return Column(
                       children: [
-                        Expanded(
-                          child: StatCard(
-                            label: "Aujourd'hui",
-                            value: tasks
-                                .where(
-                                  (t) =>
-                                      t.status.contains(TypeTaskStatus.ENCOURS),
-                                )
-                                .length,
-                            emoji: '📅',
-                            color: AppColors.primary,
-                          ),
-                        ),
-                        SizedBox(width: 5.w),
-                        Expanded(
-                          child: StatCard(
-                            label: 'À venir',
-                            value: tasks
-                                .where(
-                                  (t) =>
-                                      t.status.contains(TypeTaskStatus.AVENIR),
-                                )
-                                .length,
-                            emoji: '⏳',
-                            color: AppColors.success,
-                          ),
-                        ),
-                        SizedBox(width: 5.w),
-                        Expanded(
-                          child: StatCard(
-                            label: 'Terminées',
-                            value: tasks
-                                .where(
-                                  (t) => t.status.contains(
-                                    TypeTaskStatus.TERMINER,
+                        // ── En-tête ─────────────────────────────────────────
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Que dois-je faire\npour vous ?',
+                                style: GoogleFonts.roboto(
+                                  color: AppColors.ink,
+                                  fontSize: 24.sp,
+                                  fontWeight: FontWeight.w800,
+                                  height: 1.2,
+                                ),
+                              ),
+                            ),
+                            BlocBuilder<
+                              GetListBloc,
+                              ApiState<List<TaskResponse>>
+                            >(
+                              builder: (context, state) {
+                                final active =
+                                    state is SuccessState<List<TaskResponse>>
+                                    ? state.data
+                                          .where(
+                                            (t) => t.status.contains(
+                                              TypeTaskStatus.ENCOURS,
+                                            ),
+                                          )
+                                          .length
+                                    : 0;
+
+                                return GestureDetector(
+                                  onTap: () {
+                                    // Simulation alarmes — via le routeur Shara.
+                                    // SharaNav.navigate('simulation_alarme');
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 12.w,
+                                      vertical: 8.h,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: const Color(
+                                        0xFF6366F1,
+                                      ).withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(14.r),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.task_alt_rounded,
+                                          color: AppColors.primary,
+                                          size: 16.sp,
+                                        ),
+                                        SizedBox(width: 6.w),
+                                        Text(
+                                          '$active tâches',
+                                          style: GoogleFonts.roboto(
+                                            color: AppColors.primary,
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                )
-                                .length,
-                            emoji: '✓',
-                            color: AppColors.warning,
-                          ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: 20.h),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: StatCard(
+                                label: "Aujourd'hui",
+                                value: tasks
+                                    .where(
+                                      (t) => t.status.contains(
+                                        TypeTaskStatus.ENCOURS,
+                                      ),
+                                    )
+                                    .length,
+                                emoji: '📅',
+                                color: AppColors.primary,
+                              ),
+                            ),
+                            SizedBox(width: 5.w),
+                            Expanded(
+                              child: StatCard(
+                                label: 'À venir',
+                                value: tasks
+                                    .where(
+                                      (t) => t.status.contains(
+                                        TypeTaskStatus.AVENIR,
+                                      ),
+                                    )
+                                    .length,
+                                emoji: '⏳',
+                                color: AppColors.success,
+                              ),
+                            ),
+                            SizedBox(width: 5.w),
+                            Expanded(
+                              child: StatCard(
+                                label: 'Terminées',
+                                value: tasks
+                                    .where(
+                                      (t) => t.status.contains(
+                                        TypeTaskStatus.TERMINER,
+                                      ),
+                                    )
+                                    .length,
+                                emoji: '✓',
+                                color: AppColors.warning,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     );
@@ -802,68 +822,97 @@ class _HomeScreenState extends State<HomeScreen>
 
               // ── Tâches du jour ──────────────────────────────────
               if (today.isNotEmpty) ...[
-                SizedBox(height: 2.8.h),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Liste des tâches',
-                        style: GoogleFonts.roboto(
-                          color: AppColors.ink,
-                          fontSize: 17.sp,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: widget.onViewTasks,
-                      child: Text(
-                        'Voir tout',
-                        style: GoogleFonts.roboto(
-                          color: AppColors.primary,
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8.h),
-                BlocBuilder<GetListBloc, ApiState<List<TaskResponse>>>(
-                  builder: (context, state) {
+                BlocConsumer<GetListBloc, ApiState<List<TaskResponse>>>(
+                  listener: (context, state) {
                     if (state is LoadState<List<TaskResponse>>) {
-                      return const TaskListShimmer(count: 2);
+                      setState(() {
+                        isInforLoading = true;
+                      });
                     }
-
-                    if (state is SuccessState<List<TaskResponse>>) {
-                      final tasks =
-                          state.data
-                              .where(
-                                (t) => t.status.contains(TypeTaskStatus.AVENIR),
-                              )
-                              .toList()
-                            ..sort((a, b) => a.date.compareTo(b.date));
-
-                      if (tasks.isEmpty) {
-                        return const SizedBox.shrink();
-                      }
-
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: tasks.take(2).map((task) {
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: 8.h),
-                            child: TaskCard(
-                              task: task,
-                              onToggle: () {},
-                              onDelete: () {},
-                            ),
+                    if (state is SuccessState<List<TaskResponse>> ||
+                        state is FailedState<List<TaskResponse>>) {
+                      setState(() {
+                        isInforLoading = false;
+                      });
+                    }
+                  },
+                  builder: (context, state) {
+                    return BlocBuilder<
+                      GetListBloc,
+                      ApiState<List<TaskResponse>>
+                    >(
+                      builder: (context, state) {
+                        if (state is LoadState<List<TaskResponse>>) {
+                          return Column(
+                            children: [
+                              SizedBox(height: 20.h),
+                              const TaskListShimmer(count: 7),
+                            ],
                           );
-                        }).toList(),
-                      );
-                    }
+                        }
 
-                    return const SizedBox.shrink();
+                        if (state is SuccessState<List<TaskResponse>>) {
+                          final tasks =
+                              state.data
+                                  .where(
+                                    (t) => t.status.contains(
+                                      TypeTaskStatus.AVENIR,
+                                    ),
+                                  )
+                                  .toList()
+                                ..sort((a, b) => a.date.compareTo(b.date));
+
+                          if (tasks.isEmpty) {
+                            return const SizedBox.shrink();
+                          }
+
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(height: 2.8.h),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      'Liste des tâches',
+                                      style: GoogleFonts.roboto(
+                                        color: AppColors.ink,
+                                        fontSize: 17.sp,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: widget.onViewTasks,
+                                    child: Text(
+                                      'Voir tout',
+                                      style: GoogleFonts.roboto(
+                                        color: AppColors.primary,
+                                        fontSize: 13.sp,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 8.h),
+                              ...tasks.take(2).map((task) {
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: 8.h),
+                                  child: TaskCard(
+                                    task: task,
+                                    onToggle: () {},
+                                    onDelete: () {},
+                                  ),
+                                );
+                              }),
+                            ],
+                          );
+                        }
+
+                        return const SizedBox.shrink();
+                      },
+                    );
                   },
                 ),
               ],
@@ -872,26 +921,27 @@ class _HomeScreenState extends State<HomeScreen>
         ),
       ),
 
-      floatingActionButton:
-          BlocBuilder<SharaNavigationBloc, SharaNavigationState>(
-            builder: (context, state) {
-              final isListening = state is SharaNavigationListening;
-              final isLoading = state is SharaNavigationLoading;
+      floatingActionButton: isInforLoading
+          ? SizedBox.fromSize()
+          : BlocBuilder<SharaNavigationBloc, SharaNavigationState>(
+              builder: (context, state) {
+                final isListening = state is SharaNavigationListening;
+                final isLoading = state is SharaNavigationLoading;
 
-              return SharaMicButton(
-                isListening: isListening,
-                isLoading: isLoading,
-                onPressed: () {
-                  final bloc = context.read<SharaNavigationBloc>();
-                  if (isListening) {
-                    bloc.add(SharaStopListening());
-                  } else if (!isLoading) {
-                    bloc.add(SharaStartListening());
-                  }
-                },
-              );
-            },
-          ),
+                return SharaMicButton(
+                  isListening: isListening,
+                  isLoading: isLoading,
+                  onPressed: () {
+                    final bloc = context.read<SharaNavigationBloc>();
+                    if (isListening) {
+                      bloc.add(SharaStopListening());
+                    } else if (!isLoading) {
+                      bloc.add(SharaStartListening());
+                    }
+                  },
+                );
+              },
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }

@@ -9,7 +9,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:formz/formz.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grace_church/core/alert/app_alerte.dart';
-import 'package:grace_church/core/ia_analyse/ai_analyzing_screen.dart';
 import 'package:grace_church/core/injetction/injection_container.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:grace_church/feature/home/domaine/usecase/create_task_usecase.dart';
@@ -18,6 +17,7 @@ import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/cre
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/event/create_tast_event.dart';
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/state/create_tast_state.dart';
 import 'package:grace_church/feature/home/presentation/bloc/voice_task.dart';
+import 'package:grace_church/core/navigation/shara_nav.dart';
 import 'package:grace_church/core/constante/app_colors.dart';
 
 class VoiceListeningScreen extends StatefulWidget {
@@ -151,7 +151,7 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
 
     if (!mounted) return;
     await context.read<VoiceTaskCubit>().cancel();
-    if (mounted) Navigator.pop(context);
+    if (mounted) SharaNav.navigate('home');
   }
 
   @override
@@ -292,23 +292,16 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
                   previous.status != current.status,
               listener: (context, stateForm) {
                 if (stateForm.status.isSuccess) {
-                  
-
-
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AIAnalyzingScreen(
-                        actionType: widget.actionType,
-                        task: TaskResponse(
-                          title: stateForm.title.value,
-                          date: stateForm.date.value,
-                          time: stateForm.time.value,
-                          recurring: stateForm.recurring,
-                          content: stateForm.content.value,
-                          status: 'AVENIR',
-                        ),
-                      ),
+                  // Navigation via le routeur Shara : analyse IA →
+                  // confirmation (plus de push direct d'écran).
+                  SharaNav.createTaskFromVoice(
+                    TaskResponse(
+                      title: stateForm.title.value,
+                      date: stateForm.date.value,
+                      time: stateForm.time.value,
+                      recurring: stateForm.recurring,
+                      content: stateForm.content.value,
+                      status: 'AVENIR',
                     ),
                   );
                 }

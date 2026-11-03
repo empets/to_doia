@@ -3,17 +3,27 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grace_church/core/confirmation/confimation_screen.dart';
+import 'package:grace_church/core/navigation/shara_nav.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:grace_church/core/constante/app_colors.dart';
 
 
 class AIAnalyzingScreen extends StatefulWidget {
-  const AIAnalyzingScreen({super.key, required this.task, required this.actionType});
+  const AIAnalyzingScreen({
+    super.key,
+    required this.task,
+    required this.actionType,
+    this.onDone,
+  });
 
   final TaskResponse task;
   final String actionType;
-  
+
+  /// Si fourni : appelé à la fin de l'animation au lieu de pousser
+  /// [ConfirmationScreen] via Navigator (navigation pilotée par l'AppShell).
+  final VoidCallback? onDone;
+
   @override
   State<AIAnalyzingScreen> createState() => _AIAnalyzingScreenState();
 }
@@ -32,10 +42,12 @@ class _AIAnalyzingScreenState extends State<AIAnalyzingScreen>
     _animateSteps();
     Future.delayed(const Duration(milliseconds: 2200), () {
       if (mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ConfirmationScreen(task: widget.task, actionType: widget.actionType)),
-        );
+        if (widget.onDone != null) {
+          widget.onDone!();
+        } else {
+          // Défaut (standalone) : confirmation via le routeur.
+          SharaNav.createTaskFromVoice(widget.task);
+        }
       }
     });
   }

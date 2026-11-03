@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:grace_church/core/models/task.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:grace_church/core/navigation/shara_nav.dart';
 import 'package:grace_church/core/constante/app_colors.dart';
 
 const _P = AppColors.primary;
@@ -21,7 +22,7 @@ class SubScaffold extends StatelessWidget {
       backgroundColor: AppColors.background,
       elevation: 0,
       leading: GestureDetector(
-        onTap: () => Navigator.pop(context),
+        onTap: () => SharaNav.navigate('settings'),
         child: Container(
           margin: const EdgeInsets.all(10),
           decoration: BoxDecoration(

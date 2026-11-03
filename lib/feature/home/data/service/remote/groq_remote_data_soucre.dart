@@ -38,7 +38,8 @@ class GroqRemoteDataSourceImpl implements GroqRemoteDataSource {
   /// et reste extractible. La correction définitive est de déplacer les
   /// appels Groq derrière un proxy backend (Cloud Function) qui détient la
   /// clé côté serveur. Voir le README, section « Configuration des secrets ».
-  static const _key = GlobalParams.groqApiKey;
+  static const _key = '';
+  // GlobalParams.groqApiKey;
 
   /// Construit l'en-tête d'authentification.
   ///
@@ -171,10 +172,21 @@ class GroqRemoteDataSourceImpl implements GroqRemoteDataSource {
                 - tasks : liste des tâches
                 - create_task : création d'une tâche
                 - settings : paramètres
-                - voice : assistant vocal
+                - voice : écoute vocale
+                - transcription
+                - confirmation : confirmation d'une tâche en attente
+                - success
+                - settingsAppearance : apparence
+                - settingsLanguage : langue
+                - settingsNotifications : notifications
+                - settingsVoice : voix et IA
+                - settingsData : données
+                - settingsAbout : à propos
+                - settingsHelp : aide
 
                 Règles :
                 - Si l'utilisateur demande d'ouvrir un écran, utilise l'action navigate.
+                - Si l'utilisateur demande de créer une tâche, utilise "create_task".
                 - Si l'utilisateur pose une question ou discute, utilise l'action none.
                 - Ne déclenche jamais une navigation sans demande claire.
                 - N'invente pas de destinations.
@@ -183,7 +195,7 @@ class GroqRemoteDataSourceImpl implements GroqRemoteDataSource {
                   "message": "La réponse courte à lire à voix haute",
                   "action": {
                     "type": "navigate ou none",
-                    "destination": "home, tasks, create_task, settings, voice ou null"
+                    "destination": "home, tasks, create_task, settings, voice, transcription, confirmation, success, settingsAppearance, settingsLanguage, settingsNotifications, settingsVoice, settingsData, settingsAbout, settingsHelp ou null"
                   }
                 }
                 ''',
@@ -248,7 +260,17 @@ class GroqRemoteDataSourceImpl implements GroqRemoteDataSource {
           - tasks : liste des tâches
           - create_task : formulaire de création d'une tâche
           - settings : paramètres
-          - voice : assistant vocal
+          - voice : écoute vocale
+          - transcription
+          - confirmation : confirmation d'une tâche en attente
+          - success : écran de succès
+          - settingsAppearance : apparence
+          - settingsLanguage : langue
+          - settingsNotifications : notifications
+          - settingsVoice : voix et IA
+          - settingsData : données
+          - settingsAbout : à propos
+          - settingsHelp : aide
 
           Actions possibles :
           1. "navigate" : uniquement si l'utilisateur demande explicitement d'ouvrir ou consulter un écran.
@@ -277,7 +299,7 @@ class GroqRemoteDataSourceImpl implements GroqRemoteDataSource {
             "message": "réponse courte à lire à voix haute",
             "action": {
               "type": "navigate" | "create_task" | "none",
-              "destination": "home" | "tasks" | "create_task" | "settings" | "voice" | null,
+              "destination": "home" | "tasks" | "create_task" | "settings" | "voice" | "transcription" | "confirmation" | "success" | "settingsAppearance" | "settingsLanguage" | "settingsNotifications" | "settingsVoice" | "settingsData" | "settingsAbout" | "settingsHelp" | null,
               "task": {
                 "title": string|null,
                 "content": string|null,

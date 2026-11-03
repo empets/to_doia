@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
-import 'package:grace_church/feature/home/presentation/page/home_screen.dart';
+import 'package:grace_church/core/navigation/shara_nav.dart';
 import 'package:grace_church/core/constante/app_colors.dart';
 
 class SuccessScreen extends StatefulWidget {
@@ -91,17 +91,8 @@ class _SuccessScreenState extends State<SuccessScreen>
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomeScreen(
-                            tasks: [],
-                            onMicTap: () {},
-                            onViewTasks: () {},
-                            onNotif: () {},
-                          ),
-                        ),
-                      );
+                      //widget.onGoHome → accueil via SharaNav
+                      SharaNav.navigate('home');
                     },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.primary,
@@ -127,7 +118,8 @@ class _SuccessScreenState extends State<SuccessScreen>
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      //widget.onGoTasks
+                      //widget.onGoTasks → tâches via SharaNav
+                      SharaNav.navigate('tasks');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
