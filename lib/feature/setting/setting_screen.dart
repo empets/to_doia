@@ -89,7 +89,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   width: 52.w,
                   height: 52.h,
                   decoration: BoxDecoration(
-                    color: AppColors.white.withOpacity(0.2),
+                    color: AppColors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -285,11 +285,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 icon: Icons.feedback_outlined,
                 bg: AppColors.warning,
                 label: 'Envoyer un retour',
+                onTap: () => widget.onRoute('feedback'),
               ),
               _STile(
                 icon: Icons.privacy_tip_outlined,
                 bg: AppColors.purple,
                 label: 'Politique de confidentialité',
+                onTap: () => widget.onRoute('privacy'),
                 last: true,
               ),
             ],
@@ -349,7 +351,10 @@ class _SGroup extends StatelessWidget {
           color: AppColors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
-            BoxShadow(color: AppColors.black.withOpacity(0.04), blurRadius: 8),
+            BoxShadow(
+              color: AppColors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+            ),
           ],
         ),
         child: Column(children: children),

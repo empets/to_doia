@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:grace_church/core/alarme_notification/presentation/pages/simulation_alarme_page.dart';
@@ -325,6 +326,20 @@ class SharaRouter {
             child: const HelpScreen(),
           ),
         ),
+        GoRoute(
+          path: SharaRoute.settingsPrivacy,
+          builder: (context, state) => SubSettingScaffold(
+            title: 'Politique de confidentialité',
+            child: const PrivacyPolicyScreen(),
+          ),
+        ),
+        GoRoute(
+          path: SharaRoute.settingsFeedback,
+          builder: (context, state) => SubSettingScaffold(
+            title: 'Envoyer un retour',
+            child: const FeedbackScreen(),
+          ),
+        ),
       ],
     );
   }
@@ -361,7 +376,11 @@ class SimulationAlarmePageWithBack extends StatelessWidget {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
+        surfaceTintColor: AppColors.transparent,
+        foregroundColor: AppColors.ink,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         leading: GestureDetector(
           onTap: () => context.go(SharaRoute.home),
           child: Container(

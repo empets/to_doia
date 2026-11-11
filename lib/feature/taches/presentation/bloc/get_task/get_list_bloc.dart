@@ -346,9 +346,16 @@ class GetListBloc extends Bloc<TaskSectionEvent, ApiState<List<TaskResponse>>> {
 
         response.fold(
           (l) => emit(ApiState<List<TaskResponse>>.failed(l.message)),
-          (r) {
+          (r) async {
             _allTasks = r;
             emit(ApiState<List<TaskResponse>>.success(_applyFilter()));
+
+            // Crée / confirme / modifie une tâche → la liste fraîchement
+            // chargée déclenche la programmation des rappels (alarme +
+            // notification locale) pour chaque tâche active.
+            for (final task in r) {
+              await _syncRappel(task);
+            }
           },
         );
 

@@ -1,0 +1,20 @@
+{
+  "mcp": {
+    "servers": {
+      "playwright": {
+        "type": "local",
+        "command": [
+          "npx",
+          "@playwright/mcp@latest"
+        ]
+      },
+      "firebase": {
+        "type": "local",
+        "command": [
+          "firebase",
+          "mcp"
+        ]
+      }
+    }
+  }
+}
