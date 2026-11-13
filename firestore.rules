@@ -1,0 +1,75 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /feedbacks/{feedbackId} {
+      allow create: if request.resource.data.keys().hasOnly([
+        'type',
+        'typeLibelle',
+        'message',
+        'email',
+        'appareil',
+        'creeLe',
+        'statut'
+      ])
+      && request.resource.data.type is string
+      && request.resource.data.type in ['bug', 'suggestion', 'autre']
+      && request.resource.data.message is string
+      && request.resource.data.message.size() <= 5000
+      && request.resource.data.email is string
+      && request.resource.data.email.size() <= 254
+      && request.resource.data.statut == 'nouveau';
+
+      allow read, update, delete: if false;
+    }
+
+    // Profil utilisateur : chaque utilisateur ne peut lire et écrire que son
+    // propre document `users/{uid}`. Le mot de passe n'est jamais stocké ici.
+    match /users/{userId} {
+      allow read: if estProprietaire(userId);
+
+      allow create: if estProprietaire(userId)
+        && request.resource.data.keys().hasOnly([
+          'uid',
+          'nom',
+          'email',
+          'emailVerifie',
+          'statut',
+          'creeLe',
+          'derniereConnexion'
+        ])
+        && request.resource.data.uid == userId
+        && request.resource.data.nom is string
+        && request.resource.data.nom.size() <= 120
+        && request.resource.data.email is string
+        && request.resource.data.email.size() > 0
+        && request.resource.data.email.size() <= 254
+        && request.resource.data.emailVerifie is bool
+        && request.resource.data.statut == 'actif'
+        && request.resource.data.creeLe is timestamp
+        && request.resource.data.derniereConnexion is timestamp;
+
+      allow update: if estProprietaire(userId)
+        && request.resource.data.uid == userId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'nom',
+          'email',
+          'emailVerifie',
+          'derniereConnexion'
+        ])
+        && request.resource.data.nom is string
+        && request.resource.data.nom.size() <= 120
+        && request.resource.data.email is string
+        && request.resource.data.email.size() > 0
+        && request.resource.data.email.size() <= 254
+        && request.resource.data.emailVerifie is bool
+        && request.resource.data.derniereConnexion is timestamp;
+
+      allow delete: if false;
+    }
+
+    function estProprietaire(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+  }
+}

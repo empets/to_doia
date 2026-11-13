@@ -3,7 +3,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grace_church/core/alert/app_alerte.dart';
+import 'package:grace_church/core/alarme_notification/domaine/task_reminder_manager.dart';
 import 'package:grace_church/core/constante/constantes.dart';
+import 'package:grace_church/core/injetction/injection_container.dart';
 import 'package:grace_church/core/models/task.dart';
 import 'package:grace_church/core/navigation/app_flow_controller.dart';
 import 'package:grace_church/core/navigation/shara_route.dart';
@@ -121,7 +123,11 @@ class SharaNav {
   }
 
   /// ── Tâche confirmée (bouton « Confirmer » de ConfirmationScreen) ────────
-  static void taskConfirmed() {
+  ///
+  /// Appelé après succès de création, que ce soit par le formulaire manuel ou
+  /// par la voix (Shara). Crée la notification locale si la tâche est bien
+  /// enregistrée dans Firebase, puis bascule sur l'écran de succès.
+  static Future<void> taskConfirmed() async {
     final t = AppFlowController.instance.pendingTask;
     if (t != null) {
       AppFlowController.instance.addLocal(
@@ -135,6 +141,9 @@ class SharaNav {
           recurrence: t.recurring ? 'Quotidien' : '',
         ),
       );
+      // Synchronise l'alarme/notification locale (création ou annulation selon
+      // le statut). Peu importe le flow : vocal ou manuel.
+      _syncRappel(t);
     }
     // Rafraîchit la liste de tâches bloquée par l'API.
     try {
@@ -145,7 +154,34 @@ class SharaNav {
     } catch (e) {
       log('SharaNav.taskConfirmed : GetListBloc indisponible ($e)');
     }
-    go(SharaRoute.success);
+    // La création manuelle n'a pas de pendingTask (préparé uniquement par le
+    // flux vocal). go() bloque sur /success quand pendingTask == null, donc on
+    // navigue directement via le routeur.
+    SharaRouter.i.go(SharaRoute.success);
+  }
+
+  /// Crée ou annule la notification locale pour une tâche confirmée.
+  static void _syncRappel(TaskResponse t) {
+    final statut = t.status.toUpperCase();
+    final doitAnnuler =
+        statut.contains(TypeTaskStatus.TERMINER) ||
+        statut.contains(TypeTaskStatus.ANNULER) ||
+        statut.contains(TypeTaskStatus.SUPPRIMER);
+
+    final reminder = getIt<TaskReminderManager>();
+    if (doitAnnuler) {
+      reminder.annuler(t.taskId);
+    } else {
+      reminder.programmer(
+        t.taskId,
+        TaskReminderInfos(
+          title: t.title,
+          date: t.date,
+          time: t.time,
+          recurring: t.recurring,
+        ),
+      );
+    }
   }
 
   /// ── Utilitaires ──────────────────────────────────────────────────────────

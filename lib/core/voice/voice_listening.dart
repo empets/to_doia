@@ -10,6 +10,7 @@ import 'package:formz/formz.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grace_church/core/alert/app_alerte.dart';
 import 'package:grace_church/core/injetction/injection_container.dart';
+import 'package:grace_church/feature/auth/domaine/usecase/utilisateur_courant_usecase.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:grace_church/feature/home/domaine/usecase/create_task_usecase.dart';
 import 'package:grace_church/feature/home/domaine/usecase/update_task_from_usercase.dart';
@@ -229,6 +230,7 @@ class _VoiceListeningScreenState extends State<VoiceListeningScreen>
       create: (context) => FormTastBloc(
         createTaskUseCase: getIt<CreateTaskUseCase>(),
         updateTaskUseCase: getIt<UpdateTaskUseCase>(),
+        utilisateurCourantUseCase: getIt<UtilisateurCourantUseCase>(),
       ),
       child: PopScope(
         canPop: false,

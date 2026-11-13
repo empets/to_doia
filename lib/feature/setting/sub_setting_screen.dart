@@ -1,11 +1,19 @@
 // lib/screens/settings_sub_screens.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formz/formz.dart';
 import 'package:grace_church/core/models/task.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grace_church/core/navigation/shara_nav.dart';
 import 'package:grace_church/core/constante/app_colors.dart';
+import 'package:grace_church/core/injetction/injection_container.dart';
+import 'package:grace_church/feature/setting/domaine/entities/feedback_entite.dart';
+import 'package:grace_church/feature/setting/domaine/usecase/envoyer_feedback_usecase.dart';
+import 'package:grace_church/feature/setting/presentation/bloc/feedback/event/feedback_event.dart';
+import 'package:grace_church/feature/setting/presentation/bloc/feedback/feedback_bloc.dart';
+import 'package:grace_church/feature/setting/presentation/bloc/feedback/state/feedback_state.dart';
 
 const _P = AppColors.primary;
 const _sub = AppColors.greyText;
@@ -1394,7 +1402,6 @@ class _AboutScreenState extends State<AboutScreen> {
       ),
     );
   }
-
 }
 
 // ── Widgets de contenu type « page d'information » ───────────────────────────
@@ -1540,9 +1547,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
         'Voix : capturée uniquement pendant l\'écoute active, pour être '
         'transcrite en tâche.',
       ),
-      _InfoBullet(
-        'Aucun compte n\'est requis et aucune donnée n\'est vendue.',
-      ),
+      _InfoBullet('Aucun compte n\'est requis et aucune donnée n\'est vendue.'),
 
       _InfoTitle('Microphone et connexion'),
       _InfoParagraph(
@@ -1569,7 +1574,10 @@ class PrivacyPolicyScreen extends StatelessWidget {
       _InfoTitle('Partage'),
       _InfoParagraph(
         'Nous ne partageons ni ne revendons vos données personnelles à des '
-        'tiers. Aucun outil de suivi publicitaire n\'est intégré.',
+        'tiers. Aucun outil de suivi publicitaire n\'est intégré. Lorsque vous '
+        'envoyez un retour depuis « Envoyer un retour », le message, l\'e-mail '
+        'facultatif et les informations de diagnostic (appareil, version) sont '
+        'transmis à Firebase (Google) uniquement pour traiter votre demande.',
       ),
 
       _InfoTitle('Vos droits'),
@@ -1587,22 +1595,32 @@ class PrivacyPolicyScreen extends StatelessWidget {
 }
 
 // ─── 17 ter. Envoyer un retour ───────────────────────────────────────────────
-class FeedbackScreen extends StatefulWidget {
+class FeedbackScreen extends StatelessWidget {
   const FeedbackScreen({super.key});
+
   @override
-  State<FeedbackScreen> createState() => _FeedbackScreenState();
+  Widget build(BuildContext context) => BlocProvider(
+    create: (_) => FeedbackBloc(getIt<EnvoyerFeedbackUseCase>()),
+    child: const _FeedbackForm(),
+  );
 }
 
-class _FeedbackScreenState extends State<FeedbackScreen> {
+class _FeedbackForm extends StatefulWidget {
+  const _FeedbackForm();
+
+  @override
+  State<_FeedbackForm> createState() => _FeedbackFormState();
+}
+
+class _FeedbackFormState extends State<_FeedbackForm> {
   static const _types = [
-    ('Signaler un bug', Icons.bug_report_outlined),
-    ('Suggestion', Icons.lightbulb_outline_rounded),
-    ('Autre', Icons.chat_bubble_outline_rounded),
+    (TypeFeedback.bug, Icons.bug_report_outlined),
+    (TypeFeedback.suggestion, Icons.lightbulb_outline_rounded),
+    (TypeFeedback.autre, Icons.chat_bubble_outline_rounded),
   ];
 
   final _messageCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
-  int _type = 0;
 
   @override
   void dispose() {
@@ -1611,126 +1629,166 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     super.dispose();
   }
 
-  void _send() {
-    final message = _messageCtrl.text.trim();
-    if (message.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Décrivez votre retour avant d\'envoyer.',
-            style: GoogleFonts.roboto(),
-          ),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-      return;
-    }
-    FocusScope.of(context).unfocus();
-    _messageCtrl.clear();
-    _emailCtrl.clear();
+  void _afficherMessage(String message, {required Color backgroundColor}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          'Merci ! Votre retour a bien été envoyé.',
-          style: GoogleFonts.roboto(),
-        ),
+        content: Text(message, style: GoogleFonts.roboto()),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.success,
+        backgroundColor: backgroundColor,
       ),
     );
   }
 
   @override
-  Widget build(BuildContext context) => ListView(
-    padding: const EdgeInsets.all(20),
-    children: [
-      _InfoTitle('Type de retour'),
-      Wrap(
-        spacing: 8.w,
-        runSpacing: 8.h,
-        children: [
-          for (var i = 0; i < _types.length; i++)
-            GestureDetector(
-              onTap: () => setState(() => _type = i),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 10,
+  Widget build(
+    BuildContext context,
+  ) => BlocConsumer<FeedbackBloc, FeedbackState>(
+    listener: (context, state) {
+      if (state.status == FormzSubmissionStatus.success) {
+        _messageCtrl.clear();
+        _emailCtrl.clear();
+        _afficherMessage(
+          'Merci ! Votre retour a bien été envoyé.',
+          backgroundColor: AppColors.success,
+        );
+        context.read<FeedbackBloc>().add(FeedbackEvent.reinitialise());
+      } else if (state.status == FormzSubmissionStatus.failure) {
+        _afficherMessage(
+          "Le retour n'a pas pu être envoyé. Réessayez.",
+          backgroundColor: AppColors.error,
+        );
+      }
+    },
+    builder: (context, state) => ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        _InfoTitle('Type de retour'),
+        Wrap(
+          spacing: 8.w,
+          runSpacing: 8.h,
+          children: [
+            for (var i = 0; i < _types.length; i++)
+              GestureDetector(
+                onTap: () => context.read<FeedbackBloc>().add(
+                  FeedbackEvent.typeChanged(_types[i].$1),
                 ),
-                decoration: BoxDecoration(
-                  color: _type == i ? _P : AppColors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: _type == i ? _P : AppColors.greyOverlay,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: state.type == _types[i].$1 ? _P : AppColors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: state.type == _types[i].$1
+                          ? _P
+                          : AppColors.greyOverlay,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        _types[i].$2,
+                        size: 16,
+                        color: state.type == _types[i].$1
+                            ? AppColors.white
+                            : _P,
+                      ),
+                      SizedBox(width: 8.w),
+                      Text(
+                        _types[i].$1.libelle,
+                        style: GoogleFonts.roboto(
+                          color: state.type == _types[i].$1
+                              ? AppColors.white
+                              : _tx,
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      _types[i].$2,
-                      size: 16,
-                      color: _type == i ? AppColors.white : _P,
-                    ),
-                    SizedBox(width: 8.w),
-                    Text(
-                      _types[i].$1,
-                      style: GoogleFonts.roboto(
-                        color: _type == i ? AppColors.white : _tx,
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
               ),
-            ),
-        ],
-      ),
-      SizedBox(height: 16.h),
-
-      _InfoTitle('Votre message'),
-      _field(
-        controller: _messageCtrl,
-        hint: 'Décrivez ce qui s\'est passé ou ce que vous aimeriez voir...',
-        maxLines: 6,
-      ),
-      SizedBox(height: 16.h),
-
-      _InfoTitle('E-mail (facultatif)'),
-      _field(
-        controller: _emailCtrl,
-        hint: 'vous@exemple.com',
-        keyboardType: TextInputType.emailAddress,
-      ),
-      SizedBox(height: 20.h),
-
-      ElevatedButton.icon(
-        onPressed: _send,
-        icon: const Icon(Icons.send_rounded, size: 18),
-        label: Text(
-          'Envoyer le retour',
-          style: GoogleFonts.roboto(fontWeight: FontWeight.w700),
+          ],
         ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: _P,
-          foregroundColor: AppColors.white,
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+        SizedBox(height: 16.h),
+
+        _InfoTitle('Votre message'),
+        _field(
+          controller: _messageCtrl,
+          hint: 'Décrivez ce qui s\'est passé ou ce que vous aimeriez voir...',
+          maxLines: 6,
+          onChanged: (value) => context.read<FeedbackBloc>().add(
+            FeedbackEvent.messageChanged(value),
           ),
         ),
-      ),
-      SizedBox(height: 12.h),
-      Text(
-        'Votre appareil et la version de l\'application sont joints '
-        'automatiquement pour faciliter le diagnostic.',
-        textAlign: TextAlign.center,
-        style: GoogleFonts.roboto(color: _sub, fontSize: 11.sp, height: 1.5),
-      ),
-      SizedBox(height: 24.h),
-    ],
+        SizedBox(height: 16.h),
+
+        _InfoTitle('E-mail (facultatif)'),
+        _field(
+          controller: _emailCtrl,
+          hint: 'vous@exemple.com',
+          keyboardType: TextInputType.emailAddress,
+          onChanged: (value) => context.read<FeedbackBloc>().add(
+            FeedbackEvent.emailChanged(value),
+          ),
+        ),
+        if (state.email.displayError != null) ...[
+          SizedBox(height: 6.h),
+          Text(
+            'Adresse e-mail invalide.',
+            style: GoogleFonts.roboto(color: AppColors.error, fontSize: 11.sp),
+          ),
+        ],
+        SizedBox(height: 20.h),
+
+        ElevatedButton.icon(
+          onPressed: state.status.isInProgress || !state.isValide
+              ? null
+              : () {
+                  FocusScope.of(context).unfocus();
+                  context.read<FeedbackBloc>().add(FeedbackEvent.submitted());
+                },
+          icon: state.status.isInProgress
+              ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.white,
+                  ),
+                )
+              : const Icon(Icons.send_rounded, size: 18),
+          label: Text(
+            state.status.isInProgress
+                ? 'Envoi en cours...'
+                : 'Envoyer le retour',
+            style: GoogleFonts.roboto(fontWeight: FontWeight.w700),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: _P,
+            foregroundColor: AppColors.white,
+            disabledBackgroundColor: _P.withValues(alpha: 0.6),
+            disabledForegroundColor: AppColors.white,
+            elevation: 0,
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+        ),
+        SizedBox(height: 12.h),
+        Text(
+          'Votre appareil et la version de l\'application sont joints '
+          'automatiquement pour faciliter le diagnostic.',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.roboto(color: _sub, fontSize: 11.sp, height: 1.5),
+        ),
+        SizedBox(height: 24.h),
+      ],
+    ),
   );
 
   Widget _field({
@@ -1738,6 +1796,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     required String hint,
     int maxLines = 1,
     TextInputType? keyboardType,
+    ValueChanged<String>? onChanged,
   }) => Container(
     decoration: BoxDecoration(
       color: AppColors.white,
@@ -1748,6 +1807,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       controller: controller,
       maxLines: maxLines,
       keyboardType: keyboardType,
+      onChanged: onChanged,
       style: GoogleFonts.roboto(color: _tx, fontSize: 14.sp),
       decoration: InputDecoration(
         hintText: hint,

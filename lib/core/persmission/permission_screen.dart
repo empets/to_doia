@@ -100,12 +100,14 @@ class _PermissionsScreenState extends State<PermissionsScreen>
     setState(() => _busy = true);
 
     PermissionStatus status;
+    Object? erreur;
     try {
       status = await _currentPermission.request();
-    } catch (_) {
+    } catch (e) {
       // Ne jamais bloquer l'utilisateur si la permission n'est pas disponible
       // sur la plateforme (ex. notifications iOS sans configuration).
       status = PermissionStatus.denied;
+      erreur = e;
     }
 
     if (!mounted) return;
@@ -133,7 +135,9 @@ class _PermissionsScreenState extends State<PermissionsScreen>
           ),
           backgroundColor: _panel,
           content: Text(
-            _step == 0
+            erreur != null
+                ? 'Permission refusée : ${erreur.toString()}'
+                : _step == 0
                 ? 'Microphone refusé. Vous pourrez l\'autoriser plus tard.'
                 : 'Notifications refusées. Vous pourrez les autoriser plus tard.',
           ),
@@ -373,13 +377,12 @@ class _PermissionsScreenState extends State<PermissionsScreen>
   Widget _buildMainButton(Map<String, Object> s, Color color) {
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 250),
-      opacity: _busy ? 0.65 : 1.0,
+      opacity: _busy ? 0.50 : 1.0,
       child: SizedBox(
         child: PrimaryButton(
           label: s['btn'] as String,
           onPressed: _busy ? null : _requestPermission,
           colorText: AppColors.white,
-
           borderRadius: 12.r,
           isLoading: _busy,
           backgroundColor: color,

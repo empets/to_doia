@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grace_church/core/alarme_notification/presentation/pages/simulation_alarme_page.dart';
 import 'package:grace_church/core/constante/constantes.dart';
+import 'package:grace_church/core/custome_widget/button.dart';
 import 'package:grace_church/core/models/task.dart';
 import 'package:grace_church/core/service_systeme/model/api/api_state.dart';
 import 'package:grace_church/feature/assistant/app_bar_ia.dart';
@@ -588,6 +589,10 @@ class _HomeScreenState extends State<HomeScreen>
                   if (state is SuccessState<List<TaskResponse>>) {
                     final tasks = state.data;
 
+                    if (tasks.isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+
                     return Column(
                       children: [
                         // ── En-tête ─────────────────────────────────────────
@@ -720,104 +725,6 @@ class _HomeScreenState extends State<HomeScreen>
                 },
               ),
 
-              // SizedBox(height: 36.h),
-
-              // // ── Micro Shara ─────────────────────────────────────
-              // Center(
-              //   child: Column(
-              //     mainAxisSize: MainAxisSize.min,
-              //     children: [
-              //       GestureDetector(
-              //         onTap: () {
-              //           Navigator.push(
-              //             context,
-              //             MaterialPageRoute(
-              //               builder: (_) => VoiceListeningScreen(
-              //                 actionType: TypeCreateTaskOrUpdate.CREATE_TASK,
-              //               ),
-              //             ),
-              //           );
-              //         },
-              //         child: AnimatedBuilder(
-              //           animation: _pulse,
-              //           builder: (context, child) {
-              //             final pulse = _pulse.value;
-
-              //             return SizedBox(
-              //               width: 180.w,
-              //               height: 180.w,
-              //               child: Stack(
-              //                 alignment: Alignment.center,
-              //                 children: [
-              //                   ...List.generate(3, (i) {
-              //                     final size =
-              //                         100.w + (i + 1) * 26.w + pulse * 8.w;
-
-              //                     return Container(
-              //                       width: size,
-              //                       height: size,
-              //                       decoration: BoxDecoration(
-              //                         shape: BoxShape.circle,
-              //                         color: const Color(
-              //                           0xFF6366F1,
-              //                         ).withValues(alpha: 0.08 - i * 0.02),
-              //                       ),
-              //                     );
-              //                   }),
-              //                   Container(
-              //                     width: 100.w,
-              //                     height: 100.w,
-              //                     decoration: BoxDecoration(
-              //                       shape: BoxShape.circle,
-              //                       gradient: const LinearGradient(
-              //                         begin: Alignment.topLeft,
-              //                         end: Alignment.bottomRight,
-              //                         colors: [
-              //                           AppColors.primaryLight,
-              //                           AppColors.primary,
-              //                         ],
-              //                       ),
-              //                       boxShadow: [
-              //                         BoxShadow(
-              //                           color: const Color(
-              //                             0xFF6366F1,
-              //                           ).withValues(alpha: 0.35 + pulse * 0.1),
-              //                           blurRadius: 28 + pulse * 8,
-              //                         ),
-              //                       ],
-              //                     ),
-              //                     child: Icon(
-              //                       Icons.mic_rounded,
-              //                       color: AppColors.white,
-              //                       size: 44.sp,
-              //                     ),
-              //                   ),
-              //                 ],
-              //               ),
-              //             );
-              //           },
-              //         ),
-              //       ),
-              //       SizedBox(height: 12.h),
-              //       Text(
-              //         'Appuyez pour parler',
-              //         style: GoogleFonts.roboto(
-              //           color: AppColors.greyText,
-              //           fontSize: 14.sp,
-              //         ),
-              //       ),
-              //       SizedBox(height: 4.h),
-              //       Text(
-              //         'Créez une tâche avec votre voix',
-              //         textAlign: TextAlign.center,
-              //         style: GoogleFonts.roboto(
-              //           color: AppColors.greyText,
-              //           fontSize: 12.sp,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
               SizedBox(height: 3.2.h),
 
               // ── Tâches du jour ──────────────────────────────────
@@ -863,7 +770,19 @@ class _HomeScreenState extends State<HomeScreen>
                                 ..sort((a, b) => a.date.compareTo(b.date));
 
                           if (tasks.isEmpty) {
-                            return const SizedBox.shrink();
+                            return Column(
+                              children: [
+                                SizedBox(height: 2.8.h),
+                                Text(
+                                  'Aucune tâche à venir',
+                                  style: GoogleFonts.roboto(
+                                    color: AppColors.grey2,
+                                    fontSize: 13.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            );
                           }
 
                           return Column(
@@ -910,7 +829,36 @@ class _HomeScreenState extends State<HomeScreen>
                           );
                         }
 
-                        return const SizedBox.shrink();
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(height: 0.36.sh),
+                            Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                'Hello, je suis Shara, ton assistant vocal.',
+                                style: GoogleFonts.roboto(
+                                  color: AppColors.grey2,
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 12.h),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20.w),
+                              child: PrimaryButton(
+                                label: 'Créer une tâche',
+                                colorText: AppColors.white,
+                                backgroundColor: AppColors.primary,
+                                borderRadius: 12.r,
+                                onPressed: () {
+                                  SharaNav.navigate('create_task');
+                                },
+                              ),
+                            ),
+                          ],
+                        );
                       },
                     );
                   },

@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-
-import 'package:grace_church/core/constante/global_params.dart';
 import 'package:grace_church/core/service_systeme/error/failure.dart';
 import 'package:grace_church/feature/home/data/model/home_responses_models.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
@@ -38,7 +36,7 @@ class GroqRemoteDataSourceImpl implements GroqRemoteDataSource {
   /// et reste extractible. La correction définitive est de déplacer les
   /// appels Groq derrière un proxy backend (Cloud Function) qui détient la
   /// clé côté serveur. Voir le README, section « Configuration des secrets ».
-  static const _key = '';
+  static const _key = String.fromEnvironment('GROQ_API_KEY', defaultValue: '');
   // GlobalParams.groqApiKey;
 
   /// Construit l'en-tête d'authentification.

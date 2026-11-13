@@ -17,10 +17,7 @@ class SharaNavShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: navigationShell,
-      bottomNavigationBar: _buildNav(),
-    );
+    return Scaffold(body: navigationShell, bottomNavigationBar: _buildNav());
   }
 
   Widget _buildNav() {
@@ -72,9 +69,7 @@ class SharaNavShell extends StatelessWidget {
                     children: [
                       Icon(
                         active ? e.value.$1 : e.value.$2,
-                        color: active
-                            ? AppColors.primary
-                            : AppColors.greyText,
+                        color: active ? AppColors.primary : AppColors.greyText,
                         size: 24,
                       ),
                       SizedBox(height: 4.h),
@@ -111,10 +106,18 @@ class SharaNavShell extends StatelessWidget {
 
 /// ── Enrobage des sous-écrans Paramètres (bouton retour) ─────────────────────
 class SubSettingScaffold extends StatelessWidget {
-  const SubSettingScaffold({super.key, required this.title, required this.child});
+  const SubSettingScaffold({
+    super.key,
+    required this.title,
+    required this.child,
+    this.sansRetour = false,
+  });
 
   final String title;
   final Widget child;
+
+  /// En flow premier lancement : pas de bouton retour.
+  final bool sansRetour;
 
   @override
   Widget build(BuildContext context) {
@@ -127,20 +130,22 @@ class SubSettingScaffold extends StatelessWidget {
         elevation: 0,
         scrolledUnderElevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
-        leading: GestureDetector(
-          onTap: () => context.go(SharaRoute.settings),
-          child: Container(
-            margin: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(
-              Icons.chevron_left_rounded,
-              color: AppColors.primary,
-            ),
-          ),
-        ),
+        leading: sansRetour
+            ? null
+            : GestureDetector(
+                onTap: () => context.go(SharaRoute.settings),
+                child: Container(
+                  margin: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    Icons.chevron_left_rounded,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
         title: Text(
           title,
           style: GoogleFonts.roboto(

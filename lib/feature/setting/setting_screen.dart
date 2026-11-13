@@ -9,6 +9,7 @@ import 'package:grace_church/feature/home/presentation/widget/chart_whithe_grace
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grace_church/core/constante/app_colors.dart';
+import 'package:grace_church/feature/auth/presentation/widgets/compte_banniere.dart';
 
 class SettingsScreen extends StatefulWidget {
   final void Function(String) onRoute;
@@ -74,55 +75,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
           // ),
 
           // Bannière profil
-          Container(
-            margin: const EdgeInsets.only(bottom: 4),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppColors.primaryLight, AppColors.primary],
+          CompteBanniere(onTap: () => widget.onRoute('auth')),
+
+          _SGroup(
+            title: 'Autorisations',
+            children: [
+              // _STile(
+              //   icon: Icons.mic_rounded,
+              //   bg: AppColors.primary,
+              //   label: 'Microphone',
+              //   sub: 'Reconnaissance vocale',
+              //   onTap: () => widget.onRoute('settingspermissions'),
+              // ),
+              _STile(
+                icon: Icons.notifications_rounded,
+                bg: AppColors.error,
+                label: 'Notifications',
+                sub: 'Rappels',
+                onTap: () => widget.onRoute('notifications'),
+                last: true,
               ),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 52.w,
-                  height: 52.h,
-                  decoration: BoxDecoration(
-                    color: AppColors.white.withValues(alpha: 0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      '👤',
-                      style: GoogleFonts.roboto(fontSize: 26.sp),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 14.w),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Utilisateur',
-                      style: GoogleFonts.roboto(
-                        color: AppColors.white,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    SizedBox(height: 2.h),
-                    Text(
-                      'Version 1.0.0',
-                      style: GoogleFonts.roboto(
-                        color: Colors.white70,
-                        fontSize: 12.sp,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+            ],
           ),
 
           // _SGroup(
@@ -275,18 +248,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 sub: 'Version 1.0.0',
                 onTap: () => widget.onRoute('about'),
               ),
-              _STile(
-                icon: Icons.help_outline_rounded,
-                bg: AppColors.success,
-                label: 'Aide',
-                onTap: () => widget.onRoute('help'),
-              ),
-              _STile(
-                icon: Icons.feedback_outlined,
-                bg: AppColors.warning,
-                label: 'Envoyer un retour',
-                onTap: () => widget.onRoute('feedback'),
-              ),
+              // _STile(
+              //   icon: Icons.help_outline_rounded,
+              //   bg: AppColors.success,
+              //   label: 'Aide',
+              //   onTap: () => widget.onRoute('help'),
+              // ),
+              // _STile(
+              //   icon: Icons.feedback_outlined,
+              //   bg: AppColors.warning,
+              //   label: 'Envoyer un retour',
+              //   onTap: () => widget.onRoute('feedback'),
+              // ),
               _STile(
                 icon: Icons.privacy_tip_outlined,
                 bg: AppColors.purple,

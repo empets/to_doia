@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -71,8 +72,18 @@ class NotificationLocalService {
   /// `AndroidNotificationDetails` passés à chaque notification.
   Future<void> initialiser() async {
     tz.initializeTimeZones();
-    // tz.local est mis à UTC par défaut ; l'appareil fournit son vrai fuseau
-    // via [DateTime.now] → on programme toujours en heure locale.
+    // `tz.local` vaut UTC tant qu'aucun fuseau n'est fourni par la plateforme.
+    // On lui donne le vrai fuseau de l'appareil : indispensable pour que
+    // `TZDateTime.from(heureLocale, tz.local)` donne le bon instant absolu
+    // (sinon décalage de l'offset → notification en retard ou jamais déclenchée)
+    // et pour que les répétitions hebdomadaires tombent à la bonne heure.
+    try {
+      final info = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(info.identifier));
+      debugPrint('🌍 Fuseau notifications : ${info.identifier}');
+    } catch (e) {
+      debugPrint('⚠️ Fuseau appareil introuvable, repli sur UTC : $e');
+    }
     await _plugin.initialize(
       const InitializationSettings(
         android: AndroidInitializationSettings('@mipmap/ic_launcher'),
@@ -286,7 +297,7 @@ class NotificationLocalService {
         importance: Importance.defaultImportance,
         priority: Priority.defaultPriority,
       ),
-      iOS: const DarwinNotificationDetails(presentAlert: true, presentSound: false, presentBadge: true),
+      iOS: const DarwinNotificationDetails(presentAlert: true, presentSound: true, presentBadge: true),
     );
   }
 
@@ -297,6 +308,8 @@ class NotificationLocalService {
     return data.entries.map((e) => '${e.key}=${e.value}').join('&');
   }
 
+  /// Convertit une date/heure locale de l'appareil en `TZDateTime` du même
+  /// fuseau (défini dans [initialiser] via `flutter_timezone`).
   tz.TZDateTime _tzLocal(DateTime local) => tz.TZDateTime.from(local, tz.local);
 
   DateTime _prochaineOccurrence(DateTime base, int jourSemaine) {

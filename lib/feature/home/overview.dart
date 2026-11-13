@@ -7,6 +7,7 @@ import 'package:grace_church/core/constante/app_colors.dart';
 import 'package:grace_church/core/injetction/injection_container.dart';
 import 'package:grace_church/feature/home/presentation/widget/chart_whithe_grace.dart';
 import 'package:grace_church/core/navigation/shara_router.dart';
+import 'package:grace_church/feature/auth/domaine/usecase/surveiller_utilisateur_usecase.dart';
 import 'package:grace_church/feature/home/domaine/usecase/create_task_from_voice.dart';
 import 'package:grace_church/feature/home/domaine/usecase/shara_navigation_usecase.dart';
 import 'package:grace_church/feature/home/presentation/bloc/voice_task.dart';
@@ -34,9 +35,10 @@ class SmartReminderApp extends StatelessWidget {
           ),
         ),
         BlocProvider(
-          create: (context) =>
-              GetListBloc(getTaskListUseCase: getIt<GetTaskListUseCase>())
-                ..add(TaskSectionEvent.fetch(null)),
+          create: (context) => GetListBloc(
+            getTaskListUseCase: getIt<GetTaskListUseCase>(),
+            surveillerUtilisateurUseCase: getIt<SurveillerUtilisateurUseCase>(),
+          )..add(TaskSectionEvent.fetch(null)),
         ),
         BlocProvider(
           create: (context) => SharaNavigationBloc(

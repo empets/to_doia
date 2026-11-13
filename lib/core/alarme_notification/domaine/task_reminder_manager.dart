@@ -134,7 +134,7 @@ class TaskReminderManager {
       return null;
     }
 
-    final tm = RegExp(r'^(\d{1,2})[:hH](\d{2})$').firstMatch(t);
+    final tm = RegExp(r'^(\d{1,2})[:hH](\d{1,2})$').firstMatch(t);
     if (tm == null) return null;
     final hour = int.parse(tm.group(1)!);
     final minute = int.parse(tm.group(2)!);

@@ -2,7 +2,7 @@
 
 Infrastructure **réutilisable** par toutes les features, **indépendante du
 métier**, compatible **Android et iOS**. Documentation complète dans
-`architecture.md` (section « Module centralisé Alarmes & Notifications »).
+`architecture/ARCHITECTURE.md` (section « Module centralisé Alarmes & Notifications »).
 
 ## Structure
 

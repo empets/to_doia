@@ -116,6 +116,7 @@ d'info « Aucune tâche en attente » — jamais de crash.
 | `data`           | `donnees`              | Données                              |
 | `about`          | `a_propos`             | À propos                             |
 | `help`           | `aide`                 | Aide                                 |
+| `auth`           | `authentification`, `connexion`, `inscription`, `login`, `se_connecter`, `creer_un_compte` | Mon compte (connexion / inscription) |
 
 ### ❌ Non exposées à la voix (deliberatenent)
 

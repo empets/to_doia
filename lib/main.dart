@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:grace_church/core/alarme_notification/domaine/usecase/gerer_permission_notification_usecase.dart';
 import 'package:grace_church/core/alarme_notification/service/alarme_notification_service.dart';
 import 'package:grace_church/core/constante/global_params.dart';
 import 'package:grace_church/core/injetction/injection_container.dart';
@@ -38,6 +39,13 @@ void main() async {
   // Module alarme/notification : init unique (plugin OS + re-programmation
   // des alarmes persistées après reboot).
   await getIt<AlarmeNotificationService>().initialiser();
+
+  // Demande les permissions de notification (Android 13+ POST_NOTIFICATIONS,
+  // alarmes exactes SCHEDULE_EXACT_ALARM). Sans cela, les notifications sont
+  // bloquées silencieusement par l'OS.
+  await getIt<GererPermissionsNotificationUseCase>()(
+    const GererPermissionsNotificationParams(demander: true),
+  );
 
   // ⚠️ MODE SIMULATION TEMPORAIRE : l'app démarre sur la page
   // de simulation du module alarme/notification.

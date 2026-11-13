@@ -7,6 +7,8 @@ import 'package:grace_church/core/constante/constantes.dart';
 import 'package:grace_church/core/extention/app_extention.dart';
 import 'package:grace_church/core/injetction/injection_container.dart';
 import 'package:grace_church/core/service_systeme/model/formz_model/text_formz.dart';
+import 'package:grace_church/core/service_systeme/usercase/usercase.dart';
+import 'package:grace_church/feature/auth/domaine/usecase/utilisateur_courant_usecase.dart';
 import 'package:grace_church/feature/home/domaine/entities/request/home_request.dart';
 import 'package:grace_church/feature/home/domaine/usecase/create_task_usecase.dart';
 import 'package:grace_church/feature/home/domaine/usecase/update_task_from_usercase.dart';
@@ -18,6 +20,7 @@ class FormTastBloc extends Bloc<CreateTaskEvent, CreateTastState> {
   FormTastBloc({
     required this.createTaskUseCase,
     required this.updateTaskUseCase,
+    required this.utilisateurCourantUseCase,
     TaskReminderManager? taskReminder,
   }) : _taskReminder = taskReminder,
        super(CreateTastState.initial()) {
@@ -26,6 +29,7 @@ class FormTastBloc extends Bloc<CreateTaskEvent, CreateTastState> {
 
   final CreateTaskUseCase createTaskUseCase;
   final UpdateTaskUseCase updateTaskUseCase;
+  final UtilisateurCourantUseCase utilisateurCourantUseCase;
 
   /// Coordination alarme/notification (résolue via l'injection si absente).
   final TaskReminderManager? _taskReminder;
@@ -49,6 +53,13 @@ class FormTastBloc extends Bloc<CreateTaskEvent, CreateTastState> {
         recurring: state.recurring,
       ),
     );
+  }
+
+  /// Retourne l'uid de l'utilisateur connecté (chaque tâche est rattachée à
+  /// son propriétaire pour le filtrage par utilisateur.
+  Future<String> _uidUtilisateur() async {
+    final resultat = await utilisateurCourantUseCase.call(EmptyRequest());
+    return resultat.fold((_) => '', (utilisateur) => utilisateur?.uid ?? '');
   }
 
   bool _validate({
@@ -160,6 +171,8 @@ class FormTastBloc extends Bloc<CreateTaskEvent, CreateTastState> {
           if (state.actionType.value.contains(
             TypeCreateTaskOrUpdate.CREATE_TASK,
           )) {
+            final uid = await _uidUtilisateur();
+
             final response = await createTaskUseCase.call(
               RequestCreateTask(
                 title: state.title.value,
@@ -168,15 +181,14 @@ class FormTastBloc extends Bloc<CreateTaskEvent, CreateTastState> {
                 recurring: state.recurring,
                 content: state.content.value,
                 status: state.eventStatus.value,
+                userId: uid,
               ),
             );
 
             // ⚠️ L'alarme n'est programmée QUE si l'API a réussi.
             await response.fold(
               (failure) async {
-                log(
-                  "SubmitCreateTaskEvent failure: ${failure.message}",
-                );
+                log("SubmitCreateTaskEvent failure: ${failure.message}");
                 emit(
                   state.copyWith(
                     errorMessage: failure.message,
@@ -195,6 +207,7 @@ class FormTastBloc extends Bloc<CreateTaskEvent, CreateTastState> {
             TypeCreateTaskOrUpdate.UPDATE_TASK,
           )) {
             log("SubmitCreateTaskEvent failure: ${state.title.value}");
+            final uid = await _uidUtilisateur();
             final response = await updateTaskUseCase.call(
               RequestCreateTask(
                 title: state.title.value,
@@ -204,6 +217,7 @@ class FormTastBloc extends Bloc<CreateTaskEvent, CreateTastState> {
                 content: state.content.value,
                 status: state.eventStatus.value,
                 taskId: state.taskId.value,
+                userId: uid,
               ),
             );
 

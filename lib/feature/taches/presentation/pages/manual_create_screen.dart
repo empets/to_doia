@@ -18,6 +18,7 @@ import 'package:grace_church/core/succes_screen/success_screen.dart';
 import 'package:grace_church/core/voice/voice_listening.dart';
 import 'package:grace_church/feature/assistant/app_bar_ia.dart';
 import 'package:grace_church/feature/assistant/shara_loading_button.dart';
+import 'package:grace_church/feature/auth/domaine/usecase/utilisateur_courant_usecase.dart';
 import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
 import 'package:grace_church/feature/home/domaine/usecase/create_task_usecase.dart';
 import 'package:grace_church/feature/home/domaine/usecase/update_task_from_usercase.dart';
@@ -152,6 +153,7 @@ class _ManualCreateScreenState extends State<ManualCreateScreen> {
     formTastBloc = FormTastBloc(
       createTaskUseCase: getIt<CreateTaskUseCase>(),
       updateTaskUseCase: getIt<UpdateTaskUseCase>(),
+      utilisateurCourantUseCase: getIt<UtilisateurCourantUseCase>(),
     );
 
     if (widget.actionType.contains(TypeCreateTaskOrUpdate.UPDATE_TASK)) {

@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:grace_church/core/constante/app_colors.dart';
 import 'package:grace_church/core/constante/constantes.dart';
+import 'package:grace_church/core/custome_widget/button.dart';
 import 'package:grace_church/core/extention/app_extention.dart';
 import 'package:grace_church/core/navigation/shara_nav.dart';
 import 'package:grace_church/core/service_systeme/model/api/api_state.dart';
@@ -16,11 +18,15 @@ import 'package:grace_church/feature/taches/presentation/bloc/get_task/event/tas
 import 'package:grace_church/feature/taches/presentation/bloc/get_task/get_list_bloc.dart';
 import 'package:grace_church/feature/taches/presentation/pages/task_card.dart';
 import 'package:grace_church/feature/taches/presentation/pages/widget/empty_data.dart';
-import 'package:grace_church/core/constante/app_colors.dart';
 import 'package:grace_church/feature/taches/presentation/pages/widget/task_shimmer.dart';
 
 class TasksScreen extends StatefulWidget {
-  const TasksScreen({super.key, this.onViewTasks, this.onNavigate, this.onCreateTask});
+  const TasksScreen({
+    super.key,
+    this.onViewTasks,
+    this.onNavigate,
+    this.onCreateTask,
+  });
   final VoidCallback? onViewTasks;
 
   /// Navigation Shara déléguée à l'AppShell.
@@ -181,7 +187,9 @@ class _TasksScreenState extends State<TasksScreen> {
                                   borderRadius: BorderRadius.circular(14),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: AppColors.black.withOpacity(0.05),
+                                      color: AppColors.black.withValues(
+                                        alpha: 0.05,
+                                      ),
                                       blurRadius: 8,
                                     ),
                                   ],
@@ -335,7 +343,7 @@ class _TasksScreenState extends State<TasksScreen> {
                                               boxShadow: [
                                                 BoxShadow(
                                                   color: AppColors.black
-                                                      .withOpacity(0.04),
+                                                      .withValues(alpha: 0.04),
                                                   blurRadius: 6,
                                                 ),
                                               ],
@@ -441,7 +449,95 @@ class _TasksScreenState extends State<TasksScreen> {
           );
         }
 
-        return const SizedBox.shrink();
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          appBar: SharaAppBar(
+            onViewTasks: widget.onViewTasks,
+            onNavigate: widget.onNavigate,
+            onCreateTask: widget.onCreateTask,
+          ),
+          body: SafeArea(
+            child: Column(
+              children: [
+                SizedBox(height: 0.36.sh),
+                // Padding(
+                //   padding: const EdgeInsets.fromLTRB(20, 1, 20, 0),
+                //   child: Row(
+                //     children: [
+                //       Expanded(
+                //         child: Text(
+                //           'Vous n\'avez aucune tâche',
+                //           style: GoogleFonts.roboto(
+                //             color: AppColors.ink,
+                //             fontSize: 24.sp,
+                //             fontWeight: FontWeight.w800,
+                //           ),
+                //         ),
+                //       ),
+
+                //       SizedBox(width: 8.w),
+                //       IconBtn(
+                //         icon: Icons.add_rounded,
+
+                //         primary: true,
+                //         onTap: () {
+                //           // Flux création via le routeur Shara.
+                //           // (le /manual-create fournit le FormTastBloc)
+                //           SharaNav.navigate('create_task');
+                //         },
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Vous n\'avez aucune tâche',
+                    style: GoogleFonts.roboto(
+                      color: AppColors.grey2,
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 12.h),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 30.w),
+                  child: PrimaryButton(
+                    label: 'Créer une tâche',
+                    colorText: AppColors.white,
+                    backgroundColor: AppColors.primary,
+                    borderRadius: 12.r,
+                    onPressed: () {
+                      SharaNav.navigate('create_task');
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          floatingActionButton:
+              BlocBuilder<SharaNavigationBloc, SharaNavigationState>(
+                builder: (context, state) {
+                  final isListening = state is SharaNavigationListening;
+                  final isLoading = state is SharaNavigationLoading;
+
+                  return SharaMicButton(
+                    isListening: isListening,
+                    isLoading: isLoading,
+                    onPressed: () {
+                      final bloc = context.read<SharaNavigationBloc>();
+                      if (isListening) {
+                        bloc.add(SharaStopListening());
+                      } else if (!isLoading) {
+                        bloc.add(SharaStartListening());
+                      }
+                    },
+                  );
+                },
+              ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        );
       },
     );
   }

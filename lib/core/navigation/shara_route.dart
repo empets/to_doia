@@ -45,6 +45,9 @@ class SharaRoute {
   static const String settingsHelp = '/settings/help';
   static const String settingsPrivacy = '/settings/privacy';
   static const String settingsFeedback = '/settings/feedback';
+  static const String settingsAuth = '/settings/auth';
+
+  static const String settingsPermissions = '/settings/permissions';
 
   /// Mapping destination Shara (normalisée : trim, lowercase,
   /// espaces/tirets → `_`) → chemin go_router.
@@ -120,6 +123,16 @@ class SharaRoute {
     'feedback': settingsFeedback,
     'retour': settingsFeedback,
     'envoyer_un_retour': settingsFeedback,
+    'settingsauth': settingsAuth,
+    'auth': settingsAuth,
+    'authentification': settingsAuth,
+    'connexion': settingsAuth,
+    'inscription': settingsAuth,
+    'login': settingsAuth,
+    'se_connecter': settingsAuth,
+    'creer_un_compte': settingsAuth,
+    'settingspermissions': settingsPermissions,
+    'autorisations': settingsPermissions,
   };
 
   /// Onglets principaux (0 = home, 1 = tasks, 2 = settings) — voir

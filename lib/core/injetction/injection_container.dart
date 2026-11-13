@@ -1,4 +1,5 @@
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart' as databaseReference;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
@@ -7,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http/intercepted_client.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart' as shareData;
+
 //import 'injection.config.dart'; // généré
 
 final GetIt getIt = GetIt.instance;
@@ -24,6 +26,10 @@ abstract class InjectableModule {
   @lazySingleton
   databaseReference.DatabaseReference get userDb =>
       databaseReference.FirebaseDatabase.instance.ref();
+  @lazySingleton
+  FirebaseFirestore get firestore => FirebaseFirestore.instance;
+  @lazySingleton
+  FirebaseAuth get firebaseAuth => FirebaseAuth.instance;
   @preResolve
   @lazySingleton
   Future<shareData.SharedPreferences> locaDataShared() async {
@@ -43,10 +49,8 @@ abstract class InjectableModule {
     // retryPolicy: ExpiredTokenRetryPolicy(getIt(), getIt()),
   );
 
-
   @lazySingleton
   FlutterSecureStorage get prefs => const FlutterSecureStorage();
-
 }
 
 // // abstract class Env {

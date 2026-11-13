@@ -63,6 +63,9 @@ class GlobalParams {
 
   static const String userRealBdPath = "users";
 
+  /// Version de l'application jointe aux diagnostics (retours utilisateur).
+  static const String appVersion = '1.0.0';
+
   /// Vérifie que la configuration indispensable au démarrage est présente.
   ///
   /// Objectif : échouer immédiatement avec un message clair au lieu de laisser

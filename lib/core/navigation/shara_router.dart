@@ -9,17 +9,20 @@ import 'package:grace_church/core/ia_analyse/ai_analyzing_screen.dart';
 import 'package:grace_church/core/injetction/injection_container.dart';
 import 'package:grace_church/core/navigation/app_flow_controller.dart';
 import 'package:grace_church/core/navigation/shara_route.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:grace_church/core/constante/constantes.dart';
 import 'package:grace_church/core/persmission/permission_screen.dart';
+import 'package:grace_church/core/service_systeme/usercase/usercase.dart';
 import 'package:grace_church/core/succes_screen/success_screen.dart';
 import 'package:grace_church/core/transcription/transcription_screen.dart';
 import 'package:grace_church/core/voice/voice_listening.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:grace_church/core/constante/constantes.dart';
+import 'package:grace_church/feature/auth/domaine/usecase/utilisateur_courant_usecase.dart';
 import 'package:grace_church/feature/home/domaine/usecase/create_task_usecase.dart';
 import 'package:grace_church/feature/home/domaine/usecase/update_task_from_usercase.dart';
 import 'package:grace_church/feature/home/presentation/bloc/create_task.dart/create_or_update_task_bloc.dart';
 import 'package:grace_church/feature/home/presentation/page/home_screen.dart';
 import 'package:grace_church/feature/onboarding/splash_screen.dart';
+import 'package:grace_church/feature/auth/presentation/screens/auth_screen.dart';
 import 'package:grace_church/feature/setting/setting_screen.dart';
 import 'package:grace_church/feature/setting/sub_setting_screen.dart';
 import 'package:grace_church/feature/taches/presentation/pages/manual_create_screen.dart';
@@ -90,6 +93,7 @@ class SharaRouter {
     create: (context) => FormTastBloc(
       createTaskUseCase: getIt<CreateTaskUseCase>(),
       updateTaskUseCase: getIt<UpdateTaskUseCase>(),
+      utilisateurCourantUseCase: getIt<UtilisateurCourantUseCase>(),
     ),
     child: child,
   );
@@ -129,13 +133,27 @@ class SharaRouter {
         // ── Démarrage ─────────────────────────────────────────────────────────
         GoRoute(
           path: SharaRoute.splash,
-          builder: (context, state) =>
-              SplashScreen(onFinish: () => context.go(SharaRoute.permissions)),
+          builder: (context, state) => SplashScreen(
+            onFinish: () async {
+              final resultat = await getIt<UtilisateurCourantUseCase>()(
+                EmptyRequest(),
+              );
+              final utilisateur = resultat.fold((_) => null, (u) => u);
+              if (!context.mounted) return;
+              if (utilisateur != null) {
+                context.go(SharaRoute.home);
+              } else {
+                context.go(SharaRoute.permissions);
+              }
+            },
+          ),
         ),
         GoRoute(
           path: SharaRoute.permissions,
-          builder: (context, state) =>
-              PermissionsScreen(onDone: () => context.go(SharaRoute.home)),
+          builder: (context, state) => PermissionsScreen(
+            onDone: () =>
+                context.go('${SharaRoute.settingsAuth}?etape=premier'),
+          ),
         ),
 
         // ── Onglets avec barre du bas ─────────────────────────────────────────
@@ -143,27 +161,33 @@ class SharaRouter {
           builder: (context, state, navigationShell) =>
               SharaNavShell(navigationShell: navigationShell),
           branches: [
-            StatefulShellBranch(routes: [
-              GoRoute(
-                path: SharaRoute.home,
-                pageBuilder: (context, state) =>
-                    const NoTransitionPage(child: _HomeBranchWidget()),
-              ),
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                path: SharaRoute.tasks,
-                pageBuilder: (context, state) =>
-                    const NoTransitionPage(child: _TasksBranchWidget()),
-              ),
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                path: SharaRoute.settings,
-                pageBuilder: (context, state) =>
-                    const NoTransitionPage(child: _SettingsBranchWidget()),
-              ),
-            ]),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: SharaRoute.home,
+                  pageBuilder: (context, state) =>
+                      const NoTransitionPage(child: _HomeBranchWidget()),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: SharaRoute.tasks,
+                  pageBuilder: (context, state) =>
+                      const NoTransitionPage(child: _TasksBranchWidget()),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: SharaRoute.settings,
+                  pageBuilder: (context, state) =>
+                      const NoTransitionPage(child: _SettingsBranchWidget()),
+                ),
+              ],
+            ),
           ],
         ),
 
@@ -171,10 +195,9 @@ class SharaRouter {
         GoRoute(
           path: SharaRoute.manualCreate,
           builder: (context, state) {
-            final args =
-                state.extra is ManualCreateArgs
-                    ? state.extra! as ManualCreateArgs
-                    : ManualCreateArgs();
+            final args = state.extra is ManualCreateArgs
+                ? state.extra! as ManualCreateArgs
+                : ManualCreateArgs();
             // Modification via voix ? on lit la tâche en attente du flux
             final task = args.task ?? (args.isPope ? null : flow.pendingTask);
             return _formBloc(
@@ -321,10 +344,8 @@ class SharaRouter {
         ),
         GoRoute(
           path: SharaRoute.settingsHelp,
-          builder: (context, state) => SubSettingScaffold(
-            title: 'Aide',
-            child: const HelpScreen(),
-          ),
+          builder: (context, state) =>
+              SubSettingScaffold(title: 'Aide', child: const HelpScreen()),
         ),
         GoRoute(
           path: SharaRoute.settingsPrivacy,
@@ -333,11 +354,28 @@ class SharaRouter {
             child: const PrivacyPolicyScreen(),
           ),
         ),
+        // GoRoute(
+        //   path: SharaRoute.settingsFeedback,
+        //   builder: (context, state) => SubSettingScaffold(
+        //     title: 'Envoyer un retour',
+        //     child: const FeedbackScreen(),
+        //   ),
+        // ),
         GoRoute(
-          path: SharaRoute.settingsFeedback,
+          path: SharaRoute.settingsAuth,
           builder: (context, state) => SubSettingScaffold(
-            title: 'Envoyer un retour',
-            child: const FeedbackScreen(),
+            sansRetour: state.uri.queryParameters['etape'] == 'premier',
+            title: 'Mon compte',
+            child: AuthScreen(),
+          ),
+        ),
+        GoRoute(
+          path: SharaRoute.settingsPermissions,
+          builder: (context, state) => SubSettingScaffold(
+            title: 'Autorisations',
+            child: PermissionsScreen(
+              onDone: () => context.go(SharaRoute.settings),
+            ),
           ),
         ),
       ],
@@ -370,6 +408,8 @@ class _SettingsBranchWidget extends StatelessWidget {
 
 /// Simulation alarme — enrobage avec un bouton de retour vers l'accueil.
 class SimulationAlarmePageWithBack extends StatelessWidget {
+  const SimulationAlarmePageWithBack({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

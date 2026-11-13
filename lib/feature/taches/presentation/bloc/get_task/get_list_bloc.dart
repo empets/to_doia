@@ -8,6 +8,25 @@
 // import 'package:grace_church/feature/taches/presentation/bloc/get_task/event/task_event.dart';
 // import 'package:injectable/injectable.dart';
 
+import 'dart:async';
+
+import 'package:dartz/dartz.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:grace_church/core/alarme_notification/domaine/task_reminder_manager.dart';
+import 'package:grace_church/core/constante/constantes.dart';
+import 'package:grace_church/core/extention/app_extention.dart';
+import 'package:grace_church/core/injetction/injection_container.dart';
+import 'package:grace_church/core/service_systeme/model/api/api_state.dart';
+import 'package:grace_church/core/service_systeme/usercase/usercase.dart';
+import 'package:grace_church/core/service_systeme/error/failure.dart';
+import 'package:grace_church/feature/auth/domaine/entities/utilisateur_entite.dart';
+import 'package:grace_church/feature/auth/domaine/usecase/surveiller_utilisateur_usecase.dart';
+import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
+import 'package:grace_church/feature/taches/domaine/entities/request/task_request.dart';
+import 'package:grace_church/feature/taches/domaine/usecase/get_task_list_usecase.dart';
+import 'package:grace_church/feature/taches/presentation/bloc/get_task/event/task_event.dart';
+import 'package:injectable/injectable.dart';
+
 // @lazySingleton
 // class GetListBloc extends Bloc<TaskSectionEvent, ApiState<List<TaskResponse>>> {
 //   GetListBloc({required this.getTaskListUseCase})
@@ -102,7 +121,6 @@
 //                final updatedTasks =
 //                   (state as SuccessState<List<TaskResponse>>).data;
 //             if (search != null  && status != null && status.isEmpty) {
-             
 
 //               final newTasks = updatedTasks.where((t) {
 //                 return t.title.toLowerCase().contains(search.toLowerCase()) || t.content.toLowerCase().contains(search.toLowerCase());
@@ -120,7 +138,7 @@
 //             }
 //             else{
 //                final newTasks = updatedTasks.where((t) {
-//                 return (t.title!.toLowerCase().contains(search!.toLowerCase()) || 
+//                 return (t.title!.toLowerCase().contains(search!.toLowerCase()) ||
 //                        t.content!.toLowerCase().contains(search!.toLowerCase()));
 //               }).toList();
 //               final finalTasks  = newTasks.every((t) => t.status!.toLowerCase() == status!.toLowerCase()) ? newTasks : <TaskResponse>[];
@@ -131,19 +149,6 @@
 //     }
 //   }
 // }
-
-
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:grace_church/core/alarme_notification/domaine/task_reminder_manager.dart';
-import 'package:grace_church/core/constante/constantes.dart';
-import 'package:grace_church/core/extention/app_extention.dart';
-import 'package:grace_church/core/injetction/injection_container.dart';
-import 'package:grace_church/core/service_systeme/model/api/api_state.dart';
-import 'package:grace_church/feature/home/domaine/entities/response/home_responses.dart';
-import 'package:grace_church/feature/taches/domaine/entities/request/task_request.dart';
-import 'package:grace_church/feature/taches/domaine/usecase/get_task_list_usecase.dart';
-import 'package:grace_church/feature/taches/presentation/bloc/get_task/event/task_event.dart';
-import 'package:injectable/injectable.dart';
 
 // @lazySingleton
 // class GetListBloc extends Bloc<TaskSectionEvent, ApiState<List<TaskResponse>>> {
@@ -248,17 +253,43 @@ import 'package:injectable/injectable.dart';
 //   }
 // }
 
-
-
 @lazySingleton
 class GetListBloc extends Bloc<TaskSectionEvent, ApiState<List<TaskResponse>>> {
-  GetListBloc({required this.getTaskListUseCase, TaskReminderManager? taskReminder})
-      : _taskReminder = taskReminder,
-        super(ApiState<List<TaskResponse>>.initial()) {
+  GetListBloc({
+    required this.getTaskListUseCase,
+    required this.surveillerUtilisateurUseCase,
+    TaskReminderManager? taskReminder,
+  }) : _taskReminder = taskReminder,
+       super(ApiState<List<TaskResponse>>.initial()) {
     on<TaskSectionEvent>(_getList);
+    _abonnementUtilisateur = surveillerUtilisateurUseCase(
+      EmptyRequest(),
+    ).listen(_onUtilisateurChange);
   }
 
   final GetTaskListUseCase getTaskListUseCase;
+  final SurveillerUtilisateurUseCase surveillerUtilisateurUseCase;
+
+  /// Abonnement au flux d'authentification : rechargement de la liste des
+  /// tâches à chaque changement de session (login / logout / changement).
+  StreamSubscription<Either<Failure, UtilisateurEntite?>>?
+  _abonnementUtilisateur;
+
+  /// Dernier uid utilisateur connu via le flux d'authentification.
+  String _uidUtilisateur = '';
+
+  @override
+  Future<void> close() {
+    _abonnementUtilisateur?.cancel();
+    return super.close();
+  }
+
+  void _onUtilisateurChange(Either<Failure, UtilisateurEntite?> event) {
+    event.fold((_) => _uidUtilisateur = '', (utilisateur) {
+      _uidUtilisateur = utilisateur?.uid ?? '';
+      add(TaskSectionEvent.fetch(_uidUtilisateur));
+    });
+  }
 
   /// Coordination alarme/notification (résolue via l'injection si absente).
   final TaskReminderManager? _taskReminder;
@@ -305,12 +336,14 @@ class GetListBloc extends Bloc<TaskSectionEvent, ApiState<List<TaskResponse>>> {
     final noStatus = st.isEmpty || st == 'toutes';
 
     return _allTasks.where((t) {
-      final matchSearch = query.isEmpty ||
+      final matchSearch =
+          query.isEmpty ||
           t.title.toLowerCase().contains(query) ||
           t.content.toLowerCase().contains(query);
 
       // final matchStatus = noStatus || t.status.trim().toLowerCase() == st;noStatus || t.effectiveStatus.toLowerCase() == st;
-       final matchStatus =  noStatus || t.effectiveStatus.toLowerCase() == st;;
+      final matchStatus = noStatus || t.effectiveStatus.toLowerCase() == st;
+      ;
 
       return matchSearch && matchStatus;
     }).toList();
@@ -340,8 +373,16 @@ class GetListBloc extends Bloc<TaskSectionEvent, ApiState<List<TaskResponse>>> {
         _status = '';
         emit(ApiState<List<TaskResponse>>.load());
 
+        final uid = (id ?? _uidUtilisateur).trim();
+        // Utilisateur déconnecté (uid vide) : aucune tâche à afficher.
+        if (uid.isEmpty) {
+          _allTasks = <TaskResponse>[];
+          emit(ApiState<List<TaskResponse>>.success(<TaskResponse>[]));
+          return;
+        }
+
         final response = await getTaskListUseCase.call(
-          id != null ? RequestNotParams(id: id) : RequestNotParams(),
+          RequestNotParams(id: uid),
         );
 
         response.fold(
@@ -376,10 +417,9 @@ class GetListBloc extends Bloc<TaskSectionEvent, ApiState<List<TaskResponse>>> {
       case SearchTaskSectionEvent(:final search, :final status):
         _search = search ?? '';
         _status = status ?? '';
-        emit(ApiState<List<TaskResponse>>.success(
-          _applyFilter(),
-          refresh: true,
-        ));
+        emit(
+          ApiState<List<TaskResponse>>.success(_applyFilter(), refresh: true),
+        );
     }
   }
 }
